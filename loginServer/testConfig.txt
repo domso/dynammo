@@ -1,0 +1,7 @@
+dbUsername: test
+dbPassword: testpw
+dbName: test
+dbHost: localhost
+
+port: 500000
+serverID: 1
