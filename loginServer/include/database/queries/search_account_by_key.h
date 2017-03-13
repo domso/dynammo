@@ -17,10 +17,32 @@ permissions int
 */
 namespace database {
     namespace queries {
+        //______________________________________________________________________________________________________
+        //
+        // Search for a specific user in the database
+        //______________________________________________________________________________________________________
         class search_account_by_key : public database::mysql::prepared_statement {
         public:
-
+            //______________________________________________________________________________________________________
+            //
+            // Description:
+            // - initializes the SQL-statements
+            // Return:
+            // - true  | on success
+            // - false | on any error
+            //______________________________________________________________________________________________________
             bool init();
+            //______________________________________________________________________________________________________
+            //
+            // Description:
+            // - performs a query for an user specified by the given credentials
+            // - the results are stored into the permissions_ and accountID_ fields
+            // Parameter:
+            // - credentials: the userdata for the query
+            // Return:
+            // - true  | on success
+            // - false | on any error
+            //______________________________________________________________________________________________________
             bool search(const authentication::credentials_t& credentials);
 
             authentication::permissions_t permissions_;

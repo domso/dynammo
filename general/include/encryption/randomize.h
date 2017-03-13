@@ -10,7 +10,8 @@
 #include <openssl/rand.h>
 
 namespace encryption {
-    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    //______________________________________________________________________________________________________
+    //
     // Description:
     // - fills generic object of type T with random bytes
     // Parameter:
@@ -18,6 +19,7 @@ namespace encryption {
     // Return:
     // - true  | on success
     // - false | on any error
+    //______________________________________________________________________________________________________
     template <typename T>
     bool randomize(T& in) {
         return RAND_bytes((unsigned char*)&in, sizeof(T)) == 1;

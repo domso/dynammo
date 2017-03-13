@@ -1,11 +1,7 @@
 #include "network/udp_socket.h"
-
 #include "include/data/context.h"
-
 #include "include/util/timestamp.h"
-
 #include "include/authentication/types.h"
-
 #include "include/message/msg_header.h"
 #include "include/message/msg_types.h"
 #include "include/message/msg_logout.h"

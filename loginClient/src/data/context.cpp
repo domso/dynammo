@@ -1,15 +1,10 @@
-
 #include <cstring>
-
 #include "include/authentication/types.h"
 #include "include/util/timestamp.h"
 #include "include/util/mem.h"
 #include "include/data/context.h"
 
 namespace data {
-    bool context::init() {
-
-    }
 
     encryption::public_key& context::getKey() {
         return key_;
@@ -36,7 +31,6 @@ namespace data {
         return true;
     }
 
-
     void context::getCredentials(authentication::credentials_t& credentials) {
         util::wait_lock::read<authentication::identification_t> lock(identification_);
         credentials = lock.data().credentials;
@@ -52,11 +46,18 @@ namespace data {
         identification = lock.data();
     }
 
-
     void context::setIdentification(const authentication::identification_t& identification) {
         util::wait_lock::write<authentication::identification_t> lock(identification_);
         lock.data() = identification;
     }
+
+    void context::setTicket(const authentication::ticket_t& ticket) {
+        util::wait_lock::write<authentication::ticket_t> lockTicket(ticket_);
+        util::wait_lock::write<authentication::identification_t> lockIdentification(identification_);
+        lockTicket.data() = ticket;
+        lockIdentification->accountID = ticket.accountID;
+    }
+
 
     bool context::waitForTicket(authentication::ticket_t& ticket, double timeOut) {
         util::wait_lock::wait<authentication::ticket_t> lock(ticket_, timeOut);
@@ -67,13 +68,6 @@ namespace data {
 
         ticket = lock.data();
         return ticket.accountID != 0;
-    }
-
-    void context::setTicket(const authentication::ticket_t& ticket) {
-        util::wait_lock::write<authentication::ticket_t> lockTicket(ticket_);
-        util::wait_lock::write<authentication::identification_t> lockIdentification(identification_);
-        lockTicket.data() = ticket;
-        lockIdentification->accountID = ticket.accountID;
     }
 
     void context::clearTicket() {
