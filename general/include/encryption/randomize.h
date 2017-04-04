@@ -13,16 +13,17 @@ namespace encryption {
     //______________________________________________________________________________________________________
     //
     // Description:
-    // - fills generic object of type T with random bytes
+    // - fills generic objects of type T with random bytes
     // Parameter:
     // - in: reference to object
+    // - n: number of objects
     // Return:
     // - true  | on success
     // - false | on any error
     //______________________________________________________________________________________________________
     template <typename T>
-    bool randomize(T& in) {
-        return RAND_bytes((unsigned char*)&in, sizeof(T)) == 1;
+    bool randomize(T* in, const int n = 1) {
+        return RAND_bytes((unsigned char*)in, sizeof(T) * n) == 1;
     }
 }
 

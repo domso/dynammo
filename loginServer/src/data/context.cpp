@@ -26,7 +26,7 @@ namespace data {
             ticket.issuer = serverID_;
             ticket.loginTime = util::timestamp::now();
 
-            if (!encryption::randomize<authentication::random_key_t>(ticket.key)) {
+            if (!encryption::randomize<authentication::random_key_t>(&ticket.key)) {
                 return false;
             }
 

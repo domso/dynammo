@@ -40,15 +40,15 @@ message::msg_controller<data::context>* GlobalControllerLink = nullptr;
 
 void stopServer(int signal) {
     std::cout << signal << std::endl;
+
     if (GlobalControllerLink != nullptr) {
         GlobalControllerLink->close();
     }
 }
 
 int main(int argc, char* argv[]) {
-    
     std::cout << "[Info] Starting server..." << std::endl;
-    
+
     if (argc != 2) {
         std::cout << "[Error] No config-file" << std::endl;
         return 0;
@@ -119,3 +119,4 @@ int main(int argc, char* argv[]) {
     std::cout << "[Info] Closing server..." << std::endl;
     return 0;
 }
+
