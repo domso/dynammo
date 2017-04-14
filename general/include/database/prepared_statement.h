@@ -76,7 +76,7 @@ namespace database {
             //______________________________________________________________________________________________________
             //
             // Description:
-            // - sets n paramT-instances as a single parameter for store queries
+            // - sets n paramT-instances as a single parameter for queries
             // Parameters:
             // - paramID: the ascending parameter (starting with 0)
             // - mysqlType: the SQL-Type of the column
@@ -96,7 +96,8 @@ namespace database {
                 if (paramID < params_.size()) {
                     paramInfo_[paramID].isNULL = isNULL;
                     paramInfo_[paramID].useError = useError;
-
+                    paramInfo_[paramID].length = n * sizeof(paramT);                    
+                    
                     params_[paramID].buffer_type = mysqlType;
                     params_[paramID].buffer = (char*) input;
                     params_[paramID].buffer_length = n * sizeof(paramT);
@@ -113,7 +114,7 @@ namespace database {
             //______________________________________________________________________________________________________
             //
             // Description:
-            // - sets n paramT-instances as a single result-column buffer for load queries
+            // - sets n paramT-instances as a single result-column buffer for queries
             // Parameters:
             // - paramID: the ascending column number (starting with 0)
             // - mysqlType: the SQL-Type of the column

@@ -36,7 +36,7 @@ namespace data {
         credentials = lock.data().credentials;
     }
 
-    void context::setCredentials(authentication::credentials_t& credentials) {
+    void context::setCredentials(const authentication::credentials_t& credentials) {
         util::wait_lock::write<authentication::identification_t> lock(identification_);
         lock.data().credentials = credentials;
     }
@@ -58,7 +58,6 @@ namespace data {
         lockIdentification->accountID = ticket.accountID;
     }
 
-
     bool context::waitForTicket(authentication::ticket_t& ticket, double timeOut) {
         util::wait_lock::wait<authentication::ticket_t> lock(ticket_, timeOut);
 
@@ -75,6 +74,16 @@ namespace data {
         util::wait_lock::write<authentication::identification_t> lockIdentification(identification_);
         util::mem::set<authentication::ticket_t>(&lockTicket.data(), 0);
         util::mem::set<authentication::identification_t>(&lockIdentification.data(), 0);
+    }
+
+    bool context::waitForClearedTicket(double timeOut) {
+        util::wait_lock::wait<authentication::ticket_t> lock(ticket_, timeOut);
+
+        if (!lock.isValid()) {
+            return false;
+        }
+
+        return lock.data().accountID == 0;
     }
 
     void context::pushTicket(const authentication::ticket_t& ticket) {

@@ -64,7 +64,7 @@ namespace data {
         // Parameter:
         // - info: reference to an input instance
         //______________________________________________________________________________________________________
-        void setCredentials(authentication::credentials_t& credentials);
+        void setCredentials(const authentication::credentials_t& credentials);
         //______________________________________________________________________________________________________
         //
         // Description:
@@ -95,6 +95,7 @@ namespace data {
         // Description:
         // - gets the ticket of the current user and stores it in 'ticket'
         // - waits until the data is marked as an update
+        // - checks if the ticket is not empty (accountID != 0)
         // Parameter:
         // - ticket: reference to an output instance
         // - timeOut: maximal number of seconds to wait for an update
@@ -109,6 +110,18 @@ namespace data {
         // - clears the ticket and the identification of the current user
         //______________________________________________________________________________________________________
         void clearTicket();
+        //______________________________________________________________________________________________________
+        //
+        // Description:
+        // - waits until the data is marked as an update
+        // - checks if the ticket was cleared (accountID == 0)
+        // Parameter:
+        // - timeOut: maximal number of seconds to wait for an update
+        // Return:
+        // - true  | on success
+        // - false | on timeout
+        //______________________________________________________________________________________________________
+        bool waitForClearedTicket(double timeOut);
         //______________________________________________________________________________________________________
         //
         // Description:
@@ -157,6 +170,7 @@ namespace data {
 }
 
 #endif
+
 
 
 

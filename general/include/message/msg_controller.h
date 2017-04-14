@@ -76,7 +76,6 @@ namespace message {
 
             while (internalRecv(privateKey, publicKey)) {
                 header = decryptedInputBuffer_.getNext<msg_header_t>();
-
                 if (header != nullptr) {
                     if (callbacks[header->msgType] != nullptr) {
                         if (privateKey != nullptr) {
@@ -84,15 +83,12 @@ namespace message {
                         } else {
                             uncryptedOutputBuffer_.setMsgLen(0);
                         }
-
                         message::msg_header_t* outputHeader = uncryptedOutputBuffer_.pushNext<message::msg_header_t>();
                         message::msg_status_t status = callbacks[header->msgType](*header, srcAddr_, decryptedInputBuffer_, uncryptedOutputBuffer_, networkSocket_, *additional_data_);
-
                         if (status != MSG_STATUS_CLOSE && outputHeader != nullptr) {
                             outputHeader->status = status;
                             outputHeader->msgType = header->msgType ^ MSG_HEADER_TYPE_REQUEST_SWITCH_MASK;
                             outputHeader->attr = header->attr;
-
                             if (privateKey == nullptr || internalSign(*privateKey, uncryptedOutputBuffer_)) {
                                 if (!internalSend(srcAddr_,  uncryptedOutputBuffer_, encryptedOutputBuffer_, publicKey)) {
                                     //TODO send/encryption error
@@ -138,7 +134,7 @@ namespace message {
                 outputHeader->msgType = T::id;
                 outputHeader->status = MSG_STATUS_OK;
                 outputHeader->attr = 0;
-
+                
                 if (T::request(*outputHeader, destAddr, uncryptedOutputBuffer, networkSocket_, param)) {
                     if (privateKey == nullptr || internalSign(*privateKey, uncryptedOutputBuffer)) {
                         if (!internalSend(destAddr,  uncryptedOutputBuffer, encryptedOutputBuffer, publicKey)) {

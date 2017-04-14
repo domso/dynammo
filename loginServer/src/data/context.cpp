@@ -4,6 +4,7 @@
 #include "include/data/context.h"
 #include "include/encryption/randomize.h"
 
+#include <iostream>
 namespace data {
     bool context::init(database::mysql::connection& connection, int32_t serverID) {
         serverID_ = serverID;
@@ -68,9 +69,8 @@ namespace data {
     const authentication::user_data_t* context::authenticate(const authentication::identification_t& identification, authentication::permissions_t requiredPermissionMask) const {
         auto result = userData_.find(identification.accountID);
 
-        if (result != userData_.end()) {
-            if (result->second.ticket.permissions & requiredPermissionMask && util::mem::cmp<authentication::credentials_t>(&(result->second).credentials, &identification.credentials) == 0) {
-
+        if (result != userData_.end()) {           
+            if ((result->second.ticket.permissions & requiredPermissionMask) == requiredPermissionMask && util::mem::cmp<authentication::credentials_t>(&(result->second).credentials, &identification.credentials) == 0) {
                 return &result->second;
             }
 

@@ -4,8 +4,7 @@ namespace database {
     namespace queries {
         bool search_account_by_key::init() {
             bool result = true;
-//             result &= setQuery("Select accountID, permission from t where username = ? and key = ?;");
-            result &= setQuery("Select a, b from t where a = ? and b = ?;");
+            result &= setQuery("Select accountID, permission from user where username = ? and userkey = ?;");
             result &= setResult<authentication::accountID_t>(0, MYSQL_TYPE_LONG, &accountID_);
             result &= setResult<authentication::permissions_t>(1, MYSQL_TYPE_LONG, &permissions_);
             result &= setParam<char>(0,  MYSQL_TYPE_STRING, credentials_.username, sizeof(credentials_.username));
@@ -25,5 +24,7 @@ namespace database {
         }
     }
 }
+
+
 
 

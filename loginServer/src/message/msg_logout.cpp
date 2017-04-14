@@ -15,7 +15,6 @@ namespace message {
 
     msg_status_t msg_logout::requestHandler(message::msg_header_t& header, network::ipv4_addr& srcAddr, network::pkt_buffer& inputBuffer, network::pkt_buffer& outputBuffer, network::udp_socket< network::ipv4_addr >& socket, data::context& server) {
         msg_logout_request_t* request = inputBuffer.getNext<msg_logout_request_t>();
-
         if (request != nullptr) {
             if (server.logout(request->identification)) {
                 return MSG_STATUS_OK;

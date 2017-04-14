@@ -6,6 +6,8 @@
 #include "include/message/msg_types.h"
 #include "include/message/msg_login.h"
 
+
+#include <iostream>
 namespace message {
     const uint8_t msg_login::id;
 
@@ -32,5 +34,6 @@ namespace message {
         if (response != nullptr) {
             client.setTicket(response->ticket);
         }
+        return MSG_STATUS_CLOSE;
     }
 }

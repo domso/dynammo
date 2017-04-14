@@ -34,5 +34,7 @@ namespace message {
                 client.setValidatedID(response->accountID);
             }
         }
+
+        return MSG_STATUS_CLOSE;
     }
 }

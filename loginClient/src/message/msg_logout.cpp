@@ -26,14 +26,11 @@ namespace message {
     }
 
     msg_status_t msg_logout::responseHandler(message::msg_header_t& header, network::ipv4_addr& srcAddr, network::pkt_buffer& inputBuffer, network::pkt_buffer& outputBuffer, network::udp_socket< network::ipv4_addr >& socket, data::context& client) {
-        msg_logout_response_t* response;
-        response = inputBuffer.getNext<msg_logout_response_t>();
-
-        if (response != nullptr) {
-            if (header.status == MSG_STATUS_OK) {
-                client.clearTicket();
-            }
+        if (header.status == MSG_STATUS_OK) {
+            client.clearTicket();
         }
+
+        return MSG_STATUS_CLOSE;
     }
 }
 

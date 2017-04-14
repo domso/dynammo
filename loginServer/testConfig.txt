@@ -3,5 +3,6 @@ dbPassword: testpw
 dbName: test
 dbHost: localhost
 
-port: 500000
+port: 1890
 serverID: 1
+privateKey: ../keys/private.pem
