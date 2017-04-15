@@ -21,7 +21,10 @@ namespace database {
             }
 
             isBinded_ = false;
-            return statement_ != nullptr;
+            if (statement_ != nullptr) {
+                return init();
+            }
+            return false;
         }
         
         bool prepared_statement::execute() {

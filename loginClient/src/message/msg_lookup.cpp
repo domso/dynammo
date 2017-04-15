@@ -31,7 +31,7 @@ namespace message {
 
         if (response != nullptr) {
             if (header.status == MSG_STATUS_OK) {
-                client.setValidatedID(response->accountID);
+                 client.setValidatedTicket(response->ticket);
             }
         }
 

@@ -1,5 +1,6 @@
 #include <cstring>
 #include "include/authentication/types.h"
+#include "include/encryption/randomize.h"
 #include "include/util/timestamp.h"
 #include "include/util/mem.h"
 #include "include/data/context.h"
@@ -28,6 +29,27 @@ namespace data {
         }
 
         info = lock.data();
+        return true;
+    }
+
+    void context::getServerID(authentication::serverID_t& id) {
+        util::wait_lock::read<authentication::serverID_t> lock(destinationServerID_);
+        id = lock.data();
+    }
+
+    void context::setServerID(const authentication::serverID_t& id) {
+        util::wait_lock::write<authentication::serverID_t> lock(destinationServerID_);
+        lock.data() = id;
+    }
+
+    bool context::waitForServerID(authentication::serverID_t& id, double timeOut) {
+        util::wait_lock::wait<authentication::serverID_t> lock(destinationServerID_, timeOut);
+
+        if (!lock.isValid()) {
+            return false;
+        }
+
+        id = lock.data();
         return true;
     }
 
@@ -87,12 +109,12 @@ namespace data {
     }
 
     void context::pushTicket(const authentication::ticket_t& ticket) {
-        util::wait_lock::write<std::queue<authentication::ticket_t>> lock(ticketQueue_);
+        util::wait_lock::write<std::queue<authentication::ticket_t>> lock(ticketInputQueue_);
         lock.data().push(ticket);
     }
 
     bool context::popTicket(authentication::ticket_t& ticket) {
-        util::wait_lock::write<std::queue<authentication::ticket_t>> lock(ticketQueue_);
+        util::wait_lock::write<std::queue<authentication::ticket_t>> lock(ticketInputQueue_);
 
         if (lock.data().size() > 0) {
             ticket = lock.data().front();
@@ -103,20 +125,26 @@ namespace data {
         return false;
     }
 
-    void context::setValidatedID(const authentication::accountID_t accountID) {
-        util::wait_lock::write<std::queue<authentication::accountID_t>> lock(validAccountIDsQueue_);
-        lock->push(accountID);
+    void context::setValidatedTicket(const authentication::ticket_t& ticket) {
+        util::wait_lock::write<std::queue<authentication::session_t>> lock(sessionOutputQueue_);
+        if (ticket.serverID == localServerID_) {
+            authentication::session_t session;
+            session.accountID = ticket.accountID;
+            encryption::randomize<authentication::sessionID_t>(&session.sessionID);
+            lock->push(session);    
+        }
+        
     }
 
-    bool context::waitForValidatedID(authentication::accountID_t& accountID, double timeOut) {
-        util::wait_lock::wait<std::queue<authentication::accountID_t>> lock(validAccountIDsQueue_, timeOut);
+    bool context::waitForValidatedSession(authentication::session_t& session, double timeOut) {
+        util::wait_lock::wait<std::queue<authentication::session_t>> lock(sessionOutputQueue_, timeOut);
 
         if (!lock.isValid() || lock.data().size() == 0) {
             return false;
         }
 
-        accountID = lock.data().front();
+        session = lock.data().front();
         lock.data().pop();
-        return accountID != 0;
+        return session.accountID != 0;
     }
 }

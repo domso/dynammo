@@ -1,4 +1,4 @@
-#include "login_client.h"
+#include "include/login_client.h"
 #include "include/data/map_controller.h"
 #include "include/util/msg_queue.h"
 #include "include/util/binary.h"
@@ -40,10 +40,12 @@ private:
 
 int main() {
 
-    login_client client;
+    
     login_client::config_t config;
     config.port = 1891;
-
+    config.msg_buffer_size = 1024;
+    
+    login_client client(config);
     encryption::public_key key;
 
     if (!key.load("../keys/public.pem")) {
@@ -54,15 +56,10 @@ int main() {
     network::ipv4_addr addr;
     addr.init("127.0.0.1", 1890);
     
-    client.setServer(addr, &key);
+    client.setServer(addr, 5, &key);
 
 
-    client.init(config);
-
-
-
-
-
+    client.init();
 
     client.requestInfo();
     authentication::server_info_t info;
@@ -89,7 +86,7 @@ int main() {
     credentials.key[2] = 's';
     credentials.key[3] = 't';
 
-    std::cout << client.login(credentials) << std::endl;
+    std::cout << client.requestLogin(credentials) << std::endl;
 
 
     authentication::ticket_t ticket;
@@ -103,7 +100,7 @@ int main() {
     std::cout << "port: " << ticket.userAddr.getPort() << std::endl;
 
 
-    client.logout();
+    client.requestLogout();
     client.waitForLogout(10);
 
 

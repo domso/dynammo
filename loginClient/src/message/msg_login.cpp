@@ -16,6 +16,7 @@ namespace message {
 
         if (request != nullptr) {
             client.getCredentials(request->credentials);
+            client.getServerID(request->serverID);
             return true;
         }
 

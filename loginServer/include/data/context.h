@@ -5,6 +5,7 @@
 #include "include/authentication/types.h"
 #include "include/encryption/rsa.h"
 #include "include/database/queries/search_account_by_key.h"
+#include "include/database/queries/update_server_of_user.h"
 
 namespace data {
     //______________________________________________________________________________________________________
@@ -40,16 +41,17 @@ namespace data {
         //______________________________________________________________________________________________________
         //
         // Description:
-        // - tries to perform an login for the user specified by the credentials
+        // - tries to perform an login for the user specified by the credentials on a non-login-server
         // - stored the created ticket in the given 'ticket'-argument
         // Parameters:
         // - credentials: reference to an input instance for the userdata
+        // - serverID: reference to requested serverID
         // - ticket: reference to an output instance for the ticket
         // Return:
         // - true  | on success
         // - false | on any error
         //______________________________________________________________________________________________________
-        bool login(const authentication::credentials_t& credentials, authentication::ticket_t& ticket);
+        bool login(const authentication::credentials_t& credentials, const authentication::serverID_t& serverID, authentication::ticket_t& ticket);
         //______________________________________________________________________________________________________
         //
         // Description:
@@ -77,7 +79,8 @@ namespace data {
     private:
         const authentication::user_data_t* authenticate(const authentication::identification_t& identification, authentication::permissions_t requiredPermissionMask = 0) const;
         int32_t serverID_;
-        database::queries::search_account_by_key loginSearch;
+        database::queries::search_account_by_key loginSearch_;
+        database::queries::update_server_of_user updateServerOfTicket_;
         std::unordered_map<authentication::accountID_t, authentication::user_data_t> userData_;
     };
 }

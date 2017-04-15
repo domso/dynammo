@@ -9,4 +9,4 @@ file(GLOB src_data "${CMAKE_CURRENT_SOURCE_DIR}/src/data/*.cpp")
 add_library(dataGameServer STATIC ${src_data})
 
 add_executable(gameServer main.cpp)
-target_link_libraries(gameServer utilGeneral dataGameServer encryptionGeneral messageLoginClient dataLoginClient)
+target_link_libraries(gameServer utilGeneral dataGameServer encryptionGeneral LoginClient LoginClient)

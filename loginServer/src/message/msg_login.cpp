@@ -19,7 +19,7 @@ namespace message {
         if (request != nullptr && response != nullptr) {
             response->ticket.userAddr = srcAddr;
 
-            if (server.login(request->credentials, response->ticket)) {
+            if (server.login(request->credentials, request->serverID, response->ticket)) {
                 return MSG_STATUS_OK;
             } else {
                 return MSG_STATUS_AUTH_ERROR;

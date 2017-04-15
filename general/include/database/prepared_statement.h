@@ -16,9 +16,9 @@ namespace database {
             prepared_statement();
             ~prepared_statement();
             //______________________________________________________________________________________________________
-            //
             // Description:
             // - connects the query to an open connection
+            // - calls init() afterwards
             // Parameter:
             // - conn: a valid connection
             // Return:
@@ -66,6 +66,14 @@ namespace database {
         protected:
             //______________________________________________________________________________________________________
             //
+            // Description:
+            // - initializes the SQL-statements
+            // Return:
+            // - true  | on success
+            // - false | on any error
+            //______________________________________________________________________________________________________
+            virtual bool init() = 0;
+            //
             // holds the information for a single columns inside a single row from a load query
             //______________________________________________________________________________________________________
             struct result_param_t {
@@ -96,8 +104,8 @@ namespace database {
                 if (paramID < params_.size()) {
                     paramInfo_[paramID].isNULL = isNULL;
                     paramInfo_[paramID].useError = useError;
-                    paramInfo_[paramID].length = n * sizeof(paramT);                    
-                    
+                    paramInfo_[paramID].length = n * sizeof(paramT);
+
                     params_[paramID].buffer_type = mysqlType;
                     params_[paramID].buffer = (char*) input;
                     params_[paramID].buffer_length = n * sizeof(paramT);
@@ -177,7 +185,7 @@ namespace database {
             // - false | on any error
             //______________________________________________________________________________________________________
             bool bindResult();
-            
+
             // is the current query binded?
             bool isBinded_;
             // internal representation of the prepared statement

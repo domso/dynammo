@@ -6,8 +6,9 @@
 
 /*
 
-Create table userInfo (
+Create table user (
 accountID int primary key,
+serverID int,
 username varchar(8) unique,
 key varchar(128),
 email varchar(100),
@@ -44,7 +45,7 @@ namespace database {
             // - false | on any error
             //______________________________________________________________________________________________________
             bool search(const authentication::credentials_t& credentials);
-
+            
             authentication::permissions_t permissions_;
             authentication::accountID_t accountID_;
             authentication::credentials_t credentials_;

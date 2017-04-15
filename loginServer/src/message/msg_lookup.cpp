@@ -19,7 +19,7 @@ namespace message {
 
         if (request != nullptr && response != nullptr) {
             if (server.validateTicket(request->identification, request->ticket)) {
-                response->accountID = request->ticket.accountID;
+                response->ticket = request->ticket;
                 return MSG_STATUS_OK;
             } else {
                 return MSG_STATUS_AUTH_ERROR;

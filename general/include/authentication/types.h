@@ -4,8 +4,10 @@
 #include "network/ip_addr.h"
 
 namespace authentication {
-    
+
     typedef int32_t accountID_t;
+    typedef int32_t serverID_t;
+    typedef int32_t sessionID_t;
     typedef int32_t permissions_t;
     //______________________________________________________________________________________________________
     //
@@ -41,11 +43,19 @@ namespace authentication {
     };
     //______________________________________________________________________________________________________
     //
-    // any authentication on a non-loginServer is done by this ticket
+    // session identification
+    //______________________________________________________________________________________________________
+    struct session_t {
+        accountID_t accountID;
+        sessionID_t sessionID;
+    };
+    //
+    // any authentication on the non-loginServer specified by 'serverID' is done by this ticket
     // the server can then validate this ticket by the loginServer
     //______________________________________________________________________________________________________
     struct ticket_t {
         accountID_t accountID;
+        serverID_t serverID;
         int32_t issuer;
         int32_t loginTime;
         permissions_t permissions;
@@ -60,7 +70,7 @@ namespace authentication {
         ticket_t ticket;
         credentials_t credentials;
     };
-    
+
 }
 
 #endif

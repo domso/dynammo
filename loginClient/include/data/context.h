@@ -52,9 +52,38 @@ namespace data {
         //______________________________________________________________________________________________________
         //
         // Description:
+        // - loads the ID of the current server and stores it in 'id'
+        // Parameter:
+        // - id: reference to an output instance
+        //______________________________________________________________________________________________________
+        void getServerID(authentication::serverID_t& id);
+        //______________________________________________________________________________________________________
+        //
+        // Description:
+        // - stores 'id' as the new ID of the current server
+        // Parameter:
+        // - id: reference to an input instance
+        //______________________________________________________________________________________________________
+        void setServerID(const authentication::serverID_t& id);
+        //______________________________________________________________________________________________________
+        //
+        // Description:
+        // - loads the ID of the current server and stores it in 'id'
+        // - waits until the data is marked as an update
+        // Parameter:
+        // - id: reference to an output instance
+        // - timeOut: maximal number of seconds to wait for an update
+        // Return:
+        // - true  | on success
+        // - false | on timeout
+        //______________________________________________________________________________________________________
+        bool waitForServerID(authentication::serverID_t& id, double timeOut);
+        //______________________________________________________________________________________________________
+        //
+        // Description:
         // - gets the credentials of the current user and stores them in 'credentials'
         // Parameter:
-        // - info: reference to an output instance
+        // - credentials: reference to an output instance
         //______________________________________________________________________________________________________
         void getCredentials(authentication::credentials_t& credentials);
         //______________________________________________________________________________________________________
@@ -62,7 +91,7 @@ namespace data {
         // Description:
         // - stores 'credentials' as the new credentials of the current user
         // Parameter:
-        // - info: reference to an input instance
+        // - credentials: reference to an input instance
         //______________________________________________________________________________________________________
         void setCredentials(const authentication::credentials_t& credentials);
         //______________________________________________________________________________________________________
@@ -70,7 +99,7 @@ namespace data {
         // Description:
         // - gets the identification of the current user and stores them in 'identification'
         // Parameter:
-        // - info: reference to an output instance
+        // - identification: reference to an output instance
         //______________________________________________________________________________________________________
         void getIdentification(authentication::identification_t& identification);
         //______________________________________________________________________________________________________
@@ -78,7 +107,7 @@ namespace data {
         // Description:
         // - stores 'identification' as the new identification of the current user
         // Parameter:
-        // - info: reference to an input instance
+        // - identification: reference to an input instance
         //______________________________________________________________________________________________________
         void setIdentification(const authentication::identification_t& identification);
         //______________________________________________________________________________________________________
@@ -87,7 +116,7 @@ namespace data {
         // - stores 'ticket' as the new ticket of the current user
         // - triggers an update for waitForTicket
         // Parameter:
-        // - info: reference to an input instance
+        // - ticket: reference to an input instance
         //______________________________________________________________________________________________________
         void setTicket(const authentication::ticket_t& ticket);
         //______________________________________________________________________________________________________
@@ -141,31 +170,33 @@ namespace data {
         //______________________________________________________________________________________________________
         //
         // Description:
-        // - pushes a validated ID into the output-queue
+        // - pushes a validated ticket into the output-queue
         // Parameter:
-        // - accountID: input instance
+        // - ticket: input instance
         //______________________________________________________________________________________________________
-        void setValidatedID(const authentication::accountID_t accountID);
+        void setValidatedTicket(const authentication::ticket_t& ticket);
         //______________________________________________________________________________________________________
         //
         // Description:
-        // - gets the next validated ID
+        // - gets the next validated session
         // - waits until the data is marked as an update
         // Parameter:
-        // - accountID: reference to an output instance
+        // - session: reference to an output instance
         // - timeOut: maximal number of seconds to wait for an update
         // Return:
         // - true  | on success
         // - false | on timeout
         //______________________________________________________________________________________________________
-        bool waitForValidatedID(authentication::accountID_t& accountID, double timeOut);
+        bool waitForValidatedSession(authentication::session_t& session, double timeOut);
     private:
+        authentication::serverID_t localServerID_;
         encryption::public_key key_;
         util::wait_lock::context_t<authentication::server_info_t> serverInfo_;
+        util::wait_lock::context_t<authentication::serverID_t> destinationServerID_;
         util::wait_lock::context_t<authentication::identification_t> identification_;
         util::wait_lock::context_t<authentication::ticket_t> ticket_;
-        util::wait_lock::context_t<std::queue<authentication::ticket_t>> ticketQueue_;
-        util::wait_lock::context_t<std::queue<authentication::accountID_t>> validAccountIDsQueue_;
+        util::wait_lock::context_t<std::queue<authentication::ticket_t>> ticketInputQueue_;
+        util::wait_lock::context_t<std::queue<authentication::session_t>> sessionOutputQueue_;
     };
 }
 

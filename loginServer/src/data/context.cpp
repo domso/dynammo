@@ -8,7 +8,7 @@
 namespace data {
     bool context::init(database::mysql::connection& connection, int32_t serverID) {
         serverID_ = serverID;
-        return loginSearch.prepare(connection) && loginSearch.init();
+        return loginSearch_.prepare(connection) && updateServerOfTicket_.prepare(connection);
     }
 
     int context::getID() const {
@@ -19,11 +19,12 @@ namespace data {
         return 0;
     }
 
-    bool context::login(const authentication::credentials_t& credentials, authentication::ticket_t& ticket) {
-        if (loginSearch.search(credentials)) {
+    bool context::login(const authentication::credentials_t& credentials, const authentication::serverID_t& serverID, authentication::ticket_t& ticket) {
+        if (loginSearch_.search(credentials)) {
 
-            ticket.accountID = loginSearch.accountID_;
-            ticket.permissions = loginSearch.permissions_;
+            ticket.accountID = loginSearch_.accountID_;
+            ticket.serverID = serverID;
+            ticket.permissions = loginSearch_.permissions_;
             ticket.issuer = serverID_;
             ticket.loginTime = util::timestamp::now();
 
@@ -32,6 +33,13 @@ namespace data {
             }
 
             authentication::user_data_t& user = userData_[ticket.accountID];
+
+            if (user.ticket.serverID != ticket.serverID) {
+                if (!updateServerOfTicket_.update(ticket)) {
+                    return false;
+                }
+            }
+
             user.ticket = ticket;
             user.credentials = credentials;
 
@@ -69,7 +77,7 @@ namespace data {
     const authentication::user_data_t* context::authenticate(const authentication::identification_t& identification, authentication::permissions_t requiredPermissionMask) const {
         auto result = userData_.find(identification.accountID);
 
-        if (result != userData_.end()) {           
+        if (result != userData_.end()) {
             if ((result->second.ticket.permissions & requiredPermissionMask) == requiredPermissionMask && util::mem::cmp<authentication::credentials_t>(&(result->second).credentials, &identification.credentials) == 0) {
                 return &result->second;
             }
