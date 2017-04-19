@@ -62,7 +62,7 @@ namespace message {
         // - starts to receive on the internal socket for incoming udp packages
         // - every package will be decrypted with the optional private-key and validated with the optional public-key
         // - the message is required in the format: <signature(optional)|header|data>
-        // - the header specifies the requestHandler with the message type (see msg_header_t and registerHandler()) 
+        // - the header specifies the requestHandler with the message type (see msg_header_t and registerHandler())
         // - to stop receiving either an internal error needs to occure, or close() was called
         // Parameters:
         // - privateKey: valid pointer to a loaded instance of a private-key (optional)
@@ -76,6 +76,7 @@ namespace message {
 
             while (internalRecv(privateKey, publicKey)) {
                 header = decryptedInputBuffer_.getNext<msg_header_t>();
+
                 if (header != nullptr) {
                     if (callbacks[header->msgType] != nullptr) {
                         if (privateKey != nullptr) {
@@ -83,14 +84,17 @@ namespace message {
                         } else {
                             uncryptedOutputBuffer_.setMsgLen(0);
                         }
+
                         message::msg_header_t* outputHeader = uncryptedOutputBuffer_.pushNext<message::msg_header_t>();
                         message::msg_status_t status = callbacks[header->msgType](*header, srcAddr_, decryptedInputBuffer_, uncryptedOutputBuffer_, networkSocket_, *additional_data_);
+
                         if (status != MSG_STATUS_CLOSE && outputHeader != nullptr) {
                             outputHeader->status = status;
                             outputHeader->msgType = header->msgType ^ MSG_HEADER_TYPE_REQUEST_SWITCH_MASK;
                             outputHeader->attr = header->attr;
+
                             if (privateKey == nullptr || internalSign(*privateKey, uncryptedOutputBuffer_)) {
-                                if (!internalSend(srcAddr_,  uncryptedOutputBuffer_, encryptedOutputBuffer_, publicKey)) {
+                                if (!internalSend(networkSocket_, srcAddr_,  uncryptedOutputBuffer_, encryptedOutputBuffer_, publicKey)) {
                                     //TODO send/encryption error
                                 }
                             } else {
@@ -104,24 +108,44 @@ namespace message {
         //______________________________________________________________________________________________________
         //
         // Description:
+        // - static version of msg_controller::recv()
+        //______________________________________________________________________________________________________
+        static void srecv(msg_controller* controller, const encryption::private_key* privateKey = nullptr, const encryption::public_key* publicKey = nullptr) {
+            if (controller != nullptr) {
+                controller->recv(privateKey, publicKey);
+            }
+        }
+        //______________________________________________________________________________________________________
+        // Description:
         // - tries to execute a request (static function) specified by the template type T
         // - the message will be encrypted with the optional public-key and signed with the optional private-key
-        // - T needs to implement a static function bool T::request(message::msg_header_t&, network::ipv4_addr&, network::pkt_buffer&, network::udp_socket<network::ipv4_addr>&, Tparam)
+        // - T needs to implement a static function bool T::request(message::msg_header_t&, network::ipv4_addr&, network::pkt_buffer&, network::udp_socket<network::ipv4_addr>&, additional_datatype_t)
         // - T::request() should push the request-payload into the pkt_buffer
         // - if T::request() returns true, the message will be send to destination address specified by destAddr
         // Parameters:
         // - destAddr: destination address of the request
         // - uncryptedOutputBuffer: buffer for the uncrypted message
         // - encryptedOutputBuffer: buffer for the encrypted message
-        // - param: unspecific additional argument for T::request()
+        // - param: additional argument for T::request()
         // - privateKey: valid pointer to a loaded instance of a private-key (optional)
         // - publicKey: valid pointer to a loaded instance of a public-key (optional)
         // Return:
         // - true  | on success
         // - false | on any error
         //______________________________________________________________________________________________________
-        template <typename T, typename Tparam>
-        bool execRequest(network::ipv4_addr& destAddr, network::pkt_buffer& uncryptedOutputBuffer, network::pkt_buffer& encryptedOutputBuffer, Tparam& param, const encryption::private_key* privateKey = nullptr, const encryption::public_key* publicKey = nullptr) {
+        template <typename T>
+        bool execRequest(network::ipv4_addr& destAddr, network::pkt_buffer& uncryptedOutputBuffer, network::pkt_buffer& encryptedOutputBuffer, additional_datatype_t& param, const encryption::private_key* privateKey = nullptr, const encryption::public_key* publicKey = nullptr) {
+                return staticExecRequest<T>(networkSocket_, destAddr, uncryptedOutputBuffer, encryptedInputBuffer_, param, privateKey, publicKey);
+        }
+        //______________________________________________________________________________________________________
+        //
+        // Description:
+        // - static version of msg_controller::execRequest()
+        // additional Parameters:
+        // - networkSocket: reference to valid and open udp socket
+        //______________________________________________________________________________________________________
+        template <typename T>
+        static bool staticExecRequest(network::udp_socket<network::ipv4_addr>& networkSocket, network::ipv4_addr& destAddr, network::pkt_buffer& uncryptedOutputBuffer, network::pkt_buffer& encryptedOutputBuffer, additional_datatype_t& param, const encryption::private_key* privateKey = nullptr, const encryption::public_key* publicKey = nullptr) {
             if (privateKey != nullptr) {
                 uncryptedOutputBuffer.reserveLen(privateKey->getRequiredSize());
             } else {
@@ -134,13 +158,14 @@ namespace message {
                 outputHeader->msgType = T::id;
                 outputHeader->status = MSG_STATUS_OK;
                 outputHeader->attr = 0;
-                
-                if (T::request(*outputHeader, destAddr, uncryptedOutputBuffer, networkSocket_, param)) {
+
+                if (T::request(*outputHeader, destAddr, uncryptedOutputBuffer, networkSocket, param)) {
                     if (privateKey == nullptr || internalSign(*privateKey, uncryptedOutputBuffer)) {
-                        if (!internalSend(destAddr,  uncryptedOutputBuffer, encryptedOutputBuffer, publicKey)) {
+                        if (!internalSend(networkSocket, destAddr,  uncryptedOutputBuffer, encryptedOutputBuffer, publicKey)) {
                             //TODO send/encryption error
                             return false;
                         }
+
                         return true;
                     } else {
                         //TODO signature error
@@ -213,25 +238,25 @@ namespace message {
         //
         // dont use it outside of recv() or execRequest()
         //______________________________________________________________________________________________________
-        bool internalSend(network::ipv4_addr& dest, network::pkt_buffer& uncryptedOutputBuffer, network::pkt_buffer& encryptedOutputBuffer, const encryption::public_key* publicKey = nullptr, const int flags = 0) {
+        static bool internalSend(network::udp_socket<network::ipv4_addr>& networkSocket, network::ipv4_addr& dest, network::pkt_buffer& uncryptedOutputBuffer, network::pkt_buffer& encryptedOutputBuffer, const encryption::public_key* publicKey = nullptr, const int flags = 0) {
             if (publicKey != nullptr) {
                 encryptedOutputBuffer.setMsgLen(encryption::encryptChar(*publicKey, uncryptedOutputBuffer.msgLen(), (unsigned char*) uncryptedOutputBuffer.data(), encryptedOutputBuffer.capacity(), (unsigned char*) encryptedOutputBuffer.data()));
-                return networkSocket_.sendPkt(dest, encryptedOutputBuffer, flags) == encryptedOutputBuffer.msgLen();
+                return networkSocket.sendPkt(dest, encryptedOutputBuffer, flags) == encryptedOutputBuffer.msgLen();
             } else {
-                return networkSocket_.sendPkt(dest, uncryptedOutputBuffer, flags) == uncryptedOutputBuffer.msgLen();
+                return networkSocket.sendPkt(dest, uncryptedOutputBuffer, flags) == uncryptedOutputBuffer.msgLen();
             }
         }
         //______________________________________________________________________________________________________
         //
         // dont use it outside of recv() or execRequest()
         //______________________________________________________________________________________________________
-        bool internalSign(const encryption::private_key& privateKey, network::pkt_buffer& buffer) {
+        static bool internalSign(const encryption::private_key& privateKey, network::pkt_buffer& buffer) {
             buffer.reset();
             int signatureLen = privateKey.getRequiredSize();
             unsigned char* sigature = buffer.getNext<unsigned char>(signatureLen);
             return encryption::signChar(privateKey, buffer.remainingMsgLen(), (unsigned char*) buffer.dataOffset(), signatureLen, sigature) != -1;
         }
-        
+
         message::msg_status_t (*callbacks[256])(message::msg_header_t& header, network::ipv4_addr&, network::pkt_buffer&, network::pkt_buffer&, network::udp_socket<network::ipv4_addr>&, additional_datatype_t&);
         network::udp_socket<network::ipv4_addr> networkSocket_;
         network::pkt_buffer encryptedInputBuffer_;

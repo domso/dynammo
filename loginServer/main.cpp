@@ -2,9 +2,9 @@
 #include "signal.h"
 #include "include/message/msg_controller.h"
 #include "include/message/msg_info.h"
-#include "include/message/msg_login.h"
-#include "include/message/msg_logout.h"
-#include "include/message/msg_lookup.h"
+#include "include/message/msg_auth.h"
+#include "include/message/msg_register.h"
+#include "include/message/msg_unregister.h"
 #include "include/encryption/rsa.h"
 #include "include/database/connection.h"
 #include "include/util/config_file.h"
@@ -36,7 +36,7 @@ bool checkConfigFile(util::config_file& config) {
     return true;
 }
 
-message::msg_controller<data::context>* GlobalControllerLink = nullptr;
+message::msg_controller<data::login_server_context>* GlobalControllerLink = nullptr;
 
 void stopServer(int signal) {
     std::cout << signal << std::endl;
@@ -96,8 +96,8 @@ int main(int argc, char* argv[]) {
     }
 
     //______________________________________________________________________________________________________
-    message::msg_controller<data::context> controller(config.getNumeric<int>("bufferSize"));
-    data::context context;
+    message::msg_controller<data::login_server_context> controller(config.getNumeric<int>("bufferSize"));
+    data::login_server_context context(config.getNumeric<int>("bufferSize"));
 
     if (!context.init(connection, config.getNumeric<int32_t>("serverID"))) {
         std::cout << "[Error] Could not init context!" << std::endl;
@@ -107,9 +107,9 @@ int main(int argc, char* argv[]) {
 
     //______________________________________________________________________________________________________
     controller.registerHandler<message::msg_info>();
-    controller.registerHandler<message::msg_login>();
-    controller.registerHandler<message::msg_logout>();
-    controller.registerHandler<message::msg_lookup>();
+    controller.registerHandler<message::msg_auth>();
+    controller.registerHandler<message::msg_register>();
+    controller.registerHandler<message::msg_unregister>();
 
     controller.init(config.getNumeric<uint16_t>("port"), &context);
     //______________________________________________________________________________________________________

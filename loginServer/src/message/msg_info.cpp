@@ -1,6 +1,6 @@
 #include "network/udp_socket.h"
 
-#include "include/data/context.h"
+#include "include/data/login_server_context.h"
 
 #include "include/util/timestamp.h"
 
@@ -11,13 +11,12 @@
 namespace message {
     const uint8_t msg_info::id;
 
-    message::msg_status_t msg_info::requestHandler(message::msg_header_t& header, network::ipv4_addr& srcAddr, network::pkt_buffer& inputBuffer, network::pkt_buffer& outputBuffer, network::udp_socket< network::ipv4_addr >& socket, data::context& server) {
+    message::msg_status_t msg_info::requestHandler(message::msg_header_t& header, network::ipv4_addr& srcAddr, network::pkt_buffer& inputBuffer, network::pkt_buffer& outputBuffer, network::udp_socket<network::ipv4_addr>& socket, data::login_server_context& server) {
         msg_info_response_t* response = outputBuffer.pushNext<msg_info_response_t>();
 
 
         if (response != nullptr) {
             response->info.id = server.getID();
-            response->info.numClients = server.getNumClients();
             response->info.uptime = util::timestamp::uptime();
 
             return MSG_STATUS_OK;
@@ -26,7 +25,7 @@ namespace message {
         return MSG_STATUS_UNKOWN_ERROR;
     }
 
-    msg_status_t msg_info::responseHandler(message::msg_header_t& header, network::ipv4_addr& srcAddr, network::pkt_buffer& inputBuffer, network::pkt_buffer& outputBuffer, network::udp_socket< network::ipv4_addr >& socket, data::context& server) {
+    msg_status_t msg_info::responseHandler(message::msg_header_t& header, network::ipv4_addr& srcAddr, network::pkt_buffer& inputBuffer, network::pkt_buffer& outputBuffer, network::udp_socket<network::ipv4_addr>& socket, data::login_server_context& server) {
         // Ignore incoming responses
         return MSG_STATUS_CLOSE;
     }

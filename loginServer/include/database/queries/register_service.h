@@ -1,28 +1,18 @@
-#ifndef loginServer_database_queries_search_account_by_key_h
-#define loginServer_database_queries_search_account_by_key_h
+#ifndef loginServer_database_queries_register_service_h
+#define loginServer_database_queries_register_service_h
 
 #include "include/database/prepared_statement.h"
 #include "include/authentication/types.h"
+#include "network/ip_addr.h"
 
-/*
 
-Create table user (
-accountID int primary key,
-serverID int,
-username varchar(8) unique,
-key varchar(128),
-email varchar(100),
-permissions int
-);
-
-*/
 namespace database {
     namespace queries {
         //______________________________________________________________________________________________________
         //
-        // Search for a specific user in the database
+        // Search for a specific server-address in the database
         //______________________________________________________________________________________________________
-        class search_account_by_key : public database::mysql::prepared_statement {
+        class register_service : public database::mysql::prepared_statement {
         public:
             //______________________________________________________________________________________________________
             //
@@ -36,20 +26,18 @@ namespace database {
             //______________________________________________________________________________________________________
             //
             // Description:
-            // - performs a query for an user specified by the given credentials
-            // - the results are stored into the permissions_ and accountID_ fields
+            // - inserts the server specified by the given id and the address
             // Parameter:
-            // - credentials: the userdata for the query
+            // - serverID: the id of the requested server
+            // - addr: address of server for the new service
             // Return:
             // - true  | on success
             // - false | on any error
             //______________________________________________________________________________________________________
-            bool search(const authentication::credentials_t& credentials);
+            bool addService(const authentication::serverID_t& serverID, const network::ipv4_addr& addr);
             
-            authentication::permissions_t permissions_;
-            authentication::accountID_t accountID_;
             authentication::serverID_t serverID_;
-            authentication::credentials_t credentials_;
+            network::ipv4_addr addr_;
         };
     }
 }

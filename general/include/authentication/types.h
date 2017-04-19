@@ -26,19 +26,10 @@ namespace authentication {
     };
     //______________________________________________________________________________________________________
     //
-    // the identification after login on the loginServer the accountID and credentials are neccessary
-    //______________________________________________________________________________________________________
-    struct identification_t {
-        accountID_t accountID;
-        credentials_t credentials;
-    };
-    //______________________________________________________________________________________________________
-    //
     // basic information about a server
     //______________________________________________________________________________________________________
     struct server_info_t {
         int32_t id;
-        int32_t numClients;
         int32_t uptime;
     };
     //______________________________________________________________________________________________________
@@ -49,9 +40,6 @@ namespace authentication {
         accountID_t accountID;
         sessionID_t sessionID;
     };
-    //
-    // any authentication on the non-loginServer specified by 'serverID' is done by this ticket
-    // the server can then validate this ticket by the loginServer
     //______________________________________________________________________________________________________
     struct ticket_t {
         accountID_t accountID;
@@ -64,11 +52,11 @@ namespace authentication {
     };
     //______________________________________________________________________________________________________
     //
-    // the loginServer stores the current ticket with the credentials
+    // the gameServer stores the current ticket with the session
     //______________________________________________________________________________________________________
     struct user_data_t {
+        session_t session;
         ticket_t ticket;
-        credentials_t credentials;
     };
 
 }
