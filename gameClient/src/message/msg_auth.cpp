@@ -19,7 +19,7 @@ namespace message {
         return false;
     }
 
-    msg_status_t msg_auth::requestHandler(message::msg_header_t& header, network::ipv4_addr& srcAddr, network::pkt_buffer& inputBuffer, network::pkt_buffer& outputBuffer, network::udp_socket< network::ipv4_addr >& socket, data::login_context& client) {
+    msg_status_t msg_auth::requestHandler(message::msg_header_t& header, network::ipv4_addr& srcAddr, network::pkt_buffer& inputBuffer, network::pkt_buffer& outputBuffer, network::udp_socket< network::ipv4_addr >& socket, message::msg_option_t& options, data::login_context& client) {
         msg_login_request_t* request = inputBuffer.getNext<msg_login_request_t>();
         
         if (request != nullptr) {
@@ -30,7 +30,7 @@ namespace message {
         return MSG_STATUS_CLOSE;
     }
 
-    msg_status_t msg_auth::responseHandler(message::msg_header_t& header, network::ipv4_addr& srcAddr, network::pkt_buffer& inputBuffer, network::pkt_buffer& outputBuffer, network::udp_socket< network::ipv4_addr >& socket, data::login_context& client) {
+    msg_status_t msg_auth::responseHandler(message::msg_header_t& header, network::ipv4_addr& srcAddr, network::pkt_buffer& inputBuffer, network::pkt_buffer& outputBuffer, network::udp_socket< network::ipv4_addr >& socket, message::msg_option_t& options, data::login_context& client) {
         // Ignore incoming responses
         return MSG_STATUS_CLOSE;
     }

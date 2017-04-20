@@ -13,7 +13,7 @@
 namespace message {
     const uint8_t msg_register::id;
 
-    msg_status_t msg_register::requestHandler(message::msg_header_t& header, network::ipv4_addr& srcAddr, network::pkt_buffer& inputBuffer, network::pkt_buffer& outputBuffer, network::udp_socket<network::ipv4_addr>& socket, data::login_server_context& server) {
+    msg_status_t msg_register::requestHandler(message::msg_header_t& header, network::ipv4_addr& srcAddr, network::pkt_buffer& inputBuffer, network::pkt_buffer& outputBuffer, network::udp_socket<network::ipv4_addr>& socket, message::msg_option_t& options, data::login_server_context& server) {
         msg_register_request_t* request = inputBuffer.getNext<msg_register_request_t>();
         
         if (request != nullptr) {
@@ -28,7 +28,7 @@ namespace message {
         return MSG_STATUS_UNKOWN_ERROR;
     }
 
-    msg_status_t msg_register::responseHandler(message::msg_header_t& header, network::ipv4_addr& srcAddr, network::pkt_buffer& inputBuffer, network::pkt_buffer& outputBuffer, network::udp_socket<network::ipv4_addr>& socket, data::login_server_context& server) {
+    msg_status_t msg_register::responseHandler(message::msg_header_t& header, network::ipv4_addr& srcAddr, network::pkt_buffer& inputBuffer, network::pkt_buffer& outputBuffer, network::udp_socket<network::ipv4_addr>& socket, message::msg_option_t& options, data::login_server_context& server) {
         // Ignore incoming responses
         return MSG_STATUS_CLOSE;
     }

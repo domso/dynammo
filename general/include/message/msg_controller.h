@@ -68,7 +68,7 @@ namespace message {
         // - privateKey: valid pointer to a loaded instance of a private-key (optional)
         // - publicKey: valid pointer to a loaded instance of a public-key (optional)
         //______________________________________________________________________________________________________
-        void recv(const encryption::private_key* privateKey = nullptr, const encryption::public_key* publicKey = nullptr) {
+        void recv(const encryption::private_key* privateKey = nullptr, encryption::public_key* publicKey = nullptr) {
             assert(sizeof(msg_header_t::msgType) == 1);
             assert(additional_data_ != nullptr);
 
@@ -85,16 +85,23 @@ namespace message {
                             uncryptedOutputBuffer_.setMsgLen(0);
                         }
 
+                        message::msg_option_t option = MSG_OPTION_CLEAR;
                         message::msg_header_t* outputHeader = uncryptedOutputBuffer_.pushNext<message::msg_header_t>();
-                        message::msg_status_t status = callbacks[header->msgType](*header, srcAddr_, decryptedInputBuffer_, uncryptedOutputBuffer_, networkSocket_, *additional_data_);
+                        message::msg_status_t status = callbacks[header->msgType](*header, srcAddr_, decryptedInputBuffer_, uncryptedOutputBuffer_, networkSocket_, option, *additional_data_);
 
                         if (status != MSG_STATUS_CLOSE && outputHeader != nullptr) {
                             outputHeader->status = status;
-                            outputHeader->msgType = header->msgType ^ MSG_HEADER_TYPE_REQUEST_SWITCH_MASK;
+                            outputHeader->msgType = header->msgType ^ (MSG_HEADER_TYPE_REQUEST_SWITCH_MASK * (option & MSG_OPTION_NO_REQUEST_RESPONSE_SWITCH == 0));
                             outputHeader->attr = header->attr;
 
-                            if (privateKey == nullptr || internalSign(*privateKey, uncryptedOutputBuffer_)) {
-                                if (!internalSend(networkSocket_, srcAddr_,  uncryptedOutputBuffer_, encryptedOutputBuffer_, publicKey)) {
+                            if (privateKey == nullptr || (option & MSG_OPTION_NO_SIGNING) || internalSign(*privateKey, uncryptedOutputBuffer_)) {
+                                encryption::public_key* tmp = publicKey;
+                                
+                                if (option & MSG_OPTION_NO_ENCRYPTION) {
+                                    tmp = nullptr;
+                                }
+                                
+                                if (!internalSend(networkSocket_, srcAddr_,  uncryptedOutputBuffer_, encryptedOutputBuffer_, tmp)) {
                                     //TODO send/encryption error
                                 }
                             } else {
@@ -110,7 +117,7 @@ namespace message {
         // Description:
         // - static version of msg_controller::recv()
         //______________________________________________________________________________________________________
-        static void srecv(msg_controller* controller, const encryption::private_key* privateKey = nullptr, const encryption::public_key* publicKey = nullptr) {
+        static void srecv(msg_controller* controller, const encryption::private_key* privateKey = nullptr, encryption::public_key* publicKey = nullptr) {
             if (controller != nullptr) {
                 controller->recv(privateKey, publicKey);
             }
@@ -182,8 +189,8 @@ namespace message {
         // - tries to register a new handler for a message-type specified by T::id
         // - only the last 7 Bits of T::id are used as an identifier
         // - the first bit used as a internal flag bit to seperate requests and response (the bit will be ignored if falsely set)
-        // - T needs to implement a static function message::msg_status_t requestHandler(message::msg_header_t&, network::ipv4_addr&, network::pkt_buffer&, network::pkt_buffer&, network::udp_socket<network::ipv4_addr>&, additional_datatype_t);
-        // - T needs to implement a static function message::msg_status_t responseHandler(message::msg_header_t&, network::ipv4_addr&, network::pkt_buffer&, network::pkt_buffer&, network::udp_socket<network::ipv4_addr>&, additional_datatype_t);
+        // - T needs to implement a static function message::msg_status_t requestHandler(message::msg_header_t&, network::ipv4_addr&, network::pkt_buffer&, network::pkt_buffer&, network::udp_socket<network::ipv4_addr>&, message::msg_option_t&, additional_datatype_t);
+        // - T needs to implement a static function message::msg_status_t responseHandler(message::msg_header_t&, network::ipv4_addr&, network::pkt_buffer&, network::pkt_buffer&, network::udp_socket<network::ipv4_addr>&, message::msg_option_t&, additional_datatype_t);
         // - both T::requestHandler() and T::responseHandler() should read the message-payload from the first pkt_buffer, push any new payload into the second pkt_buffer and return with a message-status (see msg_header.h)
         // - any access to the pkt_buffers outside of T::requestHandler() and T::responseHandler() leads to undefined behaviour!
         // Return:
@@ -257,7 +264,7 @@ namespace message {
             return encryption::signChar(privateKey, buffer.remainingMsgLen(), (unsigned char*) buffer.dataOffset(), signatureLen, sigature) != -1;
         }
 
-        message::msg_status_t (*callbacks[256])(message::msg_header_t& header, network::ipv4_addr&, network::pkt_buffer&, network::pkt_buffer&, network::udp_socket<network::ipv4_addr>&, additional_datatype_t&);
+        message::msg_status_t (*callbacks[256])(message::msg_header_t& header, network::ipv4_addr&, network::pkt_buffer&, network::pkt_buffer&, network::udp_socket<network::ipv4_addr>&, message::msg_option_t&, additional_datatype_t&);
         network::udp_socket<network::ipv4_addr> networkSocket_;
         network::pkt_buffer encryptedInputBuffer_;
         network::pkt_buffer decryptedInputBuffer_;

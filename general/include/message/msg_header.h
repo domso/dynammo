@@ -12,6 +12,11 @@
 #define MSG_STATUS_DATA_ERROR -2
 #define MSG_STATUS_UNKOWN_ERROR -3
 
+#define MSG_OPTION_CLEAR 0
+#define MSG_OPTION_NO_ENCRYPTION 1
+#define MSG_OPTION_NO_SIGNING 2
+#define MSG_OPTION_NO_REQUEST_RESPONSE_SWITCH 4
+
 #define MSG_HEADER_TYPE_REQUEST_SWITCH_MASK 0x80
 
 namespace message {
@@ -34,6 +39,11 @@ namespace message {
         // no usage currently
         int16_t attr;
     };
+    //______________________________________________________________________________________________________
+    //
+    // general msg option
+    //______________________________________________________________________________________________________
+    typedef uint32_t msg_option_t;
 }
 
 #endif

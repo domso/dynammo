@@ -28,6 +28,11 @@ namespace message {
         authentication::ticket_t ticket;
     };
 
+    struct msg_session_response_t {
+        authentication::session_t session;
+        network::ipv4_addr addr;
+    };
+
     struct msg_login_request_t {
         authentication::session_t session;
     };
