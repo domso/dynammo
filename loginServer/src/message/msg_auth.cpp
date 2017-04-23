@@ -37,6 +37,7 @@ namespace message {
         
         if (response != nullptr && redirectedResponse != nullptr) {
             redirectedResponse->session = response->session;
+            redirectedResponse->addr = srcAddr;
             srcAddr = response->addr;
             
             return MSG_STATUS_OK;

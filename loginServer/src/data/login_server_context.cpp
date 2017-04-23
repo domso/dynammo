@@ -49,7 +49,7 @@ namespace data {
             // TODO add permissions
             return register_.addService(serverID, addr);
         }
-
+        
         return false;
     }
 

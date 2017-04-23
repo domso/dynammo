@@ -35,6 +35,7 @@ namespace message {
 
     struct msg_login_request_t {
         authentication::session_t session;
+        network::ipv4_addr addr;
     };
 
     struct msg_register_request_t {

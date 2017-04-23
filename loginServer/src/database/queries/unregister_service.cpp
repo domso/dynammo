@@ -4,7 +4,7 @@ namespace database {
     namespace queries {
         bool unregister_service::init() {
             bool result = true;
-            result &= setQuery("delete from services where serviceID=?");
+            result &= setQuery("delete from services where serviceID=?;");
             result &= setParam<authentication::serverID_t>(0,  MYSQL_TYPE_LONG, &serverID_);
 
             result &= bindParam();

@@ -60,9 +60,10 @@ namespace message {
         //
         // Description:
         // - starts to receive on the internal socket for incoming udp packages
-        // - every package will be decrypted with the optional private-key and validated with the optional public-key
+        // - every package will be decrypted with the optional private-key
         // - the message is required in the format: <signature(optional)|header|data>
         // - the header specifies the requestHandler with the message type (see msg_header_t and registerHandler())
+        // - the output may be encrypted with the optional public-key and signed with optional private-key
         // - to stop receiving either an internal error needs to occure, or close() was called
         // Parameters:
         // - privateKey: valid pointer to a loaded instance of a private-key (optional)
@@ -79,6 +80,7 @@ namespace message {
 
                 if (header != nullptr) {
                     if (callbacks[header->msgType] != nullptr) {
+
                         if (privateKey != nullptr) {
                             uncryptedOutputBuffer_.reserveLen(privateKey->getRequiredSize());
                         } else {
@@ -91,16 +93,16 @@ namespace message {
 
                         if (status != MSG_STATUS_CLOSE && outputHeader != nullptr) {
                             outputHeader->status = status;
-                            outputHeader->msgType = header->msgType ^ (MSG_HEADER_TYPE_REQUEST_SWITCH_MASK * (option & MSG_OPTION_NO_REQUEST_RESPONSE_SWITCH == 0));
+                            outputHeader->msgType = header->msgType ^ (MSG_HEADER_TYPE_REQUEST_SWITCH_MASK * ((option & MSG_OPTION_NO_REQUEST_RESPONSE_SWITCH) == 0));
                             outputHeader->attr = header->attr;
 
                             if (privateKey == nullptr || (option & MSG_OPTION_NO_SIGNING) || internalSign(*privateKey, uncryptedOutputBuffer_)) {
                                 encryption::public_key* tmp = publicKey;
-                                
+
                                 if (option & MSG_OPTION_NO_ENCRYPTION) {
                                     tmp = nullptr;
                                 }
-                                
+
                                 if (!internalSend(networkSocket_, srcAddr_,  uncryptedOutputBuffer_, encryptedOutputBuffer_, tmp)) {
                                     //TODO send/encryption error
                                 }
@@ -142,7 +144,7 @@ namespace message {
         //______________________________________________________________________________________________________
         template <typename T>
         bool execRequest(network::ipv4_addr& destAddr, network::pkt_buffer& uncryptedOutputBuffer, network::pkt_buffer& encryptedOutputBuffer, additional_datatype_t& param, const encryption::private_key* privateKey = nullptr, const encryption::public_key* publicKey = nullptr) {
-                return staticExecRequest<T>(networkSocket_, destAddr, uncryptedOutputBuffer, encryptedInputBuffer_, param, privateKey, publicKey);
+            return staticExecRequest<T>(networkSocket_, destAddr, uncryptedOutputBuffer, encryptedInputBuffer_, param, privateKey, publicKey);
         }
         //______________________________________________________________________________________________________
         //
@@ -234,6 +236,7 @@ namespace message {
                     if (!encryption::verifyChar(*publicKey, requiredSize, (unsigned char*) signature, decryptedInputBuffer_.remainingMsgLen(), (unsigned char*) decryptedInputBuffer_.dataOffset())) {
                         // delete message
                         decryptedInputBuffer_.setMsgLen(0);
+                        return false;
                     }
                 }
 

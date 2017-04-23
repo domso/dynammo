@@ -3,6 +3,7 @@
 
 #include <vector>
 #include <mysql.h>
+#include <errmsg.h>
 #include <include/database/connection.h>
 
 namespace database {
