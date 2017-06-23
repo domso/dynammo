@@ -4,9 +4,8 @@ include_directories(${CMAKE_CURRENT_SOURCE_DIR})
 include_directories(${OPENSSL_INCLUDE_DIR})
 find_package(OpenSSL REQUIRED)
 
-set (
-    CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/libs/
-)
+set (CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/libs/)
+set (CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/bin/)
 
 file(GLOB src_util "${CMAKE_CURRENT_SOURCE_DIR}/src/util/*.cpp")
 add_library(utilGeneral STATIC ${src_util})

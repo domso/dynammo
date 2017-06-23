@@ -10,7 +10,7 @@ namespace util {
     class notificator {
     public:
         notificator(const T* notifier) : notifier(notifier) {
-            
+
         }
 
         ~notificator() {

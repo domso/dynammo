@@ -35,7 +35,7 @@ namespace database {
             // - false | on any error
             //______________________________________________________________________________________________________
             bool addService(const authentication::serverID_t& serverID, const network::ipv4_addr& addr);
-            
+
             authentication::serverID_t serverID_;
             network::ipv4_addr addr_;
         };

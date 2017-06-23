@@ -32,7 +32,7 @@ namespace data {
             return false;
         }
 
-        mainThread_ = std::thread(message::msg_controller<data::session_context>::srecv, &(this->controller_), nullptr, publicKey_);
+        mainThread_ = std::thread(&message::msg_controller<data::session_context>::recv, &controller_, nullptr, publicKey_);
         return true;
     }
 
@@ -62,12 +62,12 @@ namespace data {
     bool session_login_server::unregisterService() {
         return controller_.execRequest<message::msg_unregister>(addr_, uncryptedOutputBuffer_, encryptedOutputBuffer_, context_, nullptr, publicKey_);
     }
-    
+
     bool session_login_server::waitForRegisterState(bool& state, double timeout) {
         return context_.waitForRegisterState(state, timeout);
     }
 
-    
+
     bool session_login_server::waitForUser(authentication::user_data_t& user, double timeout) {
         return context_.waitForUser(user, timeout);
     }

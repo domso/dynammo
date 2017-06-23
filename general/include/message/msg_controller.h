@@ -10,6 +10,7 @@
 #include "include/util/mem.h"
 #include "include/encryption/rsa.h"
 
+#include <iostream>
 namespace message {
     //______________________________________________________________________________________________________
     //
@@ -26,9 +27,9 @@ namespace message {
         // Parameter:
         // - bufferSize: size of the internal buffers
         //______________________________________________________________________________________________________
-        msg_controller(const int bufferSize) :
-            encryptedInputBuffer_(bufferSize), decryptedInputBuffer_(bufferSize),
-            encryptedOutputBuffer_(bufferSize), uncryptedOutputBuffer_(bufferSize) {
+        msg_controller(const int bufferSize, const int reorderWindow = 2) : currentBuffer_(0),
+            encryptedInputBuffer_(bufferSize), decryptedInputBuffers_(reorderWindow, bufferSize), encryptedOutputBuffer_(bufferSize), uncryptedOutputBuffer_(bufferSize)  {
+                               
             for (int i = 0; i < 256; i++) {
                 callbacks[i] = nullptr;
             }
@@ -59,6 +60,14 @@ namespace message {
         //______________________________________________________________________________________________________
         //
         // Description:
+        // - callable-operator for msg_controller::recv()
+        //______________________________________________________________________________________________________
+        void operator()(const encryption::private_key* privateKey = nullptr, encryption::public_key* publicKey = nullptr) {
+            recv(privateKey, publicKey);
+        }
+        //______________________________________________________________________________________________________
+        //
+        // Description:
         // - starts to receive on the internal socket for incoming udp packages
         // - every package will be decrypted with the optional private-key
         // - the message is required in the format: <signature(optional)|header|data>
@@ -70,13 +79,14 @@ namespace message {
         // - publicKey: valid pointer to a loaded instance of a public-key (optional)
         //______________________________________________________________________________________________________
         void recv(const encryption::private_key* privateKey = nullptr, encryption::public_key* publicKey = nullptr) {
-            assert(sizeof(msg_header_t::msgType) == 1);
+            static_assert(sizeof(msg_header_t::msgType) == 1, "bad header-type");
             assert(additional_data_ != nullptr);
 
             msg_header_t* header;
 
             while (internalRecv(privateKey, publicKey)) {
-                header = decryptedInputBuffer_.getNext<msg_header_t>();
+                network::pkt_buffer& decryptedInputBuffer = decryptedInputBuffers_[currentBuffer_];
+                header = decryptedInputBuffer.getNext<msg_header_t>();
 
                 if (header != nullptr) {
                     if (callbacks[header->msgType] != nullptr) {
@@ -89,9 +99,13 @@ namespace message {
 
                         message::msg_option_t option = MSG_OPTION_CLEAR;
                         message::msg_header_t* outputHeader = uncryptedOutputBuffer_.pushNext<message::msg_header_t>();
-                        message::msg_status_t status = callbacks[header->msgType](*header, srcAddr_, decryptedInputBuffer_, uncryptedOutputBuffer_, networkSocket_, option, *additional_data_);
+                        message::msg_status_t status = callbacks[header->msgType](*header, srcAddr_, decryptedInputBuffer, uncryptedOutputBuffer_, networkSocket_, option, *additional_data_);
 
-                        if (status != MSG_STATUS_CLOSE && outputHeader != nullptr) {
+                        if (status == MSG_STATUS_WAIT) {
+                            decryptedInputBuffer.reset();
+                            currentBuffer_++;                           
+                            currentBuffer_ *= (currentBuffer_ < decryptedInputBuffers_.size());
+                        } else if (status != MSG_STATUS_CLOSE && outputHeader != nullptr) {
                             outputHeader->status = status;
                             outputHeader->msgType = header->msgType ^ (MSG_HEADER_TYPE_REQUEST_SWITCH_MASK * ((option & MSG_OPTION_NO_REQUEST_RESPONSE_SWITCH) == 0));
                             outputHeader->attr = header->attr;
@@ -115,16 +129,6 @@ namespace message {
             }
         }
         //______________________________________________________________________________________________________
-        //
-        // Description:
-        // - static version of msg_controller::recv()
-        //______________________________________________________________________________________________________
-        static void srecv(msg_controller* controller, const encryption::private_key* privateKey = nullptr, encryption::public_key* publicKey = nullptr) {
-            if (controller != nullptr) {
-                controller->recv(privateKey, publicKey);
-            }
-        }
-        //______________________________________________________________________________________________________
         // Description:
         // - tries to execute a request (static function) specified by the template type T
         // - the message will be encrypted with the optional public-key and signed with the optional private-key
@@ -144,7 +148,7 @@ namespace message {
         //______________________________________________________________________________________________________
         template <typename T>
         bool execRequest(network::ipv4_addr& destAddr, network::pkt_buffer& uncryptedOutputBuffer, network::pkt_buffer& encryptedOutputBuffer, additional_datatype_t& param, const encryption::private_key* privateKey = nullptr, const encryption::public_key* publicKey = nullptr) {
-            return staticExecRequest<T>(networkSocket_, destAddr, uncryptedOutputBuffer, encryptedInputBuffer_, param, privateKey, publicKey);
+            return staticExecRequest<T>(networkSocket_, destAddr, uncryptedOutputBuffer, encryptedOutputBuffer, param, privateKey, publicKey);
         }
         //______________________________________________________________________________________________________
         //
@@ -216,26 +220,34 @@ namespace message {
         // dont use it outside of recv()
         //______________________________________________________________________________________________________
         bool internalRecv(const encryption::private_key* privateKey = nullptr, const encryption::public_key* publicKey = nullptr) {
+            network::pkt_buffer& encryptedInputBuffer = encryptedInputBuffer_;
+            network::pkt_buffer& decryptedInputBuffer = decryptedInputBuffers_[currentBuffer_];
+
+            if (decryptedInputBuffer.msgLen() != 0) {
+                return true;
+            }
+            
+            
             if (privateKey != nullptr) { // encryption
-                if (networkSocket_.recvPkt(srcAddr_, encryptedInputBuffer_) == -1) {
+                if (networkSocket_.recvPkt(srcAddr_, encryptedInputBuffer) == -1) {
                     return false;
                 }
 
-                decryptedInputBuffer_.setMsgLen(encryption::decryptChar(*privateKey, encryptedInputBuffer_.msgLen(), (unsigned char*) encryptedInputBuffer_.data(), decryptedInputBuffer_.capacity(), (unsigned char*) decryptedInputBuffer_.data()));
+                decryptedInputBuffer.setMsgLen(encryption::decryptChar(*privateKey, encryptedInputBuffer.msgLen(), (unsigned char*) encryptedInputBuffer.data(), decryptedInputBuffer.capacity(), (unsigned char*) decryptedInputBuffer.data()));
             } else { // no encryption
-                if (networkSocket_.recvPkt(srcAddr_, decryptedInputBuffer_) == -1) {
+                if (networkSocket_.recvPkt(srcAddr_, decryptedInputBuffer) == -1) {
                     return false;
                 }
             }
 
             if (publicKey != nullptr) { // validate signature
                 int requiredSize = publicKey->getRequiredSize();
-                char* signature = decryptedInputBuffer_.getNext<char>(requiredSize);
+                char* signature = decryptedInputBuffer.getNext<char>(requiredSize);
 
                 if (signature != nullptr) {
-                    if (!encryption::verifyChar(*publicKey, requiredSize, (unsigned char*) signature, decryptedInputBuffer_.remainingMsgLen(), (unsigned char*) decryptedInputBuffer_.dataOffset())) {
+                    if (!encryption::verifyChar(*publicKey, requiredSize, (unsigned char*) signature, decryptedInputBuffer.remainingMsgLen(), (unsigned char*) decryptedInputBuffer.dataOffset())) {
                         // delete message
-                        decryptedInputBuffer_.setMsgLen(0);
+                        decryptedInputBuffer.setMsgLen(0);
                         return false;
                     }
                 }
@@ -269,10 +281,15 @@ namespace message {
 
         message::msg_status_t (*callbacks[256])(message::msg_header_t& header, network::ipv4_addr&, network::pkt_buffer&, network::pkt_buffer&, network::udp_socket<network::ipv4_addr>&, message::msg_option_t&, additional_datatype_t&);
         network::udp_socket<network::ipv4_addr> networkSocket_;
+
+        int currentBuffer_;
+
         network::pkt_buffer encryptedInputBuffer_;
-        network::pkt_buffer decryptedInputBuffer_;
+        std::vector<network::pkt_buffer> decryptedInputBuffers_;
+
         network::pkt_buffer encryptedOutputBuffer_;
         network::pkt_buffer uncryptedOutputBuffer_;
+
         network::ipv4_addr srcAddr_;
         additional_datatype_t* additional_data_;
     };

@@ -2,7 +2,7 @@
 
 namespace util {
     namespace binary {
-        
+
         uint64_t getMSB64(uint64_t in) {
             register uint64_t current = 1UL << (31);
             current = current >> (16 * (current > in)) << (16 * (current < in));
@@ -25,6 +25,6 @@ namespace util {
 
             return current;
         }
-        
+
     }
 }

@@ -18,7 +18,7 @@ namespace database {
             serverID_ = ticket.serverID;
             return execute();
         }
-        
+
     }
 }
 

@@ -20,7 +20,7 @@ void service_map::init() {
 
 bool service_map::registerService(int key, service_info& info) {
     std::lock_guard<std::mutex> lock(mutex_);
-    auto result = map_.insert( {key, info});
+    auto result = map_.insert({key, info});
 
     if (!result.second) {
         result.first->second = info;

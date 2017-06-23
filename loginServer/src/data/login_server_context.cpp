@@ -19,7 +19,7 @@ namespace data {
         return serverID_;
     }
 
-    bool login_server_context::authenticate(const authentication::credentials_t& credentials, authentication::ticket_t& ticket) {
+    message::msg_status_t login_server_context::authenticate(const authentication::credentials_t& credentials, authentication::ticket_t& ticket) {
         if (loginSearch_.search(credentials)) {
 
             ticket.accountID = loginSearch_.accountID_;
@@ -28,38 +28,39 @@ namespace data {
             ticket.issuer = serverID_;
             ticket.loginTime = util::timestamp::now();
 
-
-            return true;
+            return MSG_STATUS_OK;
         }
 
-        return false;
+        return MSG_STATUS_AUTH_ERROR;
     }
 
-    bool login_server_context::getDestination(const authentication::ticket_t& ticket, network::ipv4_addr& addr) {
+    message::msg_status_t login_server_context::getDestination(const authentication::ticket_t& ticket, network::ipv4_addr& addr) {
         if (serverSearch_.search(ticket.serverID)) {
             addr = serverSearch_.addr_;
-            return true;
+            return MSG_STATUS_OK;
         }
 
-        return false;
+        return MSG_STATUS_UNAVAILABLE;
     }
 
-    bool login_server_context::registerService(const authentication::credentials_t& credentials, const authentication::serverID_t& serverID, const network::ipv4_addr& addr) {
+    message::msg_status_t login_server_context::registerService(const authentication::credentials_t& credentials, const authentication::serverID_t& serverID, const network::ipv4_addr& addr) {
         if (loginSearch_.search(credentials)) {
             // TODO add permissions
-            return register_.addService(serverID, addr);
+
+            return MSG_STATUS_EXECUTION_ERROR * !register_.addService(serverID, addr);
         }
-        
-        return false;
+
+        return MSG_STATUS_AUTH_ERROR;
     }
 
-    bool login_server_context::unregisterService(const authentication::credentials_t& credentials, const authentication::serverID_t& serverID) {
+    message::msg_status_t login_server_context::unregisterService(const authentication::credentials_t& credentials, const authentication::serverID_t& serverID) {
         if (loginSearch_.search(credentials)) {
             // TODO add permissions
-            return unregister_.removeService(serverID);
+
+            return MSG_STATUS_EXECUTION_ERROR * !unregister_.removeService(serverID);
         }
 
-        return false;
+        return MSG_STATUS_AUTH_ERROR;
     }
 
 

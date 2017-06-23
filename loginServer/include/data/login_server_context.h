@@ -1,6 +1,7 @@
 #ifndef loginServer_data_context_h
 #define loginServer_data_context_h
 
+#include "include/message/msg_header.h"
 #include "include/authentication/types.h"
 #include "include/encryption/rsa.h"
 #include "include/database/queries/search_account_by_key.h"
@@ -48,10 +49,10 @@ namespace data {
         // - credentials: reference to an input instance for the userdata
         // - ticket: reference to output instance
         // Return:
-        // - true  | on success
-        // - false | on any error
+        // - MSG_STATUS_OK  | on success
+        // - MSG_STATUS_AUTH_ERROR | on an authentication-error
         //______________________________________________________________________________________________________
-        bool authenticate(const authentication::credentials_t& credentials, authentication::ticket_t& ticket);
+        message::msg_status_t authenticate(const authentication::credentials_t& credentials, authentication::ticket_t& ticket);
         //______________________________________________________________________________________________________
         //
         // Description:
@@ -60,10 +61,10 @@ namespace data {
         // - ticket: ticket, which links to a service
         // - addr: reference to output instance
         // Return:
-        // - true  | on success
-        // - false | on any error
+        // - MSG_STATUS_OK  | on success
+        // - MSG_STATUS_UNAVAILABLE | if server is not available
         //______________________________________________________________________________________________________
-        bool getDestination(const authentication::ticket_t& ticket, network::ipv4_addr& addr);
+        message::msg_status_t getDestination(const authentication::ticket_t& ticket, network::ipv4_addr& addr);
         //______________________________________________________________________________________________________
         //
         // Description:
@@ -73,10 +74,11 @@ namespace data {
         // - serverID: ID of new server
         // - addr: address of new server
         // Return:
-        // - true  | on success
-        // - false | on any error
+        // - MSG_STATUS_OK  | on success
+        // - MSG_STATUS_AUTH_ERROR | on an authentication-error
+        // - MSG_STATUS_EXECUTION_ERROR | on an internal-error
         //______________________________________________________________________________________________________
-        bool registerService(const authentication::credentials_t& credentials, const authentication::serverID_t& serverID, const network::ipv4_addr& addr);
+        message::msg_status_t registerService(const authentication::credentials_t& credentials, const authentication::serverID_t& serverID, const network::ipv4_addr& addr);
         //______________________________________________________________________________________________________
         //
         // Description:
@@ -85,18 +87,18 @@ namespace data {
         // - credentials: reference to an input instance for the userdata
         // - serverID: ID of old server
         // Return:
-        // - true  | on success
-        // - false | on any error
+        // - MSG_STATUS_OK  | on success
+        // - MSG_STATUS_AUTH_ERROR | on an authentication-error
+        // - MSG_STATUS_EXECUTION_ERROR | on an internal-error
         //______________________________________________________________________________________________________
-        bool unregisterService(const authentication::credentials_t& credentials, const authentication::serverID_t& serverID);
+        message::msg_status_t unregisterService(const authentication::credentials_t& credentials, const authentication::serverID_t& serverID);
     private:
-        
         int32_t serverID_;
         database::queries::search_account_by_key loginSearch_;
         database::queries::update_service_of_user updateServerOfTicket_;
-        
+
         database::queries::search_server_by_id serverSearch_;
-        
+
         database::queries::register_service register_;
         database::queries::unregister_service unregister_;
     };

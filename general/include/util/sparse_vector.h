@@ -85,8 +85,6 @@ namespace util {
                         }
                     }
 
-
-
                     if (connectMode == 0)  {
                         if (internalData_[current].next <= current) {
                             lastSelectedEntry = current;
@@ -128,13 +126,11 @@ namespace util {
                             }
                         }
                     }
-
                 }
 
                 for (uint64_t i = lastEntry; i < internalDataEnd_; i++) {
                     internalData_[i].next = currentMin;
                 }
-
             }
             //______________________________________________________________________________________________________
             //
@@ -157,7 +153,6 @@ namespace util {
 
                     diffNext = internalData_[i].next;
                     diffNext += internalDataSize_ * (diffNext <= i);
-
 
                     diffCurrent = index;
                     diffCurrent += internalDataSize_ * (diffCurrent <= i);

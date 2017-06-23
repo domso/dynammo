@@ -42,7 +42,7 @@ namespace database {
             // - false | on any error
             //______________________________________________________________________________________________________
             bool search(const authentication::serverID_t& serverID);
-            
+
             authentication::serverID_t serverID_;
             network::ipv4_addr addr_;
         };

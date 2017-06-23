@@ -53,13 +53,13 @@ namespace encryption {
         // - true  | on success
         // - false | on any error
         //______________________________________________________________________________________________________
-        
+
         virtual bool setRSA(FILE* file) = 0;
         // pointer to internal RSA-structure
         RSA* rsa_;
         // store the result of getRequiredSize()
         int requiredSize_;
-        
+
     };
     //______________________________________________________________________________________________________
     //

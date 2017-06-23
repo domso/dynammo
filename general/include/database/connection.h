@@ -32,7 +32,7 @@ namespace database {
                 long unsigned int flags = 0;
                 unsigned int port = 0;
             };
-            
+
             connection();
             ~connection();
             //______________________________________________________________________________________________________

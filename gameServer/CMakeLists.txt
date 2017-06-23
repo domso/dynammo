@@ -12,5 +12,8 @@ file(GLOB src_data "${CMAKE_CURRENT_SOURCE_DIR}/src/data/*.cpp")
 add_library(dataGameServer STATIC ${src_data})
 target_link_libraries(dataGameServer utilGeneral encryptionGeneral messageGameServer)
 
+file(GLOB src_data_map "${CMAKE_CURRENT_SOURCE_DIR}/src/data/map/*.cpp")
+add_library(dataMapGameServer STATIC ${src_data_map})
+
 add_executable(gameServer main.cpp)
-target_link_libraries(gameServer utilGeneral encryptionGeneral dataGameServer messageGameServer)
+target_link_libraries(gameServer utilGeneral encryptionGeneral dataGameServer messageGameServer dataMapGameServer)

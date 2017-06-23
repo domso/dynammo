@@ -25,7 +25,7 @@ namespace message {
         if (response != nullptr) {
             client.setServerInfo(response->info);
         }
-        
+
         return MSG_STATUS_CLOSE;
     }
 }

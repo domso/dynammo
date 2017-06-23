@@ -23,11 +23,11 @@ namespace data {
                 delete controller;
             }
         }
-        
+
         bool init(const mapID_t startID, const mapID_t endID) {
             startID_ = startID;
             endID_ = endID;
-            
+
             mainThreadHandler = std::thread(mainThread, this);
 
             return true; // TODO
@@ -134,7 +134,7 @@ namespace data {
     protected:
 
         std::thread mainThreadHandler;
-        
+
         mapID_t startID_;
         mapID_t endID_;
         std::vector<data::map_handle_t> maps_;

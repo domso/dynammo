@@ -2,17 +2,17 @@
 
 namespace database {
     namespace mysql {
-        
+
         connection::connection() : connection_(nullptr) {
 
         }
-        
+
         connection::~connection() {
             if (connection_ != nullptr) {
                 mysql_close(connection_);
             }
         }
-        
+
         bool connection::open(const user_data_t& user, const server_adress_t& server) {
             // there might be an open connection
             if (connection_ != nullptr) {
@@ -33,21 +33,21 @@ namespace database {
             return connection_ != nullptr;
 
         }
-        
+
         void connection::close() {
             mysql_close(connection_);
             connection_ = nullptr;
         }
-        
+
         MYSQL* connection::getNativeHandler() {
             return connection_;
         }
-        
+
         std::string connection::getErrorMsg()  {
             std::string result(mysql_error(&databaseLink_));
             return result;
         }
-        
+
     }
 }
 

@@ -90,7 +90,7 @@ namespace util {
         util::msg_queue::reader<T> pop(const int n = 1) {
             return outputQueue_.read<T>(n);
         }
-        
+
         execution_pipeline(const execution_pipeline& that) = delete;
         void operator=(int) = delete;
     private:

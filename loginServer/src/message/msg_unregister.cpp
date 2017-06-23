@@ -15,14 +15,9 @@ namespace message {
 
     msg_status_t msg_unregister::requestHandler(message::msg_header_t& header, network::ipv4_addr& srcAddr, network::pkt_buffer& inputBuffer, network::pkt_buffer& outputBuffer, network::udp_socket<network::ipv4_addr>& socket, message::msg_option_t& options, data::login_server_context& server) {
         msg_unregister_request_t* request = inputBuffer.getNext<msg_unregister_request_t>();
-        
+
         if (request != nullptr) {
-            if (server.unregisterService(request->credentials, request->serverID)) {              
-                
-                 return MSG_STATUS_OK;
-             } else {
-                 return MSG_STATUS_AUTH_ERROR;
-             }
+            return server.unregisterService(request->credentials, request->serverID);
         }
 
         return MSG_STATUS_UNKOWN_ERROR;

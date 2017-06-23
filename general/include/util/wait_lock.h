@@ -39,7 +39,7 @@ namespace util {
             read(context_t<T>& context) : lock_(context.mutex), data_(context.data) {
 
             }
-            
+
             ~read() {
 
             }
@@ -141,14 +141,14 @@ namespace util {
 
                 context.interrupt = false;
             }
-            
+
             ~wait() {
 
             }
             //______________________________________________________________________________________________________
             //
             // Return:
-            // - true  | an update was performed 
+            // - true  | an update was performed
             // - false | a timeout occured while waiting
             //______________________________________________________________________________________________________
             bool isValid() {
@@ -180,3 +180,4 @@ namespace util {
 }
 
 #endif
+

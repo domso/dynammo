@@ -1,16 +1,24 @@
 #ifndef general_message_msg_header_h
 #define general_message_msg_header_h
 
+#include "include/util/error_code.h"
 #include <cstdint>
-// drop message / do nothing / no send
-#define MSG_STATUS_CLOSE 0
 
-#define MSG_STATUS_OK 1
-#define MSG_STATUS_WARNING 2
+#define MSG_STATUS_OK 0
 
-#define MSG_STATUS_AUTH_ERROR -1
-#define MSG_STATUS_DATA_ERROR -2
-#define MSG_STATUS_UNKOWN_ERROR -3
+// process message later / Ressource is not available
+#define MSG_STATUS_WAIT -1
+
+// drop message / do nothing / no send / no error
+#define MSG_STATUS_CLOSE 1
+
+#define MSG_STATUS_UNKOWN_ERROR 2
+#define MSG_STATUS_AUTH_ERROR 3
+#define MSG_STATUS_EXECUTION_ERROR 4
+#define MSG_STATUS_INVALID_ARGUMENTS 5
+#define MSG_STATUS_ACCESS_DENIED 6
+#define MSG_STATUS_TIMEOUT 7
+#define MSG_STATUS_UNAVAILABLE 8
 
 #define MSG_OPTION_CLEAR 0
 #define MSG_OPTION_NO_ENCRYPTION 1

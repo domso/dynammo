@@ -28,7 +28,7 @@ namespace data {
             return false;
         }
 
-        mainThread_ = std::thread(message::msg_controller<data::login_context>::srecv, &(this->controller_), nullptr, publicKey_);
+        mainThread_ = std::thread(&message::msg_controller<data::login_context>::recv, &controller_, nullptr, publicKey_);
         return true;
     }
 

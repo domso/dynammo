@@ -41,8 +41,10 @@ namespace util {
                                 tmp = tmp ^ (tmp & 255);
                                 tmp += j;
                                 links_[i + 1] = links_[i]->childs_[j];
+
                                 for (int k = i + 2; k < sizeof(uint64_t) + 1; k++) {
                                     tmp = tmp << 8;
+
                                     for (int m = 0; m < 256; m++) {
                                         if (links_[k - 1]->childs_[m] != nullptr) {
                                             links_[k] = links_[k - 1]->childs_[m];
@@ -51,12 +53,15 @@ namespace util {
                                         }
                                     }
                                 }
+
                                 index_ = tmp;
                                 return links_[sizeof(uint64_t)]->data;
                             }
                         }
+
                         tmp = tmp >> 8;
                     }
+
                     return links_[sizeof(uint64_t)]->data;
                 }
 

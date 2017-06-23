@@ -45,7 +45,7 @@ namespace database {
             // - false | on any error
             //______________________________________________________________________________________________________
             bool search(const authentication::credentials_t& credentials);
-            
+
             authentication::permissions_t permissions_;
             authentication::accountID_t accountID_;
             authentication::serverID_t serverID_;

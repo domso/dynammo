@@ -8,21 +8,19 @@ int main() {
 
     network::ipv4_addr addr;
     addr.init("127.0.0.1", 1890);
-     encryption::public_key key;
-     if (!key.load("../keys/public.pem")) {
-         std::cout << "could not load key" << std::endl;
-     }
+    encryption::public_key key;
 
-     
-     
-     loginConnector.setServer(addr, &key);
-     
-     
-     if (!loginConnector.init()) {
-        std::cout << "could not init" << std::endl;
+    if (!key.load("../keys/public.pem")) {
+        std::cout << "could not load key" << std::endl;
     }
 
-    
+
+    loginConnector.setServer(addr, &key);
+
+
+    if (!loginConnector.init()) {
+        std::cout << "could not init" << std::endl;
+    }
 
 
     authentication::credentials_t userdata;
@@ -40,13 +38,14 @@ int main() {
     userdata.key[1] = 'e';
     userdata.key[2] = 's';
     userdata.key[3] = 't';
-    
 
-    
-    loginConnector.registerService(27,userdata);
-    
-    
+
+
+    loginConnector.registerService(27, userdata);
+
+
     bool flag = false;
+
     if (!loginConnector.waitForRegisterState(flag, 10)) {
         std::cout << "could not connect to server" << std::endl;
         return 0;
@@ -57,7 +56,13 @@ int main() {
     } else {
         std::cout << "success!" << std::endl;
     }
-    
+
+
+    while (true) {
+
+    }
+
+
     loginConnector.close();
 
     return 0;

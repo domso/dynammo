@@ -92,6 +92,7 @@ namespace data {
         if (!lock.isValid()) {
             return false;
         }
+
         state = lock.data();
         return true;
     }

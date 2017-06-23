@@ -105,7 +105,7 @@ namespace data {
         //______________________________________________________________________________________________________
         //
         // Description:
-        // - stores 'state' as new registration-status 
+        // - stores 'state' as new registration-status
         // Parameter:
         // - info: reference to an input instance
         //______________________________________________________________________________________________________

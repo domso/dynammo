@@ -8,7 +8,7 @@
 namespace data {
 //______________________________________________________________________________________________________
 //
-    // gameServer logic for login
+// gameServer logic for login
 //______________________________________________________________________________________________________
     class session_login_server {
     public:
@@ -115,9 +115,7 @@ namespace data {
         // - false | on timeout
         //______________________________________________________________________________________________________
         bool waitForUser(authentication::user_data_t& user, double timeout);
-
     private:
-
         uint16_t localPort_;
         network::ipv4_addr addr_;
         encryption::public_key* publicKey_;
@@ -131,3 +129,4 @@ namespace data {
 }
 
 #endif
+

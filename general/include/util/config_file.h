@@ -235,7 +235,7 @@ namespace util {
         // - false | on any error
         //______________________________________________________________________________________________________
         bool insert(const std::string input);
-        
+
         // the filename of last loaded config file
         std::string filename_;
         // string containing all error messages

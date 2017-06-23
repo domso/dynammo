@@ -22,7 +22,7 @@ namespace util {
         //______________________________________________________________________________________________________
         //
         // Description:
-        // - calls arg->execute() 
+        // - calls arg->execute()
         // - if arg is internal, the instance is deleted afterwards
         // Parameter:
         // - arg: pointer to a valid instance of T or nullptr
@@ -51,7 +51,7 @@ namespace util {
             data_ = new T();
             internalInstance_ = true;
             return data;
-        }        
+        }
         //______________________________________________________________________________________________________
         //
         // Description:
