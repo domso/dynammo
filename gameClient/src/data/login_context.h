@@ -1,5 +1,5 @@
-#ifndef gameClient_datalogin_contexth
-#define gameClient_datalogin_contexth
+#ifndef gameClient_data_login_contexth
+#define gameClient_data_login_contexth
 
 #include "src/authentication/types.h"
 #include "src/encryption/rsa.h"

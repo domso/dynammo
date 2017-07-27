@@ -1,5 +1,5 @@
-#ifndef gameClient_datalogin_client_h
-#define gameClient_datalogin_client_h
+#ifndef gameClient_data_login_client_h
+#define gameClient_data_login_client_h
 
 #include <thread>
 #include "src/data/login_context.h"

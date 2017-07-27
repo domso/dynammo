@@ -16,7 +16,7 @@ namespace data {
 
         bool controller::open() {
             accept_thread::options_t acceptOptions;
-            send_thread::m_contextarg_t sendOptions;
+            send_thread::context_arg_t sendOptions;
             
             acceptOptions.port = 9585; //TODO
             acceptOptions.backlog = 10;

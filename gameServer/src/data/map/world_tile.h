@@ -1,5 +1,5 @@
-#ifndef gameServer_dataworld_tile_h
-#define gameServer_dataworld_tile_h
+#ifndef gameServer_data_world_tile_h
+#define gameServer_data_world_tile_h
 
 #include <stdint.h>
 

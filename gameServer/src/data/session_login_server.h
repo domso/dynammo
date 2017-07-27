@@ -10,7 +10,7 @@ namespace data {
 //
 // gameServer logic for login
 //______________________________________________________________________________________________________
-    class m_sessionlogin_server {
+    class session_login_server {
     public:
         //______________________________________________________________________________________________________
         //
@@ -20,14 +20,14 @@ namespace data {
         // -port: udp-socket-port for communication
         // -msgBufferSize: maximal size of internal buffers
         //______________________________________________________________________________________________________
-        m_sessionlogin_server(const uint16_t port, const int msgBufferSize);
+        session_login_server(const uint16_t port, const int msgBufferSize);
 
-        ~m_sessionlogin_server();
+        ~session_login_server();
         //______________________________________________________________________________________________________
         //
         // Description:
         // - initializes the internal structures
-        // - starts a new thread for m_sessionlogin_server::execute()
+        // - starts a new thread for session_login_server::execute()
         // Return:
         // - true  | on success
         // - false | on error
@@ -121,8 +121,8 @@ namespace data {
         encryption::public_key* m_publicKey;
 
         std::thread m_mainThread;
-        data::m_sessioncontext m_context;
-        message::msg_controller<data::m_sessioncontext> m_controller;
+        data::session_context m_context;
+        message::msg_controller<data::session_context> m_controller;
         network::pkt_buffer m_uncryptedOutputBuffer;
         network::pkt_buffer m_encryptedOutputBuffer;
     };

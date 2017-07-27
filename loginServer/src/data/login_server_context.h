@@ -1,5 +1,5 @@
-#ifndef loginServer_datam_contexth
-#define loginServer_datam_contexth
+#ifndef loginServer_data_context_h
+#define loginServer_data_context_h
 
 #include "src/message/msg_header.h"
 #include "src/authentication/types.h"

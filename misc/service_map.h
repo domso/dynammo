@@ -35,7 +35,7 @@ class service_map {
         service_info info;
     };
 
-    struct m_registerrequest {
+    struct register_request {
         base_header header;
         int uptime;
         int QoS;

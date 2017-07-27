@@ -76,7 +76,7 @@ void service_map::exec_contr() {
     network::ipv6_addr srcAddr;
 
     base_header* header;
-    m_registerrequest* request;
+    register_request* request;
     service_info info;
 
 
@@ -87,7 +87,7 @@ void service_map::exec_contr() {
         if (header != nullptr) {
             if (header->status & SERVICE_MAP_HEADER_REQUEST_REGISTER) {
 
-                request = buffer.castNext<m_registerrequest>();
+                request = buffer.castNext<register_request>();
                 info.date = std::time(0);
                 info.uptime = request->uptime;
                 info.QoS = request->QoS;

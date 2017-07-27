@@ -4,7 +4,7 @@
 
 int main() {
     // registration demo
-    data::m_sessionlogin_server loginConnector(1891, 1024);
+    data::session_login_server loginConnector(1891, 1024);
 
     network::ipv4_addr addr;
     addr.init("127.0.0.1", 1890);

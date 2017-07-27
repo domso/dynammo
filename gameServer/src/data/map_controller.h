@@ -11,11 +11,11 @@
 namespace data {
 
 
-    class m_mapcontroller {
+    class map_controller {
     public:
 
 
-        static void mainThread(m_mapcontroller* controller) {
+        static void mainThread(map_controller* controller) {
             if (controller != nullptr) {
 
                 //TODO add main logic
@@ -54,7 +54,7 @@ namespace data {
                 numSecond += m_maps[i].mapID > newEnd;
             }
 
-            m_mapcontroller* newController = new m_mapcontroller();
+            map_controller* newController = new map_controller();
             std::vector<data::m_maphandle_t> newMaps(numFirst);
             newController->m_maps.resize(numSecond);
 

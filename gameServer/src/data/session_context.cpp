@@ -7,21 +7,21 @@
 
 namespace data {
 
-    encryption::public_key& m_sessioncontext::getKey() {
+    encryption::public_key& session_context::getKey() {
         return m_key;
     }
 
-    void m_sessioncontext::getServerInfo(authentication::server_info_t& info) {
+    void session_context::getServerInfo(authentication::server_info_t& info) {
         util::wait_lock::read<authentication::server_info_t> lock(m_serverInfo);
         info = lock.data();
     }
 
-    void m_sessioncontext::setServerInfo(const authentication::server_info_t& info) {
+    void session_context::setServerInfo(const authentication::server_info_t& info) {
         util::wait_lock::write<authentication::server_info_t> lock(m_serverInfo);
         lock.data() = info;
     }
 
-    bool m_sessioncontext::waitForServerInfo(authentication::server_info_t& info, double timeOut) {
+    bool session_context::waitForServerInfo(authentication::server_info_t& info, double timeOut) {
         util::wait_lock::wait<authentication::server_info_t> lock(m_serverInfo, timeOut);
 
         if (!lock.isValid()) {
@@ -32,17 +32,17 @@ namespace data {
         return true;
     }
 
-    void m_sessioncontext::getCredentials(authentication::credentials_t& credentials) {
+    void session_context::getCredentials(authentication::credentials_t& credentials) {
         util::wait_lock::read<authentication::credentials_t> lock(m_credentials);
         credentials = lock.data();
     }
 
-    void m_sessioncontext::setCredentials(const authentication::credentials_t& credentials) {
+    void session_context::setCredentials(const authentication::credentials_t& credentials) {
         util::wait_lock::write<authentication::credentials_t> lock(m_credentials);
         lock.data() = credentials;
     }
 
-    void m_sessioncontext::createNewUser(const authentication::ticket_t& ticket, authentication::session_t& session) {
+    void session_context::createNewUser(const authentication::ticket_t& ticket, authentication::session_t& session) {
         util::wait_lock::write<std::queue<authentication::user_data_t>> lock(m_users);
         lock.data().emplace<>();
         authentication::user_data_t& user = lock.data().back();
@@ -55,7 +55,7 @@ namespace data {
 
     }
 
-    bool m_sessioncontext::waitForUser(authentication::user_data_t& user, double timeOut) {
+    bool session_context::waitForUser(authentication::user_data_t& user, double timeOut) {
         util::wait_lock::wait<std::queue<authentication::user_data_t>> lock(m_users, timeOut);
 
         if (!lock.isValid()) {
@@ -71,22 +71,22 @@ namespace data {
         return false;
     }
 
-    void m_sessioncontext::getServerID(authentication::m_serverIDt& serverID) {
+    void session_context::getServerID(authentication::m_serverIDt& serverID) {
         util::wait_lock::read<authentication::m_serverIDt> lock(m_serverID);
         serverID = lock.data();
     }
 
-    void m_sessioncontext::setServerID(const authentication::m_serverIDt& serverID) {
+    void session_context::setServerID(const authentication::m_serverIDt& serverID) {
         util::wait_lock::write<authentication::m_serverIDt> lock(m_serverID);
         lock.data() = serverID;
     }
 
-    void m_sessioncontext::setRegisterState(const bool state) {
+    void session_context::setRegisterState(const bool state) {
         util::wait_lock::write<bool> lock(m_registerState);
         lock.data() = state;
     }
 
-    bool m_sessioncontext::waitForRegisterState(bool& state, double timeOut) {
+    bool session_context::waitForRegisterState(bool& state, double timeOut) {
         util::wait_lock::wait<bool> lock(m_registerState, timeOut);
 
         if (!lock.isValid()) {

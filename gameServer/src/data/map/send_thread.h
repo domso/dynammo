@@ -15,13 +15,13 @@ namespace data {
 
             send_thread(const send_thread&) = delete;
             
-            struct m_contextarg_t {
+            struct context_arg_t {
                 std::mutex* mutex;
                 std::queue<std::shared_ptr<network::tcp_connection<network::ipv4_addr>>>* connectionQueue;
             };
 
             struct context_t {
-                context_t(const m_contextarg_t& arg);
+                context_t(const context_arg_t& arg);
                 std::mutex& mutex;
                 std::queue<std::shared_ptr<network::tcp_connection<network::ipv4_addr>>>& connectionQueue;
                 std::unordered_set<std::shared_ptr<network::tcp_connection<network::ipv4_addr>>> connections;
@@ -39,7 +39,7 @@ namespace data {
                 static void execute(context_t& context);
             };
 
-            util::executor<context_t, m_contextarg_t> executor;
+            util::executor<context_t, context_arg_t> executor;
         };
     }
 }
