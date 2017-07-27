@@ -12,10 +12,12 @@ namespace data {
         }
 
         void send_thread::addConnectionTask::execute(context_t& context) {
-            std::lock_guard<std::mutex> lg(context.mutex);
+            std::unique_lock<std::mutex> ul(context.mutex);
             
             if (!context.connectionQueue.empty()) {
-                auto& connection = context.connectionQueue.front();
+                auto connection = context.connectionQueue.front();
+                
+                ul.unlock();
                 //TODO send all data to connection
                 context.connections.insert(connection);
                 
