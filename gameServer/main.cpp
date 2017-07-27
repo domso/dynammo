@@ -1,10 +1,10 @@
 
 #include <iostream>
-#include "include/data/session_login_server.h"
+#include "src/data/session_login_server.h"
 
 int main() {
     // registration demo
-    data::session_login_server loginConnector(1891, 1024);
+    data::m_sessionlogin_server loginConnector(1891, 1024);
 
     network::ipv4_addr addr;
     addr.init("127.0.0.1", 1890);

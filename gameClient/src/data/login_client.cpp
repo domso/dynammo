@@ -1,60 +1,60 @@
-#include "include/data/login_client.h"
+#include "src/data/login_client.h"
 
 #include <thread>
-#include "include/data/login_context.h"
-#include "include/message/msg_controller.h"
-#include "include/message/msg_info.h"
-#include "include/message/msg_auth.h"
+#include "src/data/login_context.h"
+#include "src/message/msg_controller.h"
+#include "src/message/msg_info.h"
+#include "src/message/msg_auth.h"
 
 namespace data {
-    login_client::login_client(const uint16_t port, const int msgBufferSize) : localPort_(port), publicKey_(nullptr), controller_(msgBufferSize), encryptedOutputBuffer_(msgBufferSize), uncryptedOutputBuffer_(msgBufferSize) {
+    login_client::login_client(const uint16_t port, const int msgBufferSize) : m_localPort(port), m_publicKey(nullptr), m_controller(msgBufferSize), m_encryptedOutputBuffer(msgBufferSize), m_uncryptedOutputBuffer(msgBufferSize) {
 
     }
 
     login_client::~login_client() {
-        if (mainThread_.joinable()) {
-            mainThread_.join();
+        if (m_mainThread.joinable()) {
+            m_mainThread.join();
         }
     }
 
     bool login_client::init() {
         bool result = true;
-        result &= controller_.registerHandler<message::msg_info>();
-        result &= controller_.registerHandler<message::msg_auth>();
+        result &= m_controller.registerHandler<message::msg_info>();
+        result &= m_controller.registerHandler<message::msg_auth>();
 
-        result &= controller_.init(localPort_, &context_);
+        result &= m_controller.init(m_localPort, &m_context);
 
         if (!result) {
             return false;
         }
 
-        mainThread_ = std::thread(&message::msg_controller<data::login_context>::recv, &controller_, nullptr, publicKey_);
+        m_mainThread = std::thread(&message::msg_controller<data::login_context>::recv, &m_controller, nullptr, m_publicKey);
         return true;
     }
 
     void login_client::close() {
-        controller_.close();
+        m_controller.close();
     }
 
     void login_client::setServer(const network::ipv4_addr& addr, encryption::public_key* publicKey) {
-        addr_ = addr;
-        publicKey_ = publicKey;
+        m_addr = addr;
+        m_publicKey = publicKey;
     }
 
     bool login_client::requestInfo() {
-        return controller_.execRequest<message::msg_info>(addr_, uncryptedOutputBuffer_, encryptedOutputBuffer_, context_, nullptr, publicKey_);
+        return m_controller.execRequest<message::msg_info>(m_addr, m_uncryptedOutputBuffer, m_encryptedOutputBuffer, m_context, nullptr, m_publicKey);
     }
 
     bool login_client::waitForInfo(authentication::server_info_t& info, double timeout) {
-        return context_.waitForServerInfo(info, timeout);
+        return m_context.waitForServerInfo(info, timeout);
     }
 
     bool login_client::requestSession(const authentication::credentials_t& credentials) {
-        context_.setCredentials(credentials);
-        return controller_.execRequest<message::msg_auth>(addr_, uncryptedOutputBuffer_, encryptedOutputBuffer_, context_, nullptr, publicKey_);
+        m_context.setCredentials(credentials);
+        return m_controller.execRequest<message::msg_auth>(m_addr, m_uncryptedOutputBuffer, m_encryptedOutputBuffer, m_context, nullptr, m_publicKey);
     }
 
     bool login_client::waitForSession(authentication::session_t& session, double timeout) {
-        return context_.waitForSession(session, timeout);
+        return m_context.waitForSession(session, timeout);
     }
 }

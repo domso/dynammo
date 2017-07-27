@@ -1,15 +1,15 @@
-#include "include/util/msg_queue.h"
+#include "src/util/msg_queue.h"
 
 namespace util {
 
-    msg_queue::msg_queue(const int size) : size_(size + 64), data_((size + 64) * 2), start_(0), end_(0), commit_(0), acquired_(0) {
+    msg_queue::msg_queue(const int size) : m_size(size + 64), m_data((size + 64) * 2), m_start(0), m_end(0), m_commit(0), m_acquired(0) {
 
     }
 
     bool msg_queue::release(const int lastFree, const int sizeFree, int numTries) {
         int last, next;
         next = lastFree + sizeFree;
-        next -= size_ * (next >= size_);
+        next -= m_size * (next >= m_size);
 
         do {
             if (numTries == 0) {
@@ -18,7 +18,7 @@ namespace util {
 
             numTries -= numTries > 0;
             last = lastFree;
-        } while (!start_.compare_exchange_strong(last, next));
+        } while (!m_start.compare_exchange_strong(last, next));
 
         return true;
     }
@@ -33,13 +33,13 @@ namespace util {
 
             numTries -= numTries > 0;
 
-            start = acquired_.load();
-            end = commit_.load();
-            end += size_ * (end < start);
+            start = m_acquired.load();
+            end = m_commit.load();
+            end += m_size * (end < start);
 
             newStart = start + sizeLoad;
-            finalStart = newStart - size_ * (newStart >= size_);
-        } while (newStart > end || !acquired_.compare_exchange_strong(start, finalStart));
+            finalStart = newStart - m_size * (newStart >= m_size);
+        } while (newStart > end || !m_acquired.compare_exchange_strong(start, finalStart));
 
         return start;
     }
@@ -47,7 +47,7 @@ namespace util {
     bool msg_queue::commit(const int lastCommit, const int sizeCommit, int numTries) {
         int last, next;
         next = lastCommit + sizeCommit;
-        next -= size_ * (next >= size_);
+        next -= m_size * (next >= m_size);
 
         do {
             if (numTries == 0) {
@@ -56,7 +56,7 @@ namespace util {
 
             numTries -= numTries > 0;
             last = lastCommit;
-        } while (!commit_.compare_exchange_strong(last, next));
+        } while (!m_commit.compare_exchange_strong(last, next));
 
         return true;
     }
@@ -71,57 +71,57 @@ namespace util {
 
             numTries -= numTries > 0;
 
-            start = start_.load();
-            end = end_.load();
-            start += size_ * (start <= end);
+            start = m_start.load();
+            end = m_end.load();
+            start += m_size * (start <= end);
 
             newEnd = end + sizeStorage;
-            finalEnd = newEnd - size_ * (newEnd >= size_);
-        } while (newEnd >= start || !end_.compare_exchange_strong(end, finalEnd));
+            finalEnd = newEnd - m_size * (newEnd >= m_size);
+        } while (newEnd >= start || !m_end.compare_exchange_strong(end, finalEnd));
 
         return end;
     }
 
     int msg_queue::size() const {
-        return size_ - 64;
+        return m_size - 64;
     }
 
     int msg_queue::usage() const {
-        int result = end_.load() - start_.load();
-        result += size_ * (result < 0);
+        int result = m_end.load() - m_start.load();
+        result += m_size * (result < 0);
         return result;
     }
 
     int msg_queue::acquired() const {
-        int result = acquired_.load() - start_.load();
-        result += size_ * (result < 0);
+        int result = m_acquired.load() - m_start.load();
+        result += m_size * (result < 0);
         return result;
     }
 
     int msg_queue::available() const {
-        int result = commit_.load() - acquired_.load();
-        result += size_ * (result < 0);
+        int result = m_commit.load() - m_acquired.load();
+        result += m_size * (result < 0);
         return result;
     }
 
     int msg_queue::uncommited() const {
-        int result = end_.load() - commit_.load();
-        result += size_ * (result < 0);
+        int result = m_end.load() - m_commit.load();
+        result += m_size * (result < 0);
         return result;
     }
 
     int msg_queue::free() const {
-        int result = start_.load() - end_.load();
-        result += size_ * (result <= 0);
+        int result = m_start.load() - m_end.load();
+        result += m_size * (result <= 0);
         return result - 64;
     }
 
 
     void msg_queue::printDebugInfo() {
         std::cout << "-------------------------------------" << std::endl;
-        std::cout << "data:       [" << start_.load() << ", " << end_.load() << "]" << std::endl;
-        std::cout << "acquired:   [" << start_.load() << ", " << acquired_.load() << "]" << std::endl;
-        std::cout << "available:  [" << acquired_.load() << ", " << commit_.load() << "]" << std::endl;
-        std::cout << "uncommited: [" << commit_.load() << ", " << end_.load() << "]" << std::endl;
+        std::cout << "data:       [" << m_start.load() << ", " << m_end.load() << "]" << std::endl;
+        std::cout << "acquired:   [" << m_start.load() << ", " << m_acquired.load() << "]" << std::endl;
+        std::cout << "available:  [" << m_acquired.load() << ", " << m_commit.load() << "]" << std::endl;
+        std::cout << "uncommited: [" << m_commit.load() << ", " << m_end.load() << "]" << std::endl;
     }
 }

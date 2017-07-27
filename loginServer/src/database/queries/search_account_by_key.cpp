@@ -1,15 +1,15 @@
-#include "include/database/queries/search_account_by_key.h"
+#include "src/database/queries/search_account_by_key.h"
 
 namespace database {
     namespace queries {
         bool search_account_by_key::init() {
             bool result = true;
             result &= setQuery("Select accountID, permission, serverID from user where username = ? and userkey = ?;");
-            result &= setResult<authentication::accountID_t>(0, MYSQL_TYPE_LONG, &accountID_);
-            result &= setResult<authentication::permissions_t>(1, MYSQL_TYPE_LONG, &permissions_);
-            result &= setResult<authentication::serverID_t>(2, MYSQL_TYPE_LONG, &serverID_);
-            result &= setParam<char>(0,  MYSQL_TYPE_STRING, credentials_.username, sizeof(credentials_.username));
-            result &= setParam<char>(1,  MYSQL_TYPE_STRING, credentials_.key, sizeof(credentials_.key));
+            result &= setResult<authentication::m_accountIDt>(0, MYSQL_TYPE_LONG, &m_accountID);
+            result &= setResult<authentication::m_permissionst>(1, MYSQL_TYPE_LONG, &m_permissions);
+            result &= setResult<authentication::m_serverIDt>(2, MYSQL_TYPE_LONG, &m_serverID);
+            result &= setParam<char>(0,  MYSQL_TYPE_STRING, m_credentials.username, sizeof(m_credentials.username));
+            result &= setParam<char>(1,  MYSQL_TYPE_STRING, m_credentials.key, sizeof(m_credentials.key));
 
             result &= bindResult();
             result &= bindParam();
@@ -18,10 +18,10 @@ namespace database {
         }
 
         bool search_account_by_key::search(const authentication::credentials_t& credentials) {
-            credentials_ = credentials;
-            permissions_ = 0;
-            accountID_ = 0;
-            serverID_ = 0;
+            m_credentials = credentials;
+            m_permissions = 0;
+            m_accountID = 0;
+            m_serverID = 0;
 
             return execute() && fetchRow();
         }

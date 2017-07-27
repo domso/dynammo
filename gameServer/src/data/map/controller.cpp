@@ -1,4 +1,4 @@
-#include "include/data/map/controller.h"
+#include "src/data/map/controller.h"
 #include "network/tcp_socket.h"
 #include "network/tcp_connection.h"
 
@@ -6,7 +6,7 @@
 
 namespace data {
     namespace map {
-        controller::controller() : mapOpen_(false) {
+        controller::controller() : m_mapOpen(false) {
 
         }
 
@@ -16,7 +16,7 @@ namespace data {
 
         bool controller::open() {
             accept_thread::options_t acceptOptions;
-            send_thread::context_arg_t sendOptions;
+            send_thread::m_contextarg_t sendOptions;
             
             acceptOptions.port = 9585; //TODO
             acceptOptions.backlog = 10;

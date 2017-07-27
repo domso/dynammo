@@ -2,19 +2,19 @@
 
 #include <thread>
 
-#include "include/message/msg_controller.h"
-#include "include/message/msg_info.h"
-#include "include/message/msg_login.h"
-#include "include/message/msg_logout.h"
-#include "include/message/msg_lookup.h"
+#include "src/message/msg_controller.h"
+#include "src/message/msg_info.h"
+#include "src/message/msg_login.h"
+#include "src/message/msg_logout.h"
+#include "src/message/msg_lookup.h"
 
-// #include "include/message/client/msg_info.h"
-// #include "include/message/client/msg_login.h"
-// #include "include/message/client/msg_logout.h"
-// #include "include/message/client/msg_lookup.h"
+// #include "src/message/client/msg_info.h"
+// #include "src/message/client/msg_login.h"
+// #include "src/message/client/msg_logout.h"
+// #include "src/message/client/msg_lookup.h"
 
-#include "include/encryption/rsa.h"
-#include "include/database/connection.h"
+#include "src/encryption/rsa.h"
+#include "src/database/connection.h"
 
 
 int main() {
@@ -100,7 +100,7 @@ void client() {
 
 
 #include <chrono>
-#include "include/util/mem.h"
+#include "src/util/mem.h"
 
 
 int main() {
@@ -138,9 +138,9 @@ int main() {
 //
 // #include <chrono>
 //
-// #include "include/message/msg_receiver.h"
-// #include "include/message/server/msg_info.h"
-// #include "include/message/server/msg_login.h"
+// #include "src/message/msg_receiver.h"
+// #include "src/message/server/msg_info.h"
+// #include "src/message/server/msg_login.h"
 //
 //
 //
@@ -210,7 +210,7 @@ int main() {
 //     char c4;
 // };
 //
-// #include "include/encryption/rsa.h"
+// #include "src/encryption/rsa.h"
 //
 // struct rsa1 {
 //     char data[200];

@@ -1,5 +1,5 @@
-#ifndef service_map_h
-#define service_map_h
+#ifndef service_m_maph
+#define service_m_maph
 
 #include <unordered_map>
 #include <thread>
@@ -35,7 +35,7 @@ class service_map {
         service_info info;
     };
 
-    struct register_request {
+    struct m_registerrequest {
         base_header header;
         int uptime;
         int QoS;
@@ -64,11 +64,11 @@ public:
 
 private:
 
-    std::atomic<bool> isRunning_;
-    std::mutex mutex_;
-    std::unordered_map<int, service_info> map_;
-    network::udp_socket<network::ipv6_addr> data_socket_;
-    network::udp_socket<network::ipv6_addr> controll_socket_;
+    std::atomic<bool> m_isRunning;
+    std::mutex m_mutex;
+    std::unordered_map<int, service_info> m_map;
+    network::udp_socket<network::ipv6_addr> m_datam_socket;
+    network::udp_socket<network::ipv6_addr> controll_m_socket;
 };
 
 

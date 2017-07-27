@@ -1,4 +1,4 @@
-#include "include/data/map/accept_thread.h"
+#include "src/data/map/accept_thread.h"
 
 namespace data {
     namespace map {
@@ -7,26 +7,26 @@ namespace data {
         }
 
         accept_thread::~accept_thread() {
-            if (mainThreadHandle_.joinable()) {
-                mainThreadHandle_.join();
+            if (m_mainThreadHandle.joinable()) {
+                m_mainThreadHandle.join();
             }
         }
 
         bool accept_thread::start(const options_t& options) {
             bool current = false;
 
-            if (isRunning_.compare_exchange_strong(current, true)) {
-                if (!socket_.acceptOn(options.port, options.backlog)) {
+            if (m_isRunning.compare_exchange_strong(current, true)) {
+                if (!m_socket.acceptOn(options.port, options.backlog)) {
                     return false;
                 }
 
-                socket_.setTimeout(options.updateIntervall);
+                m_socket.setTimeout(options.updateIntervall);
 
-                if (mainThreadHandle_.joinable()) {
-                    mainThreadHandle_.join();
+                if (m_mainThreadHandle.joinable()) {
+                    m_mainThreadHandle.join();
                 }
                 
-                mainThreadHandle_ = std::thread(&accept_thread::mainThread, this, std::ref(options));
+                m_mainThreadHandle = std::thread(&accept_thread::mainThread, this, std::ref(options));
                 
                 return true;
             }
@@ -36,12 +36,12 @@ namespace data {
 
         bool accept_thread::stop() {
             bool current = true;
-            return isRunning_.compare_exchange_strong(current, false);
+            return m_isRunning.compare_exchange_strong(current, false);
         }
 
         void accept_thread::mainThread(const options_t& options) {
-            while (isRunning_.load()) {
-                auto connection = socket_.acceptConnection();
+            while (m_isRunning.load()) {
+                auto connection = m_socket.acceptConnection();
                 if (connection != nullptr) {
                     std::lock_guard<std::mutex> lg(*options.mutex);
 

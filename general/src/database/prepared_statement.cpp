@@ -1,4 +1,4 @@
-#include <include/database/prepared_statement.h>
+#include "src/database/prepared_statement.h"
 
 namespace database {
     namespace mysql {
@@ -15,14 +15,14 @@ namespace database {
             bool result;
 
             if (conn.getNativeHandler() != nullptr) {
-                statement_ = mysql_stmt_init(conn.getNativeHandler());
+                m_statement = mysql_stmt_init(conn.getNativeHandler());
             } else {
-                statement_ = nullptr;
+                m_statement = nullptr;
             }
 
-            isBinded_ = false;
+            m_isBinded = false;
 
-            if (statement_ != nullptr) {
+            if (m_statement != nullptr) {
                 return init();
             }
 
@@ -30,26 +30,26 @@ namespace database {
         }
 
         bool prepared_statement::execute() {
-            return statement_ != nullptr && mysql_stmt_execute(statement_) == 0;
+            return m_statement != nullptr && mysql_stmt_execute(m_statement) == 0;
         }
 
         bool prepared_statement::fetchRow() {
-            int result = mysql_stmt_fetch(statement_);
-            mysql_stmt_free_result(statement_);
-            return statement_ != nullptr && result == 0;
+            int result = mysql_stmt_fetch(m_statement);
+            mysql_stmt_free_result(m_statement);
+            return m_statement != nullptr && result == 0;
         }
 
         long unsigned int prepared_statement::getParamResultLength(const int paramID) {
-            if (paramID < resultInfo_.size()) {
-                return resultInfo_[paramID].length;
+            if (paramID < m_resultInfo.size()) {
+                return m_resultInfo[paramID].length;
             }
 
             return 0;
         }
 
         std::string prepared_statement::getErrorMsg() {
-            if (statement_ != nullptr) {
-                std::string result(mysql_stmt_error(statement_));
+            if (m_statement != nullptr) {
+                std::string result(mysql_stmt_error(m_statement));
                 return result;
             }
 
@@ -57,11 +57,11 @@ namespace database {
         }
 
         bool prepared_statement::setQuery(const std::string query) {
-            if (statement_ != nullptr && mysql_stmt_prepare(statement_, query.c_str(), query.length()) == 0) {
-                params_.resize(mysql_stmt_param_count(statement_));
-                results_.resize(mysql_stmt_field_count(statement_));
-                paramInfo_.resize(params_.size());
-                resultInfo_.resize(results_.size());
+            if (m_statement != nullptr && mysql_stmt_prepare(m_statement, query.c_str(), query.length()) == 0) {
+                m_params.resize(mysql_stmt_param_count(m_statement));
+                m_results.resize(mysql_stmt_field_count(m_statement));
+                m_paramInfo.resize(m_params.size());
+                m_resultInfo.resize(m_results.size());
                 return true;
             }
 
@@ -69,11 +69,11 @@ namespace database {
         }
 
         bool prepared_statement::bindParam() {
-            return statement_ != nullptr && params_.size() != 0 && mysql_stmt_bind_param(statement_, params_.data()) == 0;
+            return m_statement != nullptr && m_params.size() != 0 && mysql_stmt_bind_param(m_statement, m_params.data()) == 0;
         }
 
         bool prepared_statement::bindResult() {
-            return statement_ != nullptr && results_.size() != 0 && mysql_stmt_bind_result(statement_, results_.data()) == 0;
+            return m_statement != nullptr && m_results.size() != 0 && mysql_stmt_bind_result(m_statement, m_results.data()) == 0;
         }
 
     }

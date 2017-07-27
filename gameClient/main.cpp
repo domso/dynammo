@@ -1,6 +1,6 @@
-#include "include/data/login_client.h"
-#include "include/util/msg_queue.h"
-#include "include/util/binary.h"
+#include "src/data/login_client.h"
+#include "src/util/msg_queue.h"
+#include "src/util/binary.h"
 #include <chrono>
 
 int main() {

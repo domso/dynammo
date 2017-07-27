@@ -1,9 +1,9 @@
 #include "network/udp_socket.h"
-#include "include/data/login_context.h"
-#include "include/util/timestamp.h"
-#include "include/message/msg_header.h"
-#include "include/message/msg_types.h"
-#include "include/message/msg_auth.h"
+#include "src/data/login_context.h"
+#include "src/util/timestamp.h"
+#include "src/message/msg_header.h"
+#include "src/message/msg_types.h"
+#include "src/message/msg_auth.h"
 
 namespace message {
     const uint8_t msg_auth::id;

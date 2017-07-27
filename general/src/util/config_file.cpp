@@ -2,7 +2,7 @@
 #include <iostream>
 #include <fstream>
 #include <cmath>
-#include "include/util/config_file.h"
+#include "src/util/config_file.h"
 
 namespace util {
 
@@ -27,55 +27,55 @@ namespace util {
 
             file.close();
 
-            filename_ = filename;
+            m_filename = filename;
             return;
         }
 
-        filename_ = "";
-        errorMsg_ += "[ERROR] Could not open '" + filename + "' as config file.";
+        m_filename = "";
+        m_errorMsg += "[ERROR] Could not open '" + filename + "' as config file.";
         return;
     }
 
     void config_file::requireString(const std::string& key) {
-        if (filename_.empty()) {
+        if (m_filename.empty()) {
             return;
         }
 
-        auto result = map_.find(key);
+        auto result = m_map.find(key);
 
-        if (result != map_.end()) {
+        if (result != m_map.end()) {
             if (result->second != "") {
                 return;
             }
         }
 
-        errorMsg_ += "[ERROR] Require '" + key + "'";
-        errorMsg_ += " in " + filename_ + ".\n";
+        m_errorMsg += "[ERROR] Require '" + key + "'";
+        m_errorMsg += " in " + m_filename + ".\n";
     }
 
     void config_file::recommendString(const std::string& key, const std::string& defaultValue) {
-        if (filename_.empty()) {
+        if (m_filename.empty()) {
             return;
         }
 
-        auto result = map_.find(key);
+        auto result = m_map.find(key);
 
-        if (result != map_.end()) {
+        if (result != m_map.end()) {
             if (result->second != "") {
                 return;
             }
         }
 
-        map_[key] = defaultValue;
-        warningMsg_ += "[WARNING] Recommend '" + key + "'";
-        warningMsg_ += " (Default = '" + defaultValue + "')";
-        warningMsg_ += " in " + filename_ + ".\n";
+        m_map[key] = defaultValue;
+        m_warningMsg += "[WARNING] Recommend '" + key + "'";
+        m_warningMsg += " (Default = '" + defaultValue + "')";
+        m_warningMsg += " in " + m_filename + ".\n";
     }
 
     std::string config_file::getString(const std::__cxx11::string& key, const std::__cxx11::string& defaultValue) const {
-        auto result = map_.find(key);
+        auto result = m_map.find(key);
 
-        if (result != map_.end()) {
+        if (result != m_map.end()) {
             if (result->second != "") {
                 return result->second;
             }
@@ -85,24 +85,24 @@ namespace util {
     }
 
     bool config_file::isError() const {
-        return !errorMsg_.empty();
+        return !m_errorMsg.empty();
     }
 
     const std::string& config_file::getErrorMsgs() const {
-        return errorMsg_;
+        return m_errorMsg;
     }
 
     bool config_file::isWarning() const {
-        return !warningMsg_.empty();
+        return !m_warningMsg.empty();
     }
 
     const std::string& config_file::getWarningMsgs() const {
-        return warningMsg_;
+        return m_warningMsg;
     }
 
     void config_file::clear() {
-        errorMsg_ = "";
-        warningMsg_ = "";
+        m_errorMsg = "";
+        m_warningMsg = "";
     }
 
     bool config_file::insert(const std::string input) {
@@ -142,7 +142,7 @@ namespace util {
         }
 
         if (components[0][0] != '#') {
-            map_.insert({components[0], components[1]});
+            m_map.insert({components[0], components[1]});
         }
 
         return true;

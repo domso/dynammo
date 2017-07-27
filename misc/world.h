@@ -33,7 +33,7 @@ public:
     }
 };
 
-class world_map_handle_t {
+class world_maphandle_t {
 public:
     int id;
     std::atomic<char> seperatorState;
@@ -65,7 +65,7 @@ public:
 
 class world_group_t {
 public:
-    std::vector<world_map_handle_t> maps;
+    std::vector<world_maphandle_t> maps;
 
 
     void update(int startIndex, int endIndex) {

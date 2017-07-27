@@ -1,4 +1,4 @@
-#include "include/data/map/send_thread.h"
+#include "src/data/map/send_thread.h"
 
 namespace data {
     namespace map {
@@ -7,7 +7,7 @@ namespace data {
             executor.registerTask<sendUpdateTask>();
         }
 
-        send_thread::context_t::context_t(const context_arg_t& arg) : mutex(*arg.mutex), connectionQueue(*arg.connectionQueue) {
+        send_thread::context_t::context_t(const m_contextarg_t& arg) : mutex(*arg.mutex), connectionQueue(*arg.connectionQueue) {
 
         }
 

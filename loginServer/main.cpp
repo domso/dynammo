@@ -1,13 +1,13 @@
 #include <iostream>
 #include "signal.h"
-#include "include/message/msg_controller.h"
-#include "include/message/msg_info.h"
-#include "include/message/msg_auth.h"
-#include "include/message/msg_register.h"
-#include "include/message/msg_unregister.h"
-#include "include/encryption/rsa.h"
-#include "include/database/connection.h"
-#include "include/util/config_file.h"
+#include "src/message/msg_controller.h"
+#include "src/message/msg_info.h"
+#include "src/message/msg_auth.h"
+#include "src/message/msg_register.h"
+#include "src/message/msg_unregister.h"
+#include "src/encryption/rsa.h"
+#include "src/database/connection.h"
+#include "src/util/config_file.h"
 
 
 bool checkConfigFile(util::config_file& config) {

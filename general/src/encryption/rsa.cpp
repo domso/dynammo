@@ -8,23 +8,23 @@
 #include <openssl/evp.h>
 #include <openssl/bio.h>
 #include <openssl/err.h>
-#include "include/encryption/rsa.h"
+#include "src/encryption/rsa.h"
 
 namespace encryption {
 
     base_key::base_key() {
-        rsa_ = nullptr;
-        requiredSize_ = 0;
+        m_rsa = nullptr;
+        m_requiredSize = 0;
     }
 
     base_key::~base_key() {
-        if (rsa_ != nullptr) {
-            RSA_free(rsa_);
+        if (m_rsa != nullptr) {
+            RSA_free(m_rsa);
         }
     }
 
     RSA* base_key::getRSA() const {
-        return rsa_;
+        return m_rsa;
     }
 
     bool base_key::load(const std::string filename) {
@@ -33,7 +33,7 @@ namespace encryption {
         if (file != nullptr) {
             bool result = setRSA(file);
             fclose(file);
-            requiredSize_ = RSA_size(rsa_);
+            m_requiredSize = RSA_size(m_rsa);
             return result;
         }
 
@@ -41,17 +41,17 @@ namespace encryption {
     }
 
     int base_key::getRequiredSize() const {
-        return requiredSize_;
+        return m_requiredSize;
     }
 
     bool private_key::setRSA(FILE* file) {
-        rsa_ = PEM_read_RSAPrivateKey(file, nullptr, nullptr, nullptr);
-        return rsa_ != nullptr;
+        m_rsa = PEM_read_RSAPrivateKey(file, nullptr, nullptr, nullptr);
+        return m_rsa != nullptr;
     }
 
     bool public_key::setRSA(FILE* file) {
-        rsa_ = PEM_read_RSA_PUBKEY(file, nullptr, nullptr, nullptr);
-        return rsa_ != nullptr;
+        m_rsa = PEM_read_RSA_PUBKEY(file, nullptr, nullptr, nullptr);
+        return m_rsa != nullptr;
     }
 
     int encryptChar(const public_key& key, const int dataLen, const unsigned char* in, const int bufferLen, unsigned char* out) {
