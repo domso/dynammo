@@ -1,14 +1,16 @@
 #ifndef general_auth_types_h
 #define general_auth_types_h
 
+#include <vector>
 #include "network/ip_addr.h"
 
 namespace authentication {
 
-    typedef int32_t m_accountIDt;
-    typedef int32_t m_serverIDt;
+    typedef int32_t accountID_t;
+    typedef int32_t serverID_t;
     typedef int32_t sessionID_t;
-    typedef int32_t m_permissionst;
+    typedef int32_t permissions_t;
+    typedef int32_t ticket_t;
     //______________________________________________________________________________________________________
     //
     // random salt
@@ -37,28 +39,21 @@ namespace authentication {
     // session identification
     //______________________________________________________________________________________________________
     struct session_t {
-        m_accountIDt accountID;
+        accountID_t accountID;
         sessionID_t sessionID;
-    };
-    //______________________________________________________________________________________________________
-    struct ticket_t {
-        m_accountIDt accountID;
-        m_serverIDt serverID;
-        int32_t issuer;
+        serverID_t serverID;
         int32_t loginTime;
-        m_permissionst permissions;
-        random_key_t key;
-        network::ipv4_addr userAddr;
+        int32_t issuer;
+        permissions_t permissions;
     };
     //______________________________________________________________________________________________________
     //
-    // the gameServer stores the current ticket with the session
+    // signed session identification
     //______________________________________________________________________________________________________
-    struct user_data_t {
-        session_t session;
-        ticket_t ticket;
+    struct signed_session_t {
+        authentication::session_t session;
+        std::vector<unsigned char> signature;
     };
-
 }
 
 #endif

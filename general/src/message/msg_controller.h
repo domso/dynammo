@@ -29,7 +29,7 @@ namespace message {
         //______________________________________________________________________________________________________
         msg_controller(const int bufferSize, const int reorderWindow = 2) : m_currentBuffer(0),
             m_encryptedInputBuffer(bufferSize), m_decryptedInputBuffers(reorderWindow, bufferSize), m_encryptedOutputBuffer(bufferSize), m_uncryptedOutputBuffer(bufferSize)  {
-                               
+
             for (int i = 0; i < 256; i++) {
                 callbacks[i] = nullptr;
             }
@@ -97,23 +97,27 @@ namespace message {
                             m_uncryptedOutputBuffer.setMsgLen(0);
                         }
 
-                        message::msg_option_t option = MSG_OPTION_CLEAR;
+                        message::msg_option_t option = message::option::clear;
                         message::msg_header_t* outputHeader = m_uncryptedOutputBuffer.pushNext<message::msg_header_t>();
                         message::msg_status_t status = callbacks[header->msgType](*header, m_srcAddr, decryptedInputBuffer, m_uncryptedOutputBuffer, m_networkSocket, option, *m_additional_data);
 
-                        if (status == MSG_STATUS_WAIT) {
+                        if (status == message::status::wait) {
                             decryptedInputBuffer.reset();
-                            m_currentBuffer++;                           
+                            m_currentBuffer++;
                             m_currentBuffer *= (m_currentBuffer < m_decryptedInputBuffers.size());
-                        } else if (status != MSG_STATUS_CLOSE && outputHeader != nullptr) {
+                        } else {
+                            decryptedInputBuffer.setMsgLen(0);
+                        }
+
+                        if (status != message::status::close && outputHeader != nullptr) {
                             outputHeader->status = status;
-                            outputHeader->msgType = header->msgType ^ (MSG_HEADER_TYPE_REQUEST_SWITCH_MASK * ((option & MSG_OPTION_NO_REQUEST_RESPONSE_SWITCH) == 0));
+                            outputHeader->msgType = header->msgType ^ (message::request_switch_mask * ((option & message::option::no_request_response_switch) == 0));
                             outputHeader->attr = header->attr;
 
-                            if (privateKey == nullptr || (option & MSG_OPTION_NO_SIGNING) || internalSign(*privateKey, m_uncryptedOutputBuffer)) {
+                            if (privateKey == nullptr || (option & message::option::no_signing) || internalSign(*privateKey, m_uncryptedOutputBuffer)) {
                                 encryption::public_key* tmp = publicKey;
 
-                                if (option & MSG_OPTION_NO_ENCRYPTION) {
+                                if (option & message::option::no_encryption) {
                                     tmp = nullptr;
                                 }
 
@@ -169,7 +173,7 @@ namespace message {
 
             if (outputHeader != nullptr) {
                 outputHeader->msgType = T::id;
-                outputHeader->status = MSG_STATUS_OK;
+                outputHeader->status = message::status::ok;
                 outputHeader->attr = 0;
 
                 if (T::request(*outputHeader, destAddr, uncryptedOutputBuffer, networkSocket, param)) {
@@ -226,8 +230,7 @@ namespace message {
             if (decryptedInputBuffer.msgLen() != 0) {
                 return true;
             }
-            
-            
+
             if (privateKey != nullptr) { // encryption
                 if (m_networkSocket.recvPkt(m_srcAddr, encryptedInputBuffer) == -1) {
                     return false;

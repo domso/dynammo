@@ -8,7 +8,7 @@
 #include "src/encryption/rsa.h"
 #include "src/database/connection.h"
 #include "src/util/config_file.h"
-
+#include "src/controller/login_server_context.h"
 
 bool checkConfigFile(util::config_file& config) {
     config.requireString("dbUsername");
@@ -36,7 +36,7 @@ bool checkConfigFile(util::config_file& config) {
     return true;
 }
 
-message::msg_controller<data::login_server_context>* GlobalControllerLink = nullptr;
+message::msg_controller<controller::login_server_context>* GlobalControllerLink = nullptr;
 
 void stopServer(int signal) {
     std::cout << signal << std::endl;
@@ -96,10 +96,10 @@ int main(int argc, char* argv[]) {
     }
 
     //______________________________________________________________________________________________________
-    message::msg_controller<data::login_server_context> controller(config.getNumeric<int>("bufferSize"));
-    data::login_server_context context(config.getNumeric<int>("bufferSize"));
+    message::msg_controller<controller::login_server_context> controller(config.getNumeric<int>("bufferSize"));
+    controller::login_server_context context(config.getNumeric<int>("bufferSize"));
 
-    if (!context.init(connection, config.getNumeric<int32_t>("serverID"))) {
+    if (!context.init(connection, config.getNumeric<int32_t>("serverID"), privateKeyLink)) {
         std::cout << "[Error] Could not init context!" << std::endl;
         std::cout << "[Error] " << connection.getErrorMsg() << std::endl;
         return 0;

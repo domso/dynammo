@@ -25,31 +25,27 @@ namespace message {
     };
 
     struct msg_auth_response_t {
-        authentication::ticket_t ticket;
-    };
-
-    struct msg_session_response_t {
         authentication::session_t session;
-        network::ipv4_addr addr;
     };
 
     struct msg_login_request_t {
+        authentication::ticket_t ticket;
         authentication::session_t session;
-        network::ipv4_addr addr;
+    };
+    
+    struct msg_logout_request_t {
+        authentication::session_t session;
     };
 
     struct msg_register_request_t {
         authentication::credentials_t credentials;
-        authentication::m_serverIDt serverID;
+        authentication::serverID_t serverID;
     };
 
     struct msg_unregister_request_t {
         authentication::credentials_t credentials;
-        authentication::m_serverIDt serverID;
+        authentication::serverID_t serverID;
     };
-
-
-
 
 }
 

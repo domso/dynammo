@@ -103,16 +103,16 @@ namespace encryption {
         return offset;
     }
 
-    int signChar(const private_key& key, int dataLen, const unsigned char* in, const int bufferLen, unsigned char* out) {
+    int signChar(const private_key& key, int dataLen, const unsigned char* in, const int sigLen, unsigned char* signature) {
         int result;
         unsigned char hash[20];
 
-        if (bufferLen < key.getRequiredSize()) {
+        if (sigLen < key.getRequiredSize()) {
             return -1;
         }
 
         SHA1(in, dataLen, hash);
-        result = RSA_private_encrypt(20, hash, out, key.getRSA(), RSA_PKCS1_PADDING);
+        result = RSA_private_encrypt(20, hash, signature, key.getRSA(), RSA_PKCS1_PADDING);
 
         if (result < 0) {
             return 0;

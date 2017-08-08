@@ -46,9 +46,9 @@ namespace database {
             //______________________________________________________________________________________________________
             bool search(const authentication::credentials_t& credentials);
 
-            authentication::m_permissionst m_permissions;
-            authentication::m_accountIDt m_accountID;
-            authentication::m_serverIDt m_serverID;
+            authentication::permissions_t m_permissions;
+            authentication::accountID_t m_accountID;
+            authentication::serverID_t m_serverID;
             authentication::credentials_t m_credentials;
         };
     }

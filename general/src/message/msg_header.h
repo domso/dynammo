@@ -4,29 +4,6 @@
 #include "src/util/error_code.h"
 #include <cstdint>
 
-#define MSG_STATUS_OK 0
-
-// process message later / Ressource is not available
-#define MSG_STATUS_WAIT -1
-
-// drop message / do nothing / no send / no error
-#define MSG_STATUS_CLOSE 1
-
-#define MSG_STATUS_UNKOWN_ERROR 2
-#define MSG_STATUS_AUTH_ERROR 3
-#define MSG_STATUS_EXECUTION_ERROR 4
-#define MSG_STATUS_INVALID_ARGUMENTS 5
-#define MSG_STATUS_ACCESS_DENIED 6
-#define MSG_STATUS_TIMEOUT 7
-#define MSG_STATUS_UNAVAILABLE 8
-
-#define MSG_OPTION_CLEAR 0
-#define MSG_OPTION_NO_ENCRYPTION 1
-#define MSG_OPTION_NO_SIGNING 2
-#define MSG_OPTION_NO_REQUEST_RESPONSE_SWITCH 4
-
-#define MSG_HEADER_TYPE_REQUEST_SWITCH_MASK 0x80
-
 namespace message {
     //______________________________________________________________________________________________________
     //
@@ -35,6 +12,37 @@ namespace message {
     typedef uint8_t msg_type_t;
     typedef int8_t msg_status_t;
     typedef uint16_t msg_attr_t;
+    
+    namespace status {
+        constexpr msg_status_t ok = 0;
+
+        // process message later / Ressource is not available
+        constexpr msg_status_t wait = -1;
+
+        // drop message / do nothing / no send / no error
+        constexpr msg_status_t close = 1;
+
+        namespace error {
+            constexpr msg_status_t unknown = 2;
+            constexpr msg_status_t auth = 3;
+            constexpr msg_status_t execution = 4;
+            constexpr msg_status_t invalid_arguments = 5;
+            constexpr msg_status_t access_denied = 6;
+            constexpr msg_status_t timeout = 7;
+            constexpr msg_status_t unavailable = 8;
+            constexpr msg_status_t signing = 9;
+            constexpr msg_status_t permission = 10;
+        }
+    }
+
+    namespace option {
+        constexpr msg_status_t clear = 0;
+        constexpr msg_status_t no_encryption = 1;
+        constexpr msg_status_t no_signing = 2;
+        constexpr msg_status_t no_request_response_switch = 4;
+    }
+    
+    constexpr int request_switch_mask = 0x80;
     //______________________________________________________________________________________________________
     //
     // simple header for any message
@@ -55,3 +63,6 @@ namespace message {
 }
 
 #endif
+
+
+

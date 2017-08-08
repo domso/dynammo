@@ -33,9 +33,9 @@ namespace database {
             // - true  | on success
             // - false | on any error
             //______________________________________________________________________________________________________
-            bool removeService(const authentication::m_serverIDt& serverID);
+            bool removeService(const authentication::serverID_t& serverID);
 
-            authentication::m_serverIDt m_serverID;
+            authentication::serverID_t m_serverID;
             network::ipv4_addr m_addr;
         };
     }

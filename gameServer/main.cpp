@@ -1,10 +1,11 @@
 
 #include <iostream>
-#include "src/data/session_login_server.h"
+#include "src/controller/account/login_controller.h"
+
 
 int main() {
     // registration demo
-    data::session_login_server loginConnector(1891, 1024);
+    controller::account::login_controller loginConnector(1891, 1024);
 
     network::ipv4_addr addr;
     addr.init("127.0.0.1", 1890);
@@ -39,10 +40,7 @@ int main() {
     userdata.key[2] = 's';
     userdata.key[3] = 't';
 
-
-
     loginConnector.registerService(27, userdata);
-
 
     bool flag = false;
 

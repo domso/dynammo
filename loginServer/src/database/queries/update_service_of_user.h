@@ -24,17 +24,17 @@ namespace database {
             //______________________________________________________________________________________________________
             //
             // Description:
-            // - updates the current serverID for an user specified by the given ticket
+            // - updates the current serverID for an user specified by the given session
             // Parameter:
-            // - ticket: ticket containing the new serverID and the accountID;
+            // - session: session containing the new serverID and the accountID;
             // Return:
             // - true  | on success
             // - false | on any error
             //______________________________________________________________________________________________________
-            bool update(const authentication::ticket_t& ticket);
+            bool update(const authentication::session_t& session);
         private:
-            authentication::m_accountIDt m_accountID;
-            authentication::m_serverIDt m_serverID;
+            authentication::accountID_t m_accountID;
+            authentication::serverID_t m_serverID;
         };
     }
 }

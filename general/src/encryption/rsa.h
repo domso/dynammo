@@ -145,19 +145,18 @@ namespace encryption {
     // - key: reference to a valid rsa-public-key
     // - dataLen: length of the input buffer
     // - in: pointer to the input buffer
-    // - bufferLen: length of the output buffer
-    // - out: pointer to the output buffer
+    // - sigLen: length of the signature buffer
+    // - signature: pointer to the output buffer
     // Return:
     // - number of valid signature bytes in the output buffer | on success
     // - zero | on any error
     //______________________________________________________________________________________________________
-    int signChar(const encryption::private_key& key, int dataLen, const unsigned char* in, const int bufferLen, unsigned char* out);
+    int signChar(const encryption::private_key& key, int dataLen, const unsigned char* in, const int sigLen, unsigned char* signature);
     //______________________________________________________________________________________________________
     //
     // Description:
     // - tries to validate dataLen bytes from 'in' with the public key
     // - for validation RSA_public_decrypt() with SHA1 and RSA_PKCS1_PADDING is used
-    // - the required size for the output-buffer will be checked
     // Parameters:
     // - key: reference to a valid rsa-public-key
     // - sigLen: length of signature
@@ -174,8 +173,8 @@ namespace encryption {
     // simple struct with template-defined size
     //______________________________________________________________________________________________________
     template<int T>
-    struct encryptedData_RSA {
-        char data[T * 8];
+    struct signature {
+        char data[T];
     };
 }
 
