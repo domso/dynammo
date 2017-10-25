@@ -24,11 +24,11 @@ namespace controller {
             auto user = userData.find(session.accountID);
             
             if (user != userData.end()) {
-                if (session == user->second.session) {
-                    userData.erase(user);
-                    
-                    return true;
-                }
+//                 if (session == user->second.session) {
+//                     userData.erase(user);
+//                     
+//                     return true;
+//                 }
             }
             
             return false;

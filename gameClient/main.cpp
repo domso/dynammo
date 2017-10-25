@@ -3,7 +3,10 @@
 #include "src/util/binary.h"
 #include <chrono>
 
-int main() {
+#include <SDL2/SDL.h>
+
+
+int main2() {
     controller::login_controller client(1892, 1024);
     encryption::public_key key;
 
