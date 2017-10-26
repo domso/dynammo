@@ -5,6 +5,57 @@
 
 #include <SDL2/SDL.h>
 
+#include "src/SDL/window.h"
+#include "src/SDL/renderer.h"
+#include "src/SDL/image.h"
+
+int main() {    
+    SDL::window window;
+    SDL::window::config config;
+    
+    config.width = 800;
+    config.height = 600;
+    
+    window.open(config);       
+    
+    SDL::renderer renderer;
+    
+    renderer.init(window);
+    
+    renderer.clear();
+    renderer.update();    
+    
+    SDL::image image;
+    
+    image.load("test.jpg", renderer);
+    
+    
+    
+    SDL::rect r;
+    
+    r.h = 200;
+    r.w = 400;
+    r.x = 100;
+    r.y = 200;
+    
+    
+    renderer.draw<SDL::image>(image, nullptr, &r);
+    
+    
+    renderer.set_draw_color(255, 255, 255, 255);
+    renderer.draw_line(0, 0, 800, 600);
+    
+    
+    while (window.is_open()) {
+        
+        
+        
+        renderer.update();
+        window.update();
+    }
+    
+    return 0;
+}
 
 int main2() {
     controller::login_controller client(1892, 1024);

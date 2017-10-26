@@ -7,38 +7,31 @@
 namespace SDL {
     class renderer {
     public:        
-        renderer() : m_internalHandle(nullptr) {
-            
-        }
+        renderer();
         
         renderer(const renderer&) = delete;
         
-        bool init(window& targetWindow) {
-            m_internalHandle = SDL_CreateRenderer(targetWindow.internal_handler(), -1, SDL_RENDERER_ACCELERATED);
-            return m_internalHandle != nullptr;
-        }        
+        bool init(window& targetWindow);
         
-        ~renderer() {
-            if (m_internalHandle != nullptr) {
-                SDL_DestroyRenderer(m_internalHandle);
-            }
+        ~renderer();
+        
+        void clear();
+        
+        void update();
+        
+        template <typename T>
+        void draw(T& texture, const rect* sourceRect = nullptr, const rect* destRect = nullptr) {
+            SDL_RenderCopy(m_internalHandle, texture.internal_handle(), sourceRect, destRect);
         }
         
-        void clear() {
-            SDL_RenderClear(m_internalHandle);
-        }
+        void draw_line(const int srcX, const int srcY, const int destX, const int destY);        
         
-        void update() {
-            SDL_RenderPresent(m_internalHandle);
-        }
+        void set_draw_color(const uint8_t r, const uint8_t g, const uint8_t b, const uint8_t a);
         
-        
-        SDL_Renderer* internal_handler() {
-            return m_internalHandle;
-        }       
+        SDL_Renderer* internal_handle();
     private:
         SDL_Renderer* m_internalHandle;
-    }
+    };
 }
 
 #endif

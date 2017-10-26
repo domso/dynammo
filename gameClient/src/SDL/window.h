@@ -5,12 +5,12 @@
 #include <string>
 
 namespace SDL {
+    typedef SDL_Rect rect;
+    
     class window {
     public:        
-        window() : m_internalHandle(nullptr) {
-            
-        }
-        
+        window();
+        ~window();
         window(const window&) = delete;
         
         struct config {
@@ -22,28 +22,18 @@ namespace SDL {
             uint32_t flags = SDL_WINDOW_SHOWN;
         };
         
-        bool init(const config& c) {
-            m_internalHandle = SDL_CreateWindow(c.title.c_str(), c.x, c.y, c.width, c.height, c.flags);
-            return m_internalHandle != nullptr;
-        }        
+        bool open(const config& c);
+        void close();
         
-        ~window() {
-            if (m_internalHandle != nullptr) {
-                SDL_DestroyWindow(m_internalHandle);
-            }
-        }
+        bool is_open() const;       
         
-        SDL_Window* internal_handler() {
-            return m_internalHandle;
-        }        
         
+        void update();
+        
+        SDL_Window* internal_handler();        
     private:
         SDL_Window* m_internalHandle;
-    }
-}
-
-        
-    }   
+    };
 }
 
 #endif
