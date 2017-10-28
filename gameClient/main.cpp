@@ -4,7 +4,7 @@
 #include <chrono>
 
 int main() {
-    controller::login_controller client(1892, 1024);
+    controller::login_controller client(1900, 1024);
     encryption::public_key key;
 
     if (!key.load("../keys/public.pem")) {
@@ -54,7 +54,20 @@ int main() {
     } else {
         std::cout << "could not get session!" << std::endl;
     }
+    
+    client.requestLogin();
 
+    bool flag;
+    if (client.waitForLogin(flag, 10)) {
+        if (flag) {
+            std::cout << "login successfull!" << std::endl;
+        } else {
+            std::cout << "login NOT successfull!" << std::endl;
+        }
+    } else {
+        std::cout << "no response for login" << std::endl;
+    }
+    
     client.close();
     return 0;
 }

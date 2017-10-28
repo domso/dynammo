@@ -5,6 +5,7 @@
 #include "src/message/msg_controller.h"
 #include "src/message/account/msg_info.h"
 #include "src/message/account/msg_auth.h"
+#include "src/message/game/msg_login.h"
 
 namespace controller {
     login_controller::login_controller(const uint16_t port, const int msgBufferSize) : m_localPort(port), m_publicKey(nullptr), m_controller(msgBufferSize), m_encryptedOutputBuffer(msgBufferSize), m_uncryptedOutputBuffer(msgBufferSize) {
@@ -59,7 +60,8 @@ namespace controller {
     }
     
     bool login_controller::requestLogin() {
-        return m_controller.execRequest<message::account::msg_auth>(m_addr, m_uncryptedOutputBuffer, m_encryptedOutputBuffer, m_context, nullptr, m_publicKey);
+        // m_addr is the wrong address, but it is updated in the request-handler!
+        return m_controller.execRequest<message::game::msg_login>(m_addr, m_uncryptedOutputBuffer, m_encryptedOutputBuffer, m_context, nullptr, m_publicKey);
     }
 
     bool login_controller::waitForLogin(bool& loginState, double timeout) {

@@ -3,6 +3,7 @@
 
 #include <vector>
 #include "network/ip_addr.h"
+#include "src/encryption/rsa.h"
 
 namespace authentication {
 
@@ -45,6 +46,7 @@ namespace authentication {
         int32_t loginTime;
         int32_t issuer;
         permissions_t permissions;
+        network::ipv4_addr serverAddr;
     };
     //______________________________________________________________________________________________________
     //
@@ -52,7 +54,7 @@ namespace authentication {
     //______________________________________________________________________________________________________
     struct signed_session_t {
         authentication::session_t session;
-        std::vector<unsigned char> signature;
+        std::vector<uint8_t> signature;
     };
 }
 

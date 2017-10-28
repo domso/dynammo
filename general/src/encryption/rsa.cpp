@@ -54,7 +54,7 @@ namespace encryption {
         return m_rsa != nullptr;
     }
 
-    int encryptChar(const public_key& key, const int dataLen, const unsigned char* in, const int bufferLen, unsigned char* out) {
+    int encryptChar(const public_key& key, const int dataLen, const uint8_t* in, const int bufferLen, uint8_t* out) {
         int result;
         int i;
         int offset = 0;
@@ -83,7 +83,7 @@ namespace encryption {
         return offset;
     }
 
-    int decryptChar(const private_key& key, int dataLen, const unsigned char* in, const int bufferLen, unsigned char* out) {
+    int decryptChar(const private_key& key, int dataLen, const uint8_t* in, const int bufferLen, uint8_t* out) {
         int result;
         int offset = 0;
         int requiredSize = key.getRequiredSize();
@@ -103,35 +103,8 @@ namespace encryption {
         return offset;
     }
 
-    int signChar(const private_key& key, int dataLen, const unsigned char* in, const int sigLen, unsigned char* signature) {
-        int result;
-        unsigned char hash[20];
-
-        if (sigLen < key.getRequiredSize()) {
-            return -1;
-        }
-
-        SHA1(in, dataLen, hash);
-        result = RSA_private_encrypt(20, hash, signature, key.getRSA(), RSA_PKCS1_PADDING);
-
-        if (result < 0) {
-            return 0;
-        }
-
-        return result;
-    }
-
-    bool verifyChar(const encryption::public_key& key, int sigLen, const unsigned char* signature, int dataLen, const unsigned char* in) {
-        unsigned char hash[20];
-        SHA1(in, dataLen, hash);
-
-        unsigned char calcSignatureBuffer[key.getRequiredSize()];
-
-        if (RSA_public_decrypt(sigLen, signature, calcSignatureBuffer, key.getRSA(), RSA_PKCS1_PADDING) == 20) {
-            return memcmp(hash, calcSignatureBuffer, 20) == 0;
-        }
-
-        return false;
+    signature::signature(uint8_t* const d, const int l) : data(d), length(l) {
+        
     }
 
 }

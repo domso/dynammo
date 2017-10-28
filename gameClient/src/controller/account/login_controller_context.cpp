@@ -48,10 +48,10 @@ namespace controller {
         session = lock.data();
     }
 
-    void login_controller_context::setSession(const authentication::session_t& session, const int sigLen, const unsigned char* signature) {
+    void login_controller_context::setSession(const authentication::session_t& session, const encryption::signature& signature) {
         util::wait_lock::write<authentication::signed_session_t> lock(m_signedSession);
         lock.data().session = session;
-        lock.data().signature = std::vector<unsigned char>(signature, signature + sigLen);       
+        lock.data().signature = std::vector<uint8_t>(signature.data, signature.data + signature.length);       
     }
 
     bool login_controller_context::waitForSession(authentication::signed_session_t& session, double timeOut) {

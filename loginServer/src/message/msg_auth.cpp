@@ -15,20 +15,23 @@ namespace message {
         msg_auth_request_t* request = inputBuffer.getNext<msg_auth_request_t>();
         msg_auth_response_t* response = outputBuffer.pushNext<msg_auth_response_t>();
         message::msg_status_t status = message::status::error::unknown;
-   
+
         if (request != nullptr && response != nullptr) {
             status = server.authenticate(request->credentials, response->session);
-        }
-
-        if (server.getPrivateKey() != nullptr) {
-            int requiredSize = server.getPrivateKey()->getRequiredSize();
-            unsigned char* signature = outputBuffer.pushNext<unsigned char>(requiredSize);
-
-            if (signature == nullptr || encryption::signChar(*server.getPrivateKey(), sizeof(authentication::session_t), (const unsigned char*)&response->session, requiredSize, signature) == 0) {
-               status = message::status::error::signing;
+            if (status == message::status::ok) {
+                status = server.getDestination(response->session, response->session.serverAddr);
             }
         }
-        
+
+        if (server.getPrivateKey() != nullptr && status == message::status::ok) {
+            int requiredSize = server.getPrivateKey()->getRequiredSize();
+            encryption::signature signature(outputBuffer.pushNext<unsigned char>(requiredSize), requiredSize);
+
+            if (signature.data == nullptr || encryption::sign<authentication::session_t>(*server.getPrivateKey(), signature, &response->session) == 0) {
+                status = message::status::error::signing;
+            }
+        }
+
         return status;
     }
 

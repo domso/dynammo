@@ -78,10 +78,9 @@ namespace controller {
         // - stores 'session' as new session of the current user
         // Parameter:
         // - info: reference to an input instance
-        // - sigLen: length of signature
-        // - signature: pointer to the session-signature
+        // - signature: reference to the session-signature
         //______________________________________________________________________________________________________
-        void setSession(const authentication::session_t& session, const int sigLen, const unsigned char* signature);
+        void setSession(const authentication::session_t& session, const encryption::signature& signature);
         //______________________________________________________________________________________________________
         //
         // Description:

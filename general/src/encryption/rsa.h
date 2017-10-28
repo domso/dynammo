@@ -1,6 +1,7 @@
 #ifndef general_encryption_rsa_h
 #define general_encryption_rsa_h
 
+#include <stdint.h>
 #include <openssl/pem.h>
 #include <openssl/ssl.h>
 #include <openssl/rsa.h>
@@ -115,7 +116,7 @@ namespace encryption {
     // - number of valid encrypted bytes in the output buffer | on success
     // - zero | on any error
     //______________________________________________________________________________________________________
-    int encryptChar(const encryption::public_key& key, const int dataLen, const unsigned char* in, const int bufferLen, unsigned char* out);
+    int encryptChar(const encryption::public_key& key, const int dataLen, const uint8_t* in, const int bufferLen, uint8_t* out);
     //______________________________________________________________________________________________________
     //
     // Description:
@@ -134,48 +135,77 @@ namespace encryption {
     // - number of valid decrypted bytes in the output buffer | on success
     // - zero | on any error
     //______________________________________________________________________________________________________
-    int decryptChar(const private_key& key, int dataLen, const unsigned char* in, const int bufferLen, unsigned char* out);
+    int decryptChar(const private_key& key, int dataLen, const uint8_t* in, const int bufferLen, uint8_t* out);
+    //______________________________________________________________________________________________________
+    //
+    // simple storage class for a signature
+    //______________________________________________________________________________________________________
+    class signature {
+    public:
+        signature(uint8_t* const d, const int l);
+        uint8_t* const data;
+        const int length;
+    };
     //______________________________________________________________________________________________________
     //
     // Description:
-    // - tries to sign dataLen bytes from 'in' with the private key and store the signature into 'out'
+    // - tries to sign n instances of T from 'in' with the private key and store the signature into 'signature'
     // - for signing RSA_private_encrypt() with SHA1 and RSA_PKCS1_PADDING is used
     // - the required size for the output-buffer will be checked
     // Parameters:
     // - key: reference to a valid rsa-public-key
-    // - dataLen: length of the input buffer
-    // - in: pointer to the input buffer
-    // - sigLen: length of the signature buffer
-    // - signature: pointer to the output buffer
+    // - signature: pointer to the output signature
+    // - in: pointer to the input instances
+    // - n: number of input-instances (default 1)
     // Return:
     // - number of valid signature bytes in the output buffer | on success
     // - zero | on any error
     //______________________________________________________________________________________________________
-    int signChar(const encryption::private_key& key, int dataLen, const unsigned char* in, const int sigLen, unsigned char* signature);
+    template <typename T>
+    int sign(const encryption::private_key& key, signature& signature, const T* in, const int n = 1) {
+        int result;
+        uint8_t hash[20];
+
+        if (signature.length < key.getRequiredSize()) {
+            return -1;
+        }
+
+        SHA1((unsigned char*)in, sizeof(T) * n, hash);
+        result = RSA_private_encrypt(20, hash, signature.data, key.getRSA(), RSA_PKCS1_PADDING);
+
+        if (result < 0) {
+            return 0;
+        }
+
+        return result;
+    }
     //______________________________________________________________________________________________________
     //
     // Description:
-    // - tries to validate dataLen bytes from 'in' with the public key
+    // - tries to validate n instances of T from 'in' with the public key
     // - for validation RSA_public_decrypt() with SHA1 and RSA_PKCS1_PADDING is used
     // Parameters:
     // - key: reference to a valid rsa-public-key
-    // - sigLen: length of signature
-    // - signature: pointer to the signature buffer
-    // - dataLen: length of the input buffer
-    // - in: pointer to the input buffer
+    // - signature: pointer to the signature instance
+    // - in: pointer to the input instances
+    // - n: number of input-instances (default 1)
     // Return:
     // - true  | on success
     // - false | on any error
     //______________________________________________________________________________________________________
-    bool verifyChar(const encryption::public_key& key, int sigLen, const unsigned char* signature, int dataLen, const unsigned char* in);
-    //______________________________________________________________________________________________________
-    //
-    // simple struct with template-defined size
-    //______________________________________________________________________________________________________
-    template<int T>
-    struct signature {
-        char data[T];
-    };
+    template <typename T>
+    bool verify(const encryption::public_key& key, const signature& signature, const T* in, const int n = 1) {
+        uint8_t hash[20];
+        SHA1((uint8_t*)in, sizeof(T) * n, hash);
+
+        uint8_t calcSignatureBuffer[key.getRequiredSize()];
+
+        if (RSA_public_decrypt(signature.length, signature.data, calcSignatureBuffer, key.getRSA(), RSA_PKCS1_PADDING) == 20) {
+            return memcmp(hash, calcSignatureBuffer, 20) == 0;
+        }
+
+        return false;
+    }
 }
 
 #endif

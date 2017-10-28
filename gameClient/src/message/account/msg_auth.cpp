@@ -26,10 +26,10 @@ namespace message {
         msg_status_t msg_auth::responseHandler(message::msg_header_t& header, network::ipv4_addr& srcAddr, network::pkt_buffer& inputBuffer, network::pkt_buffer& outputBuffer, network::udp_socket< network::ipv4_addr >& socket, message::msg_option_t& options, controller::login_controller_context& client) {
             msg_auth_response_t* response = inputBuffer.getNext<msg_auth_response_t>();
             int sigLen = inputBuffer.remainingMsgLen();
-            unsigned char* signature = inputBuffer.getNext<unsigned char>(sigLen);
+            encryption::signature signature(inputBuffer.getNext<unsigned char>(sigLen), sigLen);
 
-            if (response != nullptr && signature != nullptr) {
-                client.setSession(response->session, sigLen, signature);
+            if (response != nullptr && signature.data != nullptr) {
+                client.setSession(response->session, signature);
 
             } else {
                 //TODO add error

@@ -245,10 +245,10 @@ namespace message {
 
             if (publicKey != nullptr) { // validate signature
                 int requiredSize = publicKey->getRequiredSize();
-                char* signature = decryptedInputBuffer.getNext<char>(requiredSize);
+                encryption::signature signature(decryptedInputBuffer.getNext<uint8_t>(requiredSize), requiredSize);
 
-                if (signature != nullptr) {
-                    if (!encryption::verifyChar(*publicKey, requiredSize, (unsigned char*) signature, decryptedInputBuffer.remainingMsgLen(), (unsigned char*) decryptedInputBuffer.dataOffset())) {
+                if (signature.data != nullptr) {
+                    if (!encryption::verify<uint8_t>(*publicKey, signature, (uint8_t*)decryptedInputBuffer.dataOffset(), decryptedInputBuffer.remainingMsgLen())) {
                         // delete message
                         decryptedInputBuffer.setMsgLen(0);
                         return false;
@@ -277,9 +277,8 @@ namespace message {
         //______________________________________________________________________________________________________
         static bool internalSign(const encryption::private_key& privateKey, network::pkt_buffer& buffer) {
             buffer.reset();
-            int signatureLen = privateKey.getRequiredSize();
-            unsigned char* sigature = buffer.getNext<unsigned char>(signatureLen);
-            return encryption::signChar(privateKey, buffer.remainingMsgLen(), (unsigned char*) buffer.dataOffset(), signatureLen, sigature) != -1;
+            encryption::signature signature(buffer.getNext<uint8_t>(privateKey.getRequiredSize()), privateKey.getRequiredSize());
+            return encryption::sign<uint8_t>(privateKey, signature, (uint8_t*) buffer.dataOffset(), buffer.remainingMsgLen()) != -1;
         }
 
         message::msg_status_t (*callbacks[256])(message::msg_header_t& header, network::ipv4_addr&, network::pkt_buffer&, network::pkt_buffer&, network::udp_socket<network::ipv4_addr>&, message::msg_option_t&, additional_datatype_t&);
