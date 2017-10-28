@@ -3,6 +3,8 @@
 
 #include <SDL2/SDL.h>
 #include "window.h"
+#include "image.h"
+#include "texture.h"
 
 namespace SDL {
     class renderer {
@@ -19,15 +21,14 @@ namespace SDL {
         
         void update();
         
-        template <typename T>
-        void draw(T& texture, const rect* sourceRect = nullptr, const rect* destRect = nullptr) {
-            SDL_RenderCopy(m_internalHandle, texture.internal_handle(), sourceRect, destRect);
-        }
+        void draw(texture& tex, const rect* sourceRect = nullptr, const rect* destRect = nullptr);
         
         void draw_line(const int srcX, const int srcY, const int destX, const int destY);        
         
         void set_draw_color(const uint8_t r, const uint8_t g, const uint8_t b, const uint8_t a);
         
+        texture create_texture(image& texImg);
+                
         SDL_Renderer* internal_handle();
     private:
         SDL_Renderer* m_internalHandle;

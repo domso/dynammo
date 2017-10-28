@@ -8,6 +8,7 @@
 #include "src/SDL/window.h"
 #include "src/SDL/renderer.h"
 #include "src/SDL/image.h"
+#include "src/SDL/texture.h"
 
 int main() {    
     SDL::window window;
@@ -25,10 +26,12 @@ int main() {
     renderer.clear();
     renderer.update();    
     
-    SDL::image image;
+    SDL::image::loader loader;
+    SDL::image image;    
+    image.load("test.jpg");
     
-    image.load("test.jpg", renderer);
     
+    SDL::texture texture = renderer.create_texture(image);
     
     
     SDL::rect r;
@@ -39,7 +42,7 @@ int main() {
     r.y = 200;
     
     
-    renderer.draw<SDL::image>(image, nullptr, &r);
+    renderer.draw(texture, nullptr, &r);
     
     
     renderer.set_draw_color(255, 255, 255, 255);

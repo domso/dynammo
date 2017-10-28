@@ -1,37 +1,41 @@
 #include "image.h"
 
 #include "SDL2/SDL_image.h"
+#include <atomic>
 
-namespace SDL {
-    image::image() : m_internalSurface(nullptr), m_internalTexture(nullptr){
-        IMG_Init(IMG_INIT_JPG | IMG_INIT_PNG);
+namespace SDL {   
+    std::atomic<bool> sdlImageFlag(false);
+    
+    image::loader::loader() {
+        IMG_Init(IMG_INIT_JPG | IMG_INIT_PNG);        
+    }
+    
+    image::loader::~loader() {        
+        IMG_Quit();        
+    }
+    
+    image::image() : m_internalSurface(nullptr) {
+        
+    }
+    
+    image::image(image&& o) {
+        m_internalSurface = o.m_internalSurface;
+        o.m_internalSurface = nullptr;
     }
 
     image::~image() {
-        if (m_internalTexture != nullptr) {
-            SDL_DestroyTexture(m_internalTexture);
-        }
-        
         if (m_internalSurface != nullptr) {
             SDL_FreeSurface(m_internalSurface);
         }
-        
-        IMG_Quit();
     }
     
-    bool image::load(const std::string& filename, renderer& context) {
-        bool result = false;
-        
+    bool image::load(const std::string& filename) {
         m_internalSurface = IMG_Load(filename.c_str());        
-        if (m_internalSurface != nullptr) {
-            m_internalTexture = SDL_CreateTextureFromSurface(context.internal_handle(), m_internalSurface);
-            result = m_internalTexture != nullptr;
-        }
-        
-        return result;
+        return m_internalSurface != nullptr;
     }    
     
-    SDL_Texture* image::internal_handle() {
-        return m_internalTexture;
+    SDL_Surface* image::internal_handle() {
+        return m_internalSurface;
     }
 }
+
