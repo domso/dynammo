@@ -8,7 +8,7 @@
 namespace message {
     class msg_auth {
     public:
-        constexpr static const message::msg_type_t id = 1;
+        constexpr static const message::msg_type_t id = 65;
 
         static bool request(message::msg_header_t& header, network::ipv4_addr& destAddr, network::pkt_buffer& outputBuffer, network::udp_socket<network::ipv4_addr>& socket, void* param);
 

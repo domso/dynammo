@@ -1,10 +1,7 @@
 #include <iostream>
 #include "signal.h"
 #include "src/message/msg_controller.h"
-#include "src/message/msg_info.h"
 #include "src/message/msg_auth.h"
-#include "src/message/msg_register.h"
-#include "src/message/msg_unregister.h"
 #include "src/encryption/rsa.h"
 #include "src/database/connection.h"
 #include "src/util/config_file.h"
@@ -81,41 +78,22 @@ int main(int argc, char* argv[]) {
     }
 
     //______________________________________________________________________________________________________
-    encryption::private_key privateKey;
-    encryption::private_key* privateKeyLink = nullptr;
+    message::msg_controller<controller::login_server_context> networkManager(config.getNumeric<int>("bufferSize"));
+    networkManager.registerHandler<message::msg_auth>();
+    
+    controller::login_server_context context;
 
-    std::string privateKeyFile = config.getString("privateKey");
-
-    if (privateKeyFile != "") {
-        if (!privateKey.load(privateKeyFile)) {
-            std::cout << "[Error] Could not load '" + privateKeyFile + "' as private key!" << std::endl;
-            return 0;
-        }
-
-        privateKeyLink = &privateKey;
-    }
-
-    //______________________________________________________________________________________________________
-    message::msg_controller<controller::login_server_context> controller(config.getNumeric<int>("bufferSize"));
-    controller::login_server_context context(config.getNumeric<int>("bufferSize"));
-
-    if (!context.init(connection, config.getNumeric<int32_t>("serverID"), privateKeyLink)) {
+    if (!context.init(connection)) {
         std::cout << "[Error] Could not init context!" << std::endl;
         std::cout << "[Error] " << connection.getErrorMsg() << std::endl;
         return 0;
     }
 
-    //______________________________________________________________________________________________________
-    controller.registerHandler<message::msg_info>();
-    controller.registerHandler<message::msg_auth>();
-    controller.registerHandler<message::msg_register>();
-    controller.registerHandler<message::msg_unregister>();
-
-    controller.init(config.getNumeric<uint16_t>("port"), &context);
+    networkManager.init(config.getNumeric<uint16_t>("port"), &context);
     //______________________________________________________________________________________________________
     signal(SIGINT, &stopServer);
-    GlobalControllerLink = &controller;
-    controller.recv(privateKeyLink);
+    GlobalControllerLink = &networkManager;
+    networkManager.recv(nullptr);
     std::cout << "[Info] Closing server..." << std::endl;
     return 0;
 }

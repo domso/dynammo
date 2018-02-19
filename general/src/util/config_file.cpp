@@ -14,7 +14,7 @@ namespace util {
 
     }
 
-    void config_file::load(std::string filename) {
+    void config_file::load(const std::string& filename) {
         std::ifstream file;
         std::string line;
 

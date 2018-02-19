@@ -4,12 +4,9 @@ namespace database {
     namespace queries {
         bool search_account_by_key::init() {
             bool result = true;
-            result &= setQuery("Select accountID, permission, serverID from user where username = ? and userkey = ?;");
-            result &= setResult<authentication::accountID_t>(0, MYSQL_TYPE_LONG, &m_accountID);
-            result &= setResult<authentication::permissions_t>(1, MYSQL_TYPE_LONG, &m_permissions);
-            result &= setResult<authentication::serverID_t>(2, MYSQL_TYPE_LONG, &m_serverID);
-            result &= setParam<char>(0,  MYSQL_TYPE_STRING, m_credentials.username, sizeof(m_credentials.username));
-            result &= setParam<char>(1,  MYSQL_TYPE_STRING, m_credentials.key, sizeof(m_credentials.key));
+            result &= setQuery("Select publicKey from keymap where accountID = ?;");
+            result &= setParam<authentication::accountID_t>(0, MYSQL_TYPE_LONG, &m_accountID);
+            result &= setResult<char[buffer_size]>(0,  MYSQL_TYPE_STRING, &m_result, sizeof(m_result));
 
             result &= bindResult();
             result &= bindParam();
@@ -17,13 +14,14 @@ namespace database {
             return result;
         }
 
-        bool search_account_by_key::search(const authentication::credentials_t& credentials) {
-            m_credentials = credentials;
-            m_permissions = 0;
-            m_accountID = 0;
-            m_serverID = 0;
+        std::string search_account_by_key::search_for_key(const authentication::accountID_t& accountID) {
+            m_accountID = accountID;
 
-            return execute() && fetchRow();
+            if (execute() && fetchRow()) {
+                return std::move(std::string(m_result));
+            }           
+            
+            return std::string();
         }
     }
 }

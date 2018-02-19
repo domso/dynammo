@@ -18,8 +18,8 @@ namespace util {
         // see memcpy()
         //______________________________________________________________________________________________________
         template <typename T>
-        void cpy(T* dest, const T* src) {
-            memcpy(dest, src, sizeof(T));
+        void cpy(T* dest, const T* src, const int n = 1) {
+            memcpy(dest, src, sizeof(T) * n);
         }
         //______________________________________________________________________________________________________
         //

@@ -9,6 +9,7 @@ namespace authentication {
 
     typedef int32_t accountID_t;
     typedef int32_t serverID_t;
+    typedef int32_t regionID_t;
     typedef int32_t sessionID_t;
     typedef int32_t permissions_t;
     typedef int32_t ticket_t;

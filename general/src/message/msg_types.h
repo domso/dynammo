@@ -5,13 +5,21 @@
 #include "src/message/msg_header.h"
 #include "src/authentication/types.h"
 
-#define MSG_TYPE_INFO 1
-#define MSG_TYPE_LOGIN 2
-#define MSG_TYPE_LOGOUT 3
-#define MSG_TYPE_LOOKUP 4
-
 namespace message {
-
+    
+    
+    namespace types {
+        enum states {
+          ready, wait, recv  
+        };
+    }
+    
+    
+    
+    
+    
+    
+    
     struct msg_info_request_t {
 
     };
@@ -21,11 +29,11 @@ namespace message {
     };
 
     struct msg_auth_request_t {
-        authentication::credentials_t credentials;
+        authentication::accountID_t accountID;
     };
 
     struct msg_auth_response_t {
-        authentication::session_t session;
+        authentication::accountID_t accountID;
     };
 
     struct msg_login_request_t {

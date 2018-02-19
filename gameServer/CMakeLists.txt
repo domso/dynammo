@@ -5,19 +5,25 @@ include_directories(${CMAKE_CURRENT_SOURCE_DIR})
 set (CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/libs/)
 set (CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/bin/)
 
-file(GLOB src_message_account "${CMAKE_CURRENT_SOURCE_DIR}/src/message/account/*.cpp")
-file(GLOB src_message_game "${CMAKE_CURRENT_SOURCE_DIR}/src/message/game/*.cpp")
-add_library(messageGameServer STATIC ${src_message_account} ${src_message_game})
 
-file(GLOB src_data "${CMAKE_CURRENT_SOURCE_DIR}/src/data/*.cpp")
-file(GLOB src_data_map "${CMAKE_CURRENT_SOURCE_DIR}/src/data/map/*.cpp")
-add_library(dataGameServer STATIC ${src_data} ${src_data_map})
-target_link_libraries(dataGameServer utilGeneral encryptionGeneral messageGameServer)
+file(GLOB src_region "${CMAKE_CURRENT_SOURCE_DIR}/src/region/*.cpp")
+add_library(regionGameServer STATIC ${src_region})
+target_link_libraries(regionGameServer utilGeneral messageGeneral)
 
-file(GLOB src_controller_account "${CMAKE_CURRENT_SOURCE_DIR}/src/controller/account/*.cpp")
-file(GLOB src_controller_game "${CMAKE_CURRENT_SOURCE_DIR}/src/controller/game/*.cpp")
-add_library(controllerGameServer STATIC ${src_controller_account} ${src_controller_game})
-target_link_libraries(controllerGameServer messageGameServer)
+file(GLOB src_connection "${CMAKE_CURRENT_SOURCE_DIR}/src/connection/*.cpp")
+add_library(connectionGameServer STATIC ${src_connection})
+target_link_libraries(connectionGameServer utilGeneral messageGeneral)
+
+file(GLOB src_connector "${CMAKE_CURRENT_SOURCE_DIR}/src/connector/*.cpp")
+add_library(connectorGameServer STATIC ${src_connector})
+target_link_libraries(connectorGameServer utilGeneral messageGeneral)
+
+file(GLOB src_user "${CMAKE_CURRENT_SOURCE_DIR}/src/user/*.cpp")
+add_library(userGameServer STATIC ${src_user})
+target_link_libraries(connectorGameServer utilGeneral messageGeneral)
+
+#file(GLOB src_message "${CMAKE_CURRENT_SOURCE_DIR}/src/message/*.cpp")
+#add_library(messageGameServer STATIC ${src_message} )
 
 add_executable(gameServer main.cpp)
-target_link_libraries(gameServer utilGeneral encryptionGeneral dataGameServer messageGameServer controllerGameServer)
+target_link_libraries(gameServer utilGeneral messageGeneral regionGameServer connectionGameServer connectorGameServer userGameServer encryptionGeneral ) #messageGameServer

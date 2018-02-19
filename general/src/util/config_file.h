@@ -22,7 +22,7 @@ namespace util {
         // Parameter:
         // - filename: the absolut or relative path to the config file
         //______________________________________________________________________________________________________
-        void load(std::string filename);
+        void load(const std::string& filename);
         //______________________________________________________________________________________________________
         //
         // Description:

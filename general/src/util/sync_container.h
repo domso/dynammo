@@ -113,7 +113,7 @@ namespace util {
         }
 
         bool importData(network::pkt_buffer& buffer) {
-            int32_t* num_entry = buffer.getNext<int32_t>(1);
+            int32_t* num_entry = buffer.get_next<int32_t>(1);
             int8_t* emptyData;
             int8_t* blockInfo;
             int i = 0;
@@ -125,7 +125,7 @@ namespace util {
 
             while (*num_entry > 0) {
                 if (state == 0) {
-                    emptyData = buffer.getNext<int8_t>(1);
+                    emptyData = buffer.get_next<int8_t>(1);
 
                     if (emptyData == nullptr) {
                         return false;
@@ -134,7 +134,7 @@ namespace util {
                     i += *emptyData & 0x7F;
                     state = *emptyData & 0x80;
                 } else {
-                    blockInfo = buffer.getNext<int8_t>(1);
+                    blockInfo = buffer.get_next<int8_t>(1);
 
                     if (blockInfo == nullptr) {
                         return false;
@@ -198,7 +198,7 @@ namespace util {
 
             for (int bit = 0; bit < 8; bit++) {
                 if (blockInfo & (1 << bit)) {
-                    payload = buffer.getNext<int64_t>(1);
+                    payload = buffer.get_next<int64_t>(1);
 
                     if (payload == nullptr) {
                         return false;
