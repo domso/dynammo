@@ -27,6 +27,7 @@ namespace connector {
             
             template <typename T>
             void set(T* dest, const int n = 1) {
+                static_assert(std::is_trivially_copyable<T>::value);
                 m_destPtr = (uint8_t*)dest;
                 m_destSize = sizeof(T) * n;
             }
@@ -40,17 +41,16 @@ namespace connector {
             int m_destSize;
         };
 
-        template <typename T, typename additional_datatype_t0, typename additional_datatype_t1>
-        void register_callbacks(additional_datatype_t0* param0, additional_datatype_t1* param1) {
+        template <typename T, typename additional_datatype_t>
+        void register_callbacks(additional_datatype_t* param) {
             static_assert(sizeof(T::id) == 1, "");
 
-            target (*configureTypeGuard)(additional_datatype_t0*, additional_datatype_t1*) = &T::configure;
-            bool (*completeTypeGuard)(additional_datatype_t0*, additional_datatype_t1*) = &T::complete;
+            target (*configureTypeGuard)(additional_datatype_t*) = &T::configure;
+            bool (*completeTypeGuard)(additional_datatype_t*) = &T::complete;
 
-            m_configureCallback[T::id] = (target(*)(void*, void*)) configureTypeGuard;
-            m_completeCallback[T::id] = (bool(*)(void*, void*)) completeTypeGuard;
-            m_callbackDataArg0[T::id] = (void*) param0;
-            m_callbackDataArg1[T::id] = (void*) param1;
+            m_configureCallback[T::id] = (target(*)(void*)) configureTypeGuard;
+            m_completeCallback[T::id] = (bool(*)(void*)) completeTypeGuard;
+            m_callbackDataArg[T::id] = (void*) param;
         }
 
         void close();
@@ -66,10 +66,9 @@ namespace connector {
         uint8_t m_currentMode;
         bool m_modeIsValid;
         
-        std::function<target(void*, void*)> m_configureCallback[256];
-        std::function<bool(void*, void*)> m_completeCallback[256];
-        void* m_callbackDataArg0[256];
-        void* m_callbackDataArg1[256];
+        std::function<target(void*)> m_configureCallback[256];
+        std::function<bool(void*)> m_completeCallback[256];
+        void* m_callbackDataArg[256];
         
         network::tcp_connection<network::ipv4_addr> m_connection;
         network::pkt_buffer m_inputBuffer;

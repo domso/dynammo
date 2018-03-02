@@ -18,6 +18,15 @@ namespace util {
             set(newState);
         }
         
+        void operator==(const stateT reqState) {
+            return is(reqState);
+        }
+        
+        stateT get() {
+            std::lock_guard<std::mutex> lg(m_mutex);
+            return current;
+        }
+        
         void set(const stateT newState) {
             std::lock_guard<std::mutex> lg(m_mutex);
             current = newState;

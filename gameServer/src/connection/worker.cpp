@@ -10,7 +10,7 @@ connection::worker::~worker() {
 
 void connection::worker::accept_new_connections(const uint16_t port) {    
     network::tcp_socket<network::ipv4_addr> tcpSocket;
-    int position = 0;
+    uint32_t position = 0;
     
     if (tcpSocket.accept_on(port, 10)) {        
         tcpSocket.set_timeout(1);
@@ -18,8 +18,10 @@ void connection::worker::accept_new_connections(const uint16_t port) {
             std::lock_guard<std::mutex> lg(m_mutexes[position]);
             if (tcpSocket.accept_connection(m_connections[position])) {   
                 uint8_t protID = 0;
+                uint16_t count = 1;
                 m_connections[position].send_data<uint8_t>(&protID, 1);
-                m_connections[position].send_data<int>(&position, 1);
+                m_connections[position].send_data<uint16_t>(&count, 1);
+                m_connections[position].send_data<uint32_t>(&position, 1);
                 position = ((position + 1) % max_number_of_pending_connections);
             }
         }

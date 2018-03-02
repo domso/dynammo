@@ -34,51 +34,43 @@ namespace graphic {
         }
         
         template <typename T>
-        bool set_uniform_attr(const std::string& attr, const T x) {
-            return set_uniform_attr_array<T>(attr, &x, 1);
+        typename std::enable_if<std::is_same<int, T>::value,void>::type set_uniform_attr(const std::string& attr, const T x) {
+            glUniform1i(m_uniformMap[attr], x);
         }
         
         template <typename T>
-        bool set_uniform_attr(const std::string& attr, const T x, const T y) {
-            T buffer[2];
-            buffer[0] = x;
-            buffer[1] = y;
-            return set_uniform_attr_array<T>(attr, buffer, 2);
+        typename std::enable_if<std::is_same<float, T>::value,void>::type set_uniform_attr(const std::string& attr, const T x) {
+            glUniform1f(m_uniformMap[attr], x);
         }
         
         template <typename T>
-        bool set_uniform_attr(const std::string& attr, const T x, const T y, const T z) {
-            T buffer[3];
-            buffer[0] = x;
-            buffer[1] = y;
-            buffer[2] = z;
-            return set_uniform_attr_array<T>(attr, buffer, 3);
-        }       
-        
-        template <typename T>
-        typename std::enable_if<std::is_same<int, T>::value,bool>::type set_uniform_attr_array(const std::string& attr,const T* x, const int n) {
-            if (m_uniformMap.count(attr) > 0) {
-                enable();
-                glUniform1iv(m_uniformMap[attr], n, x);
-                disable();
-                
-                return true;
-            }
-            
-            return false;
+        typename std::enable_if<std::is_same<int, T>::value,void>::type set_uniform_attr(const std::string& attr, const T x, const T y) {
+            glUniform2i(m_uniformMap[attr], x, y);
         }
         
         template <typename T>
-        typename std::enable_if<std::is_same<float, T>::value,bool>::type set_uniform_attr_array(const std::string& attr,const T* x, const int n) {
-            if (m_uniformMap.count(attr) > 0) {
-                enable();
-                glUniform1fv(m_uniformMap[attr], n,  x);
-                disable();
-                
-                return true;
-            }
-            
-            return false;
+        typename std::enable_if<std::is_same<float, T>::value,void>::type set_uniform_attr(const std::string& attr, const T x, const T y) {
+            glUniform2f(m_uniformMap[attr], x, y);
+        }
+        
+        template <typename T>
+        typename std::enable_if<std::is_same<int, T>::value,void>::type set_uniform_attr(const std::string& attr, const T x, const T y, const T z) {
+            glUniform3i(m_uniformMap[attr], x, y, z);
+        }
+        
+        template <typename T>
+        typename std::enable_if<std::is_same<float, T>::value,void>::type set_uniform_attr(const std::string& attr, const T x, const T y, const T z) {
+            glUniform3f(m_uniformMap[attr], x, y, z);
+        }
+        
+        template <typename T>
+        typename std::enable_if<std::is_same<int, T>::value,void>::type set_uniform_attr_array(const std::string& attr,const T* x, const int n) {
+            glUniform1iv(m_uniformMap[attr], n, x);
+        }
+        
+        template <typename T>
+        typename std::enable_if<std::is_same<float, T>::value,void>::type set_uniform_attr_array(const std::string& attr,const T* x, const int n) {
+            glUniform1fv(m_uniformMap[attr], n,  x);
         }
         
         void add_uniform_attr(const std::string& attr);
@@ -87,10 +79,9 @@ namespace graphic {
         void disable();
 
         bool link();
-    private:
-        bool no_link_error();
         void close();
-                
+    private:
+        bool no_link_error();                
         void link_uniform_attr();
         
         GLuint m_program;

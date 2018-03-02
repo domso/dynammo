@@ -2,13 +2,13 @@
 #define gameServer_region_context_h
 
 #include <unordered_set>
-#include <mutex>
+#include "src/util/lock_ref.h"
 #include "src/region/data.h"
 #include "src/authentication/types.h"
 #include "src/user/controller.h"
 
 namespace region {
-    class context {
+    class context : public util::locked_ref_item {
     public:
         context(const uint64_t id, user::controller& userCtrl);
         context(const context&) = delete;
@@ -17,7 +17,6 @@ namespace region {
         void add_user(const authentication::accountID_t accountID);
         void remove_user(const authentication::accountID_t accountID);
         
-        std::mutex& mutex();
     private:        
         void load();
         void save();
@@ -28,7 +27,6 @@ namespace region {
         user::controller& m_userCtrl;        
         
         std::unordered_set<authentication::accountID_t> m_activeUsers;
-        std::mutex m_mutex;
     };     
 }
 

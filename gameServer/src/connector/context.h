@@ -14,8 +14,7 @@ namespace connector {
         
         connection::controller m_connectionCtrl;
         user::controller m_userCtrl;
-        region::controller m_regionCtrl;
-        
+        region::controller m_regionCtrl;        
     };
 }
 

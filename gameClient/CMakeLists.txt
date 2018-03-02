@@ -23,6 +23,7 @@ target_link_libraries(connectorGameClient messageGeneral)
 
 file(GLOB src_data "${CMAKE_CURRENT_SOURCE_DIR}/src/data/*.cpp")
 add_library(dataGameClient STATIC ${src_data})
+target_link_libraries(dataGameClient regionGameClient)
 
 file(GLOB src_message "${CMAKE_CURRENT_SOURCE_DIR}/src/message/*.cpp")
 add_library(messageGameClient STATIC ${src_message})

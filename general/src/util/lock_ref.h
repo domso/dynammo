@@ -1,9 +1,44 @@
 #ifndef general_util_lock_ref_h
 #define general_util_lock_ref_h
 
+#include <mutex>
+
 namespace util {
-    // Holds ownership by locking the mutex provided by T::mutex()
-    // The destructor of T needs to lock the mutex!
+    class locked_ref_item {
+    public:
+        locked_ref_item() {
+            
+        }
+        
+        locked_ref_item(locked_ref_item& copy) {
+            std::lock_guard<std::mutex> lg(copy.m_mutex);
+        }
+        
+        locked_ref_item(locked_ref_item&& move) {
+            std::lock_guard<std::mutex> lg(move.m_mutex);
+        }
+        
+        ~locked_ref_item() {
+            std::lock_guard<std::mutex> lg(m_mutex);
+        }
+        
+        void operator=(locked_ref_item& copy) {
+            std::lock_guard<std::mutex> lg(copy.m_mutex);
+        }
+        
+        void operator=(locked_ref_item&& move) {
+            std::lock_guard<std::mutex> lg(move.m_mutex);
+        }
+        
+        std::mutex& mutex() {
+            return m_mutex;
+        }
+    private:
+        std::mutex m_mutex;
+    };
+
+
+    // T must implement locked_ref_item
     template <typename T>
     class locked_ref {
     public:
@@ -12,6 +47,10 @@ namespace util {
         locked_ref(locked_ref&& move) : m_data(move.m_data), m_lock(std::move(move.m_lock)) {}
 
         T* operator->() {
+            return &m_data;
+        }
+        
+        T* data() {
             return &m_data;
         }
     private:

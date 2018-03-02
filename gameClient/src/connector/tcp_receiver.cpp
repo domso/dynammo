@@ -6,8 +6,7 @@ connector::tcp_receiver::tcp_receiver(const int bufferSize) : m_currentMode(0), 
     for (int i = 0; i < 256; i++) {
         m_configureCallback[i] = nullptr;
         m_completeCallback[i] = nullptr;
-        m_callbackDataArg0[i] = nullptr;
-        m_callbackDataArg1[i] = nullptr;
+        m_callbackDataArg[i] = nullptr;
     }
 }
 
@@ -58,7 +57,7 @@ void connector::tcp_receiver::call_configure(std::unique_lock<std::mutex>& ul) {
 
     if (m_currentTarget.complete() && m_modeIsValid && m_configureCallback[m_currentMode] != nullptr) {
         ul.unlock();
-        m_currentTarget = m_configureCallback[m_currentMode](m_callbackDataArg0[m_currentMode], m_callbackDataArg1[m_currentMode]);
+        m_currentTarget = m_configureCallback[m_currentMode](m_callbackDataArg[m_currentMode]);
         ul.lock();
     }
 }
@@ -66,7 +65,7 @@ void connector::tcp_receiver::call_configure(std::unique_lock<std::mutex>& ul) {
 void connector::tcp_receiver::call_complete(std::unique_lock<std::mutex>& ul) {
     if (m_currentTarget.complete() && m_modeIsValid && m_completeCallback[m_currentMode] != nullptr) {
         ul.unlock();
-        m_modeIsValid = !m_completeCallback[m_currentMode](m_callbackDataArg0[m_currentMode], m_callbackDataArg1[m_currentMode]);
+        m_modeIsValid = !m_completeCallback[m_currentMode](m_callbackDataArg[m_currentMode]);
         ul.lock();
     }
 }

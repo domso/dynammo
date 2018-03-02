@@ -26,7 +26,7 @@ namespace connector {
 
         template <typename T>
         void register_data_obj(T& obj) {
-            m_tcpRecv.register_callbacks<T, T, connector::controller>(&obj, this);
+            m_tcpRecv.register_callbacks<T, T>(&obj);
         }
         
         template <typename T>

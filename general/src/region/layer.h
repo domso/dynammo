@@ -27,6 +27,14 @@ namespace region {
             return m_tiles[y * size + x];
         }
         
+        tileT* data() {
+            return m_tiles;
+        }
+        
+        const tileT* data() const {
+            return m_tiles;
+        }
+        
         const tileT& get_nearest(int x, int y) const {
             x = std::max(x, 0);
             y = std::max(y, 0);

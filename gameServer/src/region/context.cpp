@@ -6,7 +6,6 @@ region::context::context(const uint64_t id, user::controller& userCtrl) : m_id(i
 }
 
 region::context::~context() {
-    std::unique_lock<std::mutex> ul(m_mutex);
     save();
 }
 
@@ -20,10 +19,6 @@ void region::context::add_user(const authentication::accountID_t accountID) {
 
 void region::context::remove_user(const authentication::accountID_t accountID) {
     m_activeUsers.erase(accountID);
-}
-
-std::mutex& region::context::mutex() {
-    return m_mutex;
 }
 
 void region::context::load() {

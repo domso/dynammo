@@ -1,5 +1,6 @@
 #include "shader.h"
 #include <sstream>
+#include <assert.h>
 
 graphic::shader::shader(const int shaderType, const std::string& filename) {
     m_shaderHandle = create_shader(shaderType, filename);
@@ -26,24 +27,33 @@ GLuint graphic::shader::internal_handle() {
 
 std::vector<char> graphic::shader::load_shader_file(const std::string& filename) {
     std::ifstream t(filename);
-    std::stringstream buffer;
-    buffer << t.rdbuf();
     std::vector<char> result;
 
-    while (buffer.good()) {
-        result.push_back(buffer.get());
+    if (t.is_open()) {
+        std::stringstream buffer;
+        buffer << t.rdbuf();
+
+        while (buffer.good()) {
+            result.push_back(buffer.get());
+        }
+
+        result[result.size() - 1] = 0;
     }
-    result[result.size() - 1] = 0;
-    
+
     return result;
 }
 
 GLuint graphic::shader::create_shader(const int shaderType, const std::string& filename) {
-    GLuint shader = glCreateShader(shaderType);
     std::vector<char> shaderText = load_shader_file(filename);
+
+    if (shaderText.size() == 0) {
+        std::cout << "Could not open " << filename << std::endl;
+        return 0;
+    }   
+    
     int status;
     char* src = shaderText.data();
-   
+    GLuint shader = glCreateShader(shaderType);
     glShaderSource(shader, 1, &src, nullptr);
     glCompileShader(shader);
     glGetShaderiv(shader, GL_COMPILE_STATUS, &status);
