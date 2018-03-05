@@ -1,47 +1,29 @@
-#ifndef gameClient_connector_controller_h
-#define gameClient_connector_controller_h
+#pragma once
 
 #include <thread>
 #include <mutex>
 
+#include "src/util/event_controller.h"
+#include "src/types/game_events.h"
 #include "src/message/msg_controller.h"
 #include "src/connector/tcp_receiver.h"
+#include "src/connector/requester.h"
+#include "src/connector/data_transfer/context.h"
+#include "src/connector/msg_transfer/context.h"
+#include "src/region/controller.h"
+#include "src/session/controller.h"
 
 namespace connector {
     class controller {
     public:
-        controller(network::ipv4_addr& tcpDestAddr, network::ipv4_addr& udpDestAddr);
+        controller(network::ipv4_addr& tcpDestAddr, network::ipv4_addr& udpDestAddr, region::controller& regCtrl, session::controller& sessionCtrl, util::event_controller<types::game_events>& eventCtrl);
         controller(const controller& copy) = delete;
         controller(controller&& move) = delete;
         ~controller();
 
-        // call only after all objs are registered!
         bool open();
-        
-        template <typename T>
-        bool exec_request() {
-            std::lock_guard<std::mutex> lg(m_mutex);
-            return m_msgCtrl.exec_request<T>(m_udpDestAddr, m_outputBuffer);
-        }
-
-        template <typename T>
-        void register_data_obj(T& obj) {
-            m_tcpRecv.register_callbacks<T, T>(&obj);
-        }
-        
-        template <typename T>
-        void register_message_obj(typename T::content& obj) {
-            m_msgCtrl.register_handler<T, typename T::content>(&obj);
-        }
-        
-        template <typename T>
-        typename T::content& get_message_obj() {
-            return *(m_msgCtrl.additional_datatype<T, typename T::content>());
-        }        
     private:
         constexpr static const int bufferSize = 1500;
-        network::pkt_buffer m_outputBuffer;
-        std::mutex m_mutex;
 
         bool m_status;
 
@@ -53,7 +35,10 @@ namespace connector {
 
         message::msg_controller m_msgCtrl;
         connector::tcp_receiver m_tcpRecv;
+
+        // needs to be initialized last!
+        data_transfer::context m_dataContext;
+        msg_transfer::context m_messageContext;
+        requester m_requester;
     };
 }
-
-#endif

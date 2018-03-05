@@ -7,23 +7,31 @@
 #include "src/graphic/base_mesh.h"
 #include "src/graphic/base_texture.h"
 #include "src/graphic/img_texture.h"
+#include "src/graphic/data_texture.h"
+#include "src/graphic/texture_controller.h"
 
 namespace graphic {
     class sprite_mesh : public base_mesh {
     public:
-        sprite_mesh(const region::dynamic_obj* obj) : m_texture("../res/tile.png"), m_obj(*obj) {
-            set_position(region::vec3<float>(50, 50, 0));
+        sprite_mesh(const std::pair<region::dynamic_obj*, region::layer<uint32_t>*>* obj, texture_controller& texCtrl) :         
+        m_dataTexture(texCtrl.load_data_texture(obj->second->data(), obj->second->size, obj->second->size)),
+        m_texture(texCtrl.load_img_texture("../res/tile.png"))
+        {
+            set_position(region::vec3<float>(0, 0, 0));
         }
 
         void load() {
             build_position();
             build_uv();
 
-            add_texture(m_texture);
+            add_texture(*m_texture.get());
+            add_texture(*m_dataTexture.get());
+            
             m_shaders.add_shader<graphic::shader_program::shader_types::vertex>("../shader/sprite_vertex.glsl");
             m_shaders.add_shader<graphic::shader_program::shader_types::fragment>("../shader/sprite_fragment.glsl");
 
             m_shaders.add_uniform_attr("tex");
+            m_shaders.add_uniform_attr("mapData");
             m_shaders.add_uniform_attr("scale");
             m_shaders.add_uniform_attr("position");
             m_shaders.link();
@@ -35,22 +43,28 @@ namespace graphic {
 
         void update() {
             m_shaders.set_uniform_attr<int>("tex", 0);
-            m_shaders.set_uniform_attr<float>("scale", 0.5, 0.5);
+            m_shaders.set_uniform_attr<int>("mapData", 1);
+            m_shaders.set_uniform_attr<float>("scale", 0.25, 0.25);
+            
+            m_position.x += 0.01;
+            m_position.y += 0.01;
             m_shaders.set_uniform_attr<float>("position", m_position.x, m_position.y, m_position.z);
         }
         
         void set_position(const region::vec3<float>& newPos) {
-            int resolution = 128;
-            float size = 0.005;
-            float scale = 0;//0.01;            
-            float depthMargin = 1.0f / (2.0f * resolution);
+//             int resolution = 128;
+//             float size = 0.005;
+//             float scale = 0;//0.01;            
+//             float depthMargin = 1.0f / (2.0f * resolution);
+//             
+//             
+//             float depthTL = -((newPos.x + newPos.y) * depthMargin);
+// 
+//             m_position.x = -(newPos.x - newPos.y)     * 2 * size;
+//             m_position.y = -((newPos.x + newPos.y)     * size - 0);
+//             m_position.z = depthTL;
             
-            
-            float depthTL = -((newPos.x + newPos.y) * depthMargin);
-
-            m_position.x = -(newPos.x - newPos.y)     * 2 * size;
-            m_position.y = -((newPos.x + newPos.y)     * size - 0);
-            m_position.z = depthTL;
+            m_position = newPos;
         }
         
 
@@ -106,8 +120,8 @@ namespace graphic {
         }
 
         region::vec3<float> m_position;
-        img_texture m_texture;
-        const region::dynamic_obj& m_obj;
+        std::shared_ptr<data_texture> m_dataTexture;
+        std::shared_ptr<img_texture> m_texture;
     };
 }
 

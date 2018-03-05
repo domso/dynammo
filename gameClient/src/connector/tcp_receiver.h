@@ -41,12 +41,12 @@ namespace connector {
             int m_destSize;
         };
 
-        template <typename T, typename additional_datatype_t>
-        void register_callbacks(additional_datatype_t* param) {
+        template <typename T>
+        void register_callbacks(T* param) {
             static_assert(sizeof(T::id) == 1, "");
 
-            target (*configureTypeGuard)(additional_datatype_t*) = &T::configure;
-            bool (*completeTypeGuard)(additional_datatype_t*) = &T::complete;
+            target (*configureTypeGuard)(T*) = &T::configure;
+            bool (*completeTypeGuard)(T*) = &T::complete;
 
             m_configureCallback[T::id] = (target(*)(void*)) configureTypeGuard;
             m_completeCallback[T::id] = (bool(*)(void*)) completeTypeGuard;

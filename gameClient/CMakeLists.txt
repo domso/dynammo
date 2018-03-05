@@ -14,24 +14,26 @@ INCLUDE(FindPkgConfig)
 
 find_package(OpenGL REQUIRED)
 
-file(GLOB src_region "${CMAKE_CURRENT_SOURCE_DIR}/src/region/*.cpp")
-add_library(regionGameClient STATIC ${src_region})
-
-file(GLOB src_connector "${CMAKE_CURRENT_SOURCE_DIR}/src/connector/*.cpp")
-add_library(connectorGameClient STATIC ${src_connector})
-target_link_libraries(connectorGameClient messageGeneral)
-
-file(GLOB src_data "${CMAKE_CURRENT_SOURCE_DIR}/src/data/*.cpp")
-add_library(dataGameClient STATIC ${src_data})
-target_link_libraries(dataGameClient regionGameClient)
-
-file(GLOB src_message "${CMAKE_CURRENT_SOURCE_DIR}/src/message/*.cpp")
-add_library(messageGameClient STATIC ${src_message})
-
 file(GLOB src_graphic "${CMAKE_CURRENT_SOURCE_DIR}/src/graphic/*.cpp")
 add_library(graphicGameClient STATIC ${src_graphic})
 
+file(GLOB src_user_interface "${CMAKE_CURRENT_SOURCE_DIR}/src/user_interface/*.cpp")
+add_library(user_interfaceGameClient STATIC ${src_user_interface})
+
+file(GLOB src_region "${CMAKE_CURRENT_SOURCE_DIR}/src/region/*.cpp")
+add_library(regionGameClient STATIC ${src_region})
+
+file(GLOB src_session "${CMAKE_CURRENT_SOURCE_DIR}/src/session/*.cpp")
+add_library(sessionGameClient STATIC ${src_session})
+
+file(GLOB src_connector "${CMAKE_CURRENT_SOURCE_DIR}/src/connector/*.cpp")
+file(GLOB src_connector_data_transfer "${CMAKE_CURRENT_SOURCE_DIR}/src/connector/data_transfer/*.cpp")
+file(GLOB src_connector_msg_transfer "${CMAKE_CURRENT_SOURCE_DIR}/src/connector/msg_transfer/*.cpp")
+add_library(connectorGameClient STATIC ${src_connector} ${src_connector_data_transfer} ${src_connector_msg_transfer})
+target_link_libraries(connectorGameClient messageGeneral)
+
+
 add_executable(gameClient main.cpp)
-target_link_libraries(gameClient utilGeneral messageGeneral encryptionGeneral regionGameClient graphicGameClient connectorGameClient dataGameClient messageGameClient)
+target_link_libraries(gameClient utilGeneral messageGeneral encryptionGeneral regionGameClient sessionGameClient graphicGameClient user_interfaceGameClient connectorGameClient)
 INCLUDE_DIRECTORIES(${OPENGL_INCLUDE_DIRS} ${GTKMM_INCLUDE_DIRS})
 TARGET_LINK_LIBRARIES(gameClient ${OPENGL_LIBRARIES} ${GTKMM_LIBRARIES} "epoxy")

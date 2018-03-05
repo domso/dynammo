@@ -1,11 +1,14 @@
 #include "src/connector/controller.h"
 
-connector::controller::controller(network::ipv4_addr& tcpDestAddr, network::ipv4_addr& udpDestAddr)
-    : m_outputBuffer(bufferSize),
-      m_udpDestAddr(udpDestAddr),
+connector::controller::controller(network::ipv4_addr& tcpDestAddr, network::ipv4_addr& udpDestAddr, region::controller& regCtrl, session::controller& sessionCtrl, util::event_controller<types::game_events>& eventCtrl)
+    : m_udpDestAddr(udpDestAddr),
       m_tcpDestAddr(tcpDestAddr),
       m_msgCtrl(bufferSize),
-      m_tcpRecv(bufferSize) {}
+      m_tcpRecv(bufferSize),
+      m_dataContext(sessionCtrl, m_tcpRecv, regCtrl),
+      m_messageContext(m_msgCtrl, regCtrl, sessionCtrl),      
+      m_requester(udpDestAddr, eventCtrl, m_msgCtrl, regCtrl, sessionCtrl)
+      {}
 
 connector::controller::~controller() {
     m_msgCtrl.close();

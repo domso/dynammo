@@ -1,5 +1,4 @@
-#ifndef general_auth_types_h
-#define general_auth_types_h
+#pragma once
 
 #include <vector>
 #include "network/ip_addr.h"
@@ -58,5 +57,3 @@ namespace authentication {
         std::vector<uint8_t> signature;
     };
 }
-
-#endif

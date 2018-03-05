@@ -17,10 +17,6 @@ namespace region {
         
         util::locked_ref<region::context> operator[](const uint32_t id);
         void remove(const uint32_t id);
-
-        void test() {
-            std::cout << "tst" << std::endl;
-        }
     private:
         graphic::controller& m_graphicCtrl;
         std::unordered_map<uint32_t, region::context> m_regionData;

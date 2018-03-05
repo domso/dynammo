@@ -1,7 +1,5 @@
 #include "src/graphic/renderer.h"
 
-#include "src/graphic/window.h"
-
 graphic::renderer::renderer() : m_glarea(nullptr) {
 
 }
@@ -42,7 +40,7 @@ void graphic::renderer::realize() {
         currentState.set(states::error);
     } else {
         currentState.set(states::realized);
-    }
+    }    
 }
 
 void graphic::renderer::unrealize() {

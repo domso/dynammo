@@ -28,20 +28,17 @@ namespace graphic {
         };
         
         util::state_machine<states> currentState = states::unrealized;
-    private:
+    private:       
+        
         void realize();
         void unrealize();
         bool render(const Glib::RefPtr<Gdk::GLContext>& context);
-
-        void render_test();
-        
         
         void render_meshes();
         void update_meshes();
         void add_new_mesh();
         void remove_old_mesh();
         
-        bool first = true;
         
         std::thread m_thread;
         std::mutex m_mutex;

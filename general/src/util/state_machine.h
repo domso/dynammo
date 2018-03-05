@@ -1,6 +1,7 @@
 #ifndef general_util_state_machine_h
 #define general_util_state_machine_h
 
+#include <memory>
 #include <mutex>
 #include <condition_variable>
 
@@ -33,6 +34,13 @@ namespace util {
             m_cond.notify_all();
         }
         
+        bool set_from(const stateT oldState, const stateT newState) {
+            std::lock_guard<std::mutex> lg(m_mutex);
+            bool result = current.compare_exchange_strong(oldState, newState, std::memory_order_release);
+            m_cond.notify_all();
+            return result;
+        }
+        
         bool is(const stateT reqState) {
             std::lock_guard<std::mutex> lg(m_mutex);
             return current == reqState;
@@ -42,6 +50,19 @@ namespace util {
             std::unique_lock<std::mutex> ul(m_mutex);
                        
             while (current != target) {
+                std::chrono::duration<double> duration(timeOutSec);
+                if (m_cond.wait_for(ul, duration) != std::cv_status::no_timeout) {
+                    return false;
+                }
+            }
+            
+            return true;
+        }
+        
+        bool wait_for_not(const stateT target, const double timeOutSec = 10) {
+            std::unique_lock<std::mutex> ul(m_mutex);
+                       
+            while (current == target) {
                 std::chrono::duration<double> duration(timeOutSec);
                 if (m_cond.wait_for(ul, duration) != std::cv_status::no_timeout) {
                     return false;

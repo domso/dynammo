@@ -59,7 +59,7 @@ namespace message {
         //______________________________________________________________________________________________________
         // Description:
         // - tries to execute a request (static function) specified by the template type T
-        // - T needs to implement a static function bool T::request(message::msg_header_t&, network::ipv4_addr&, network::pkt_buffer&, network::udp_socket<network::ipv4_addr>&, additional_datatype_t*)
+        // - T needs to implement a static function bool T::request(message::msg_header_t&, network::ipv4_addr&, network::pkt_buffer&, network::udp_socket<network::ipv4_addr>&,instant_argT, additional_datatype_t*)
         // - T::request() should push the request-payload into the pkt_buffer
         // - if T::request() returns true, the message will be send to destination address specified by destAddr
         // Parameters:
@@ -69,8 +69,8 @@ namespace message {
         // - true  | on success
         // - false | on any error
         //______________________________________________________________________________________________________
-        template <typename T>
-        bool exec_request(network::ipv4_addr& destAddr, network::pkt_buffer& outputBuffer) {
+        template <typename T, typename instant_argT = void*>
+        bool exec_request(network::ipv4_addr& destAddr, network::pkt_buffer& outputBuffer, instant_argT arg = instant_argT()) {
             message::msg_header_t* outputHeader = outputBuffer.push_next<message::msg_header_t>();
 
             if (outputHeader != nullptr) {
@@ -81,10 +81,10 @@ namespace message {
                 
                 // T::request exspects an actual type as parameter, internal we store only void*
                 // Type-Safety is guaranteed by the register-call
-                auto castedRequest = (bool (*)(message::msg_header_t& header, network::ipv4_addr& destAddr, network::pkt_buffer& outputBuffer, network::udp_socket<network::ipv4_addr>& socket, void* context)) T::request;
+                auto castedRequest = (bool (*)(message::msg_header_t&, network::ipv4_addr&, network::pkt_buffer&, network::udp_socket<network::ipv4_addr>&, instant_argT, void*)) T::request;
                 
-                if (castedRequest(*outputHeader, destAddr, outputBuffer, m_networkSocket, m_additional_data[T::id])) {
-                    return internal_send(m_networkSocket, destAddr,  outputBuffer);
+                if (castedRequest(*outputHeader, destAddr, outputBuffer, m_networkSocket, arg, m_additional_data[T::id])) {
+                    return internal_send(m_networkSocket, destAddr, outputBuffer);
                 }
             }
 
@@ -96,15 +96,15 @@ namespace message {
         // - tries to register a new handler for a message-type specified by T::id
         // - only the last 7 Bits of T::id are used as an identifier
         // - the first bit used as a internal flag bit to seperate requests and response (the bit will be ignored if falsely set)
-        // - T needs to implement a static function message::msg_status_t requestHandler(message::msg_header_t&, network::ipv4_addr&, network::pkt_buffer&, network::pkt_buffer&, network::udp_socket<network::ipv4_addr>&, message::msg_option_t&, additional_datatype_t);
-        // - T needs to implement a static function message::msg_status_t responseHandler(message::msg_header_t&, network::ipv4_addr&, network::pkt_buffer&, network::pkt_buffer&, network::udp_socket<network::ipv4_addr>&, message::msg_option_t&, additional_datatype_t);
+        // - T needs to implement a static function message::msg_status_t requestHandler(message::msg_header_t&, network::ipv4_addr&, network::pkt_buffer&, network::pkt_buffer&, network::udp_socket<network::ipv4_addr>&, message::msg_option_t&, instant_argT, additional_datatype_t*);
+        // - T needs to implement a static function message::msg_status_t responseHandler(message::msg_header_t&, network::ipv4_addr&, network::pkt_buffer&, network::pkt_buffer&, network::udp_socket<network::ipv4_addr>&, message::msg_option_t&, instant_argT, additional_datatype_t*);
         // - both T::requestHandler() and T::responseHandler() should read the message-payload from the first pkt_buffer, push any new payload into the second pkt_buffer and return with a message-status (see msg_header.h)
         // - any access to the pkt_buffers outside of T::requestHandler() and T::responseHandler() leads to undefined behaviour!
         // Return:
         // - true  | on success
         // - false | T::id is already used
         //______________________________________________________________________________________________________
-        template <typename T, typename additional_datatype_t>
+        template <typename T, typename instant_argT = void*, typename additional_datatype_t = typename T::content>
         bool register_handler(additional_datatype_t* context)  {
             static_assert(sizeof(T::id) == 1, "");
             if (m_callbacks[T::id & 127] != nullptr || m_callbacks[(int)(T::id & 127) + 128] != nullptr) {
@@ -112,7 +112,7 @@ namespace message {
             }
 
             //enforce type safety!
-            bool (*requestTypeGuard)(message::msg_header_t&, network::ipv4_addr&, network::pkt_buffer&, network::udp_socket<network::ipv4_addr>&, additional_datatype_t*) = &T::request;
+            bool (*requestTypeGuard)(message::msg_header_t&, network::ipv4_addr&, network::pkt_buffer&, network::udp_socket<network::ipv4_addr>&, instant_argT, additional_datatype_t*) = &T::request;
             message::msg_status_t (*requestHandlerTypeGuard)(message::msg_header_t&, network::ipv4_addr&, network::pkt_buffer&, network::pkt_buffer&, network::udp_socket<network::ipv4_addr>&, message::msg_option_t&, additional_datatype_t*) = &T::requestHandler;
             message::msg_status_t (*responseHandlerTypeGuard)(message::msg_header_t&, network::ipv4_addr&, network::pkt_buffer&, network::pkt_buffer&, network::udp_socket<network::ipv4_addr>&, message::msg_option_t&, additional_datatype_t*) = &T::responseHandler;
            
@@ -131,7 +131,7 @@ namespace message {
         // Return:
         // - Registered additional_datatype for T
         //______________________________________________________________________________________________________
-        template <typename T, typename additional_datatype_t>
+        template <typename T, typename additional_datatype_t = typename T::content>
         additional_datatype_t* additional_datatype() {
             return (additional_datatype_t*) m_additional_data[T::id & 127];
         }

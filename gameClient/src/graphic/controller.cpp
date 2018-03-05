@@ -1,6 +1,6 @@
 #include "src/graphic/controller.h"
 
-graphic::controller::controller(int argc, char* argv[]) : m_argc(argc), m_argv(argv) {
+graphic::controller::controller(int argc, char* argv[], util::event_controller<types::game_events>& eventCtrl) : m_argc(argc), m_argv(argv), m_eventCtrl(eventCtrl) {
    
 }
 
@@ -22,7 +22,7 @@ void graphic::controller::wait_for_close() {
 
 void graphic::controller::thread_main() {
     assert(m_app);
-    graphic::window newWindow(m_renderer);
+    user_interface::window newWindow(m_renderer, m_eventCtrl);
     m_window = &newWindow;
     m_app->run(newWindow);
     m_window = nullptr;

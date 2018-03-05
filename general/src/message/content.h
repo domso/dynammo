@@ -35,7 +35,7 @@ namespace message {
             struct types {
                 struct request {
                     authentication::accountID_t accountID;
-                    int32_t tcpTicket;
+                    authentication::ticket_t tcpTicket;
                 };
 
                 struct response {
@@ -43,10 +43,10 @@ namespace message {
                 };
             };
 
-            types::request request;
-            types::response response;
-            message::msg_status_t status;
-            util::state_machine<message::types::states> currentState;
+//             types::request request;
+//             types::response response;
+//             message::msg_status_t status;
+//             util::state_machine<message::types::states> currentState;
         };
     }
 }

@@ -15,7 +15,7 @@ namespace message {
         public:
             constexpr static const auto id = message::content::auth::id;
             
-            static bool request(message::msg_header_t& header, network::ipv4_addr& destAddr, network::pkt_buffer& outputBuffer, network::udp_socket<network::ipv4_addr>& socket, connector::context* context) {
+            static bool request(message::msg_header_t& header, network::ipv4_addr& destAddr, network::pkt_buffer& outputBuffer, network::udp_socket<network::ipv4_addr>& socket, void*, connector::context* context) {
                 return false;
             }
 

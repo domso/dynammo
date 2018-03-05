@@ -22,7 +22,9 @@ void region::context::load_dynamic_objects(std::vector<region::dynamic_obj>& obj
     for (auto& obj : objs) {
         m_dynamicObjects.insert_or_assign(obj.id, obj);
         std::cout << obj.position.x << " / " << obj.position.y << std::endl;
-        m_graphicCtrl.add_obj<region::dynamic_obj>(&obj, id++);
+                
+        std::pair<region::dynamic_obj*, region::layer<uint32_t>*> pair = std::make_pair<region::dynamic_obj*, region::layer<uint32_t>*>(&obj, &m_layers[0]);
+        m_graphicCtrl.add_obj<std::pair<region::dynamic_obj*, region::layer<uint32_t>*>>(&pair, id++);
     }
 }
 
