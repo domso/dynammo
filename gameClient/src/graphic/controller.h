@@ -31,47 +31,71 @@ namespace graphic {
         void wait_for_close();
 
         template <typename T>
-        void add_obj(const T* newObj, const uint32_t index) {
+        void add_obj(const T* newObj, const uint32_t id) {
             std::lock_guard<std::mutex> lg(m_mutex);
-            std::unique_ptr<base_mesh> newMesh = mesh_factory<T>(newObj);
-            
-            m_renderer.add_mesh(newMesh.get());
-            m_meshes[index] = std::move(newMesh);            
+            add_mesh<T>(newObj, id);                              
         }
 
         template <typename T>
-        void remove_obj(const T* oldObj, const uint32_t index) {
+        void remove_obj(const uint32_t id) {
             std::lock_guard<std::mutex> lg(m_mutex);         
-            m_renderer.remove_mesh(m_meshes[index].get());
-            m_meshes.erase(index);
+            remove_mesh<T>(id);
         }
 
+        template <typename T>
+        void update_obj(const T* newObj, const uint32_t id) {
+            std::lock_guard<std::mutex> lg(m_mutex);
+            update_mesh<T>(newObj, id);
+        }
     private:        
         template <typename T>
-        typename std::enable_if<std::is_same<T, region::layer<uint32_t>>::value, std::unique_ptr<base_mesh>>::type mesh_factory(const T* newObj) {
-            return std::unique_ptr<base_mesh>(new region_mesh(newObj, m_texCtrl));
+        typename std::enable_if<std::is_same<T, region::layer<uint32_t>>::value, void>::type add_mesh(const T* newObj, const uint32_t id) {            
+             base_mesh* newMesh = m_regionMeshes.emplace(id, new region_mesh(newObj, m_texCtrl)).first->second.get();
+             m_renderer.add_mesh(newMesh);
+        }
+                
+        template <typename T>
+        typename std::enable_if<std::is_same<T, std::pair<region::dynamic_obj*, region::layer<uint32_t>*>>::value, void>::type add_mesh(const T* newObj, const uint32_t id) {
+              base_mesh* newMesh = m_spriteMeshes.emplace(id, new sprite_mesh(newObj, m_texCtrl)).first->second.get();
+             m_renderer.add_mesh(newMesh);
+        }
+               
+        template <typename T>
+        typename std::enable_if<std::is_same<T, region::layer<uint32_t>>::value, void>::type remove_mesh(const uint32_t id) {           
+             auto it = m_regionMeshes.find(id);
+             m_renderer.remove_mesh(it->second.get());
+             m_regionMeshes.erase(it);
+        }
+                
+        template <typename T>
+        typename std::enable_if<std::is_same<T, std::pair<region::dynamic_obj*, region::layer<uint32_t>*>>::value, void>::type remove_mesh(const uint32_t id) {
+             auto it = m_spriteMeshes.find(id);
+             m_renderer.remove_mesh(it->second.get());
+             m_spriteMeshes.erase(it);
         }
         
         template <typename T>
-        typename std::enable_if<std::is_same<T, region::dynamic_obj>::value, std::unique_ptr<base_mesh>>::type mesh_factory(const T* newObj) {
-//             return std::unique_ptr<base_mesh>(new sprite_mesh(newObj, m_texCtrl));
+        typename std::enable_if<std::is_same<T, region::layer<uint32_t>>::value, void>::type update_mesh(const T* newObj, const uint32_t id) {            
+             auto& mesh = m_regionMeshes.find(id)->second;
+        }
+                
+        template <typename T>
+        typename std::enable_if<std::is_same<T, region::dynamic_obj>::value, void>::type update_mesh(const T* newObj, const uint32_t id) {
+             auto& mesh = m_spriteMeshes.find(id)->second;
+             mesh->set_position(newObj->position);
         }
         
-        template <typename T>
-        typename std::enable_if<std::is_same<T, std::pair<region::dynamic_obj*, region::layer<uint32_t>*>>::value, std::unique_ptr<base_mesh>>::type mesh_factory(const T* newObj) {
-            return std::unique_ptr<base_mesh>(new sprite_mesh(newObj, m_texCtrl));
-        }
-
+        void clear();
+        
         void thread_main();
 
         int m_argc;
         char** m_argv;
-        util::event_controller<types::game_events>& m_eventCtrl;
-        
+        util::event_controller<types::game_events>& m_eventCtrl;        
         std::thread m_thread;
-
         std::mutex m_mutex;
-        std::unordered_map<uint32_t, std::unique_ptr<base_mesh>> m_meshes;
+        std::unordered_map<uint32_t, std::unique_ptr<region_mesh>> m_regionMeshes;        
+        std::unordered_map<uint32_t, std::unique_ptr<sprite_mesh>> m_spriteMeshes;        
         graphic::renderer m_renderer;
         graphic::texture_controller m_texCtrl;
         user_interface::window* m_window;

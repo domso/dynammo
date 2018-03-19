@@ -8,13 +8,11 @@
 namespace connector {
     class context {
     public:
-        context() : m_connectionCtrl(1850), m_regionCtrl(m_userCtrl) {
-            
-        }
+        context(region::controller& rCtrl, user::controller& uCtrl, connection::controller& cCtrl);
         
-        connection::controller m_connectionCtrl;
-        user::controller m_userCtrl;
-        region::controller m_regionCtrl;        
+        region::controller& regionCtrl;    
+        user::controller& userCtrl;
+        connection::controller& connectionCtrl;        
     };
 }
 

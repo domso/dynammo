@@ -32,3 +32,9 @@ void graphic::texture_controller::clean_unused() {
         }
     }
 }
+
+void graphic::texture_controller::clear() {
+    m_imgTextures.clear();
+    m_dataTextures.clear();
+}
+

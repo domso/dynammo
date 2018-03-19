@@ -3,7 +3,7 @@
 #include "network/udp_socket.h"
 #include "src/message/msg_header.h"
 #include "src/message/msg_types.h"
-#include "src/message/content.h"
+#include "src/types/msg_transfer/content.h"
 #include "src/types/game_events.h"
 #include "src/session/controller.h"
 
@@ -11,7 +11,7 @@ namespace connector {
     namespace msg_transfer {
         class auth {
         public:
-            typedef message::content::auth content;
+            typedef types::msg_transfer::content::auth content;
 
             constexpr static const auto id = content::id;
 

@@ -1,6 +1,6 @@
 #include "shader_program.h"
 
-graphic::shader_program::shader_program() {
+graphic::shader_program::shader_program() : m_program(0) {
 
 }
 

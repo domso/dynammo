@@ -19,7 +19,7 @@ namespace graphic {
         virtual void load() = 0;
         virtual void free() = 0;
         virtual void update() = 0;
-        
+                       
         void add_vertex_attr(const int attrNr, const float value);
         void set_vertex_attr(const int attrNr, const int vertexNr, const float value);
         void set_vertex_attr_dimension(const int attrNr, const int dim);

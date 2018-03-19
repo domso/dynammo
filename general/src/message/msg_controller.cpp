@@ -64,12 +64,12 @@ bool message::msg_controller::internal_recv() {
     if (m_inputBuffer.msg_length() != 0) {
         return true;
     }
-
-    return m_networkSocket.recv_pkt(m_srcAddr, m_inputBuffer) != -1;
+    
+    return m_networkSocket.recv_pkt(m_srcAddr, m_inputBuffer).first;
 }
 
 bool message::msg_controller::internal_send(network::udp_socket<network::ipv4_addr>& networkSocket, network::ipv4_addr& dest, network::pkt_buffer& outputBuffer, const int flags) {
-    return networkSocket.send_pkt(dest, outputBuffer, flags) == outputBuffer.msg_length();
+    return networkSocket.send_pkt(dest, outputBuffer, flags).first;
 }
 
 

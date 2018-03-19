@@ -16,7 +16,7 @@ connector::tcp_receiver::~tcp_receiver() {
 
 bool connector::tcp_receiver::init(const network::ipv4_addr& addr) {
     if (m_connection.connect_to(addr)) {
-        m_connection.set_timeout(1);
+        m_connection.set_timeout(5);
 
         return true;
     }
@@ -33,7 +33,6 @@ void connector::tcp_receiver::close() {
 void connector::tcp_receiver::recv() {
     while (internal_recv()) {
         std::unique_lock<std::mutex> ul(m_mutex);
-
         call_configure(ul);
         copy_bytes();
         call_complete(ul);
@@ -45,11 +44,11 @@ bool connector::tcp_receiver::internal_recv() {
         return true;
     }
 
-    return m_connection.recv_pkt(m_inputBuffer) != -1;
+    return m_connection.recv_pkt(m_inputBuffer).first;
 }
 
 void connector::tcp_receiver::call_configure(std::unique_lock<std::mutex>& ul) {
-    if (!m_modeIsValid && m_inputBuffer.msg_length() > 0) {
+    if (!m_modeIsValid && m_inputBuffer.msg_length() > 0) {        
         auto newMode = m_inputBuffer.get_next<uint8_t>();
         m_currentMode = *newMode;
         m_modeIsValid = m_configureCallback[m_currentMode] != nullptr;

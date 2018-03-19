@@ -28,6 +28,7 @@ namespace connector {
 
         template <typename T>
         void execute(types::game_events event) {
+            m_buffer.clear();
             m_msgCtrl.exec_request<T, types::game_events>(m_udpDestAddr, m_buffer, event);
         }
 

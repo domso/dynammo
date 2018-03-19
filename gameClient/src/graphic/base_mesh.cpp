@@ -56,10 +56,7 @@ void graphic::base_mesh::realize() {
 
     for (int i = 0; i < m_externalVertexGroup.size(); i++) {
         glBindVertexArray(m_externalVertexGroup[i]);
-
-
         glGenBuffers(1, &(m_externalVertexBuffer[i]));
-
         glBindBuffer(GL_ARRAY_BUFFER, m_externalVertexBuffer[i]);
 
         glBufferData(GL_ARRAY_BUFFER, m_internalVertexBuffer[i].size() * sizeof(m_internalVertexBuffer[i][0]), m_internalVertexBuffer[i].data(), GL_STATIC_DRAW);
@@ -68,22 +65,33 @@ void graphic::base_mesh::realize() {
 }
 void graphic::base_mesh::unrealize() {
     free();
-
-    for (base_texture* tex : m_textures) {
-        tex->free();
-    }
-    
+ 
     m_shaders.close();
     
-    if (m_externalVertexGroup.size() > 0) {
-        glDeleteBuffers(m_externalVertexGroup.size(), m_externalVertexGroup.data());
+    for (base_texture* tex : m_textures) {
+        tex->free();
+    }   
+    
+    for (int i = 0; i < m_externalVertexGroup.size(); i++) {
+//          glBindVertexArray(m_externalVertexGroup[i]);
+//          glDeleteBuffers(1, &(m_externalVertexBuffer[i]));
     }
-
-    m_externalVertexBuffer.clear();
-    m_externalVertexGroup.clear();
+    
+//     glDeleteVertexArrays(m_externalVertexGroup.size(), m_externalVertexGroup.data());
+    
+    if (m_externalVertexGroup.size() > 0) {        
+//         glDeleteBuffers(m_externalVertexBuffer.size(), m_externalVertexBuffer.data());
+    }
+    
+    if (m_externalVertexGroup.size() > 0) {        
+//         glDeleteVertexArrays(m_externalVertexGroup.size(), m_externalVertexGroup.data());
+    }
+// 
+     m_externalVertexBuffer.clear();
+     m_externalVertexGroup.clear();
 }
 
-void graphic::base_mesh::render() {    
+void graphic::base_mesh::render() {     
     m_shaders.enable();
     update();
     

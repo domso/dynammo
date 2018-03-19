@@ -1,7 +1,7 @@
 #include "src/graphic/controller.h"
 
 graphic::controller::controller(int argc, char* argv[], util::event_controller<types::game_events>& eventCtrl) : m_argc(argc), m_argv(argv), m_eventCtrl(eventCtrl) {
-   
+
 }
 
 graphic::controller::~controller() {
@@ -15,9 +15,18 @@ void graphic::controller::open() {
 }
 
 void graphic::controller::wait_for_close() {
+    m_renderer.currentState.wait_for(renderer::states::unrealized);
+    m_app->quit();
+
     if (m_thread.joinable()) {
         m_thread.join();
     }
+}
+
+void graphic::controller::clear() {
+    m_texCtrl.clear();
+    m_regionMeshes.clear();
+    m_regionMeshes.clear();
 }
 
 void graphic::controller::thread_main() {

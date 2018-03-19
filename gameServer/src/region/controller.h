@@ -5,23 +5,25 @@
 #include <mutex>
 #include "src/util/lock_ref.h"
 #include "src/region/context.h"
-
+#include "src/region/update_queue.h"
 
 namespace region {
     class controller {
     public:
-        controller(user::controller& userCtrl);
+        controller();
         controller(const controller& copy) = delete;
         controller(controller&& copy) = delete;
         
         void open_region(const uint64_t id);
-        void close_region(const uint64_t id);
-
-        bool open(const uint64_t id);
+        bool is_open(const uint64_t id);
         util::locked_ref<region::context> get_region(const uint64_t id);        
-    private:
+        
+        void update();
+    private:        
+        void close_region(const uint64_t id);
+        
         std::mutex m_mutex;
-        user::controller& m_userCtrl;
+        update_queue m_regionUpdateQueue;
         std::unordered_map<uint64_t, region::context> m_regionMap;
     };
 }

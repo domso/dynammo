@@ -1,6 +1,8 @@
 #ifndef gameClient_graphic_sprite_mesh_h
 #define gameClient_graphic_sprite_mesh_h
 
+#include <mutex>
+
 #include "src/region/vec3.h"
 #include "src/region/dynamic_obj.h"
 #include "src/graphic/shader.h"
@@ -17,10 +19,11 @@ namespace graphic {
         m_dataTexture(texCtrl.load_data_texture(obj->second->data(), obj->second->size, obj->second->size)),
         m_texture(texCtrl.load_img_texture("../res/tile.png"))
         {
-            set_position(region::vec3<float>(0, 0, 0));
+            set_position(obj->first->position);
         }
 
         void load() {
+            std::lock_guard<std::mutex> lg(m_mutex);
             build_position();
             build_uv();
 
@@ -38,61 +41,49 @@ namespace graphic {
         }
 
         void free() {
+            std::lock_guard<std::mutex> lg(m_mutex);
             
         }
 
         void update() {
+            std::lock_guard<std::mutex> lg(m_mutex);
             m_shaders.set_uniform_attr<int>("tex", 0);
             m_shaders.set_uniform_attr<int>("mapData", 1);
             m_shaders.set_uniform_attr<float>("scale", 0.25, 0.25);
             
-            m_position.x += 0.01;
-            m_position.y += 0.01;
             m_shaders.set_uniform_attr<float>("position", m_position.x, m_position.y, m_position.z);
         }
         
         void set_position(const region::vec3<float>& newPos) {
-//             int resolution = 128;
-//             float size = 0.005;
-//             float scale = 0;//0.01;            
-//             float depthMargin = 1.0f / (2.0f * resolution);
-//             
-//             
-//             float depthTL = -((newPos.x + newPos.y) * depthMargin);
-// 
-//             m_position.x = -(newPos.x - newPos.y)     * 2 * size;
-//             m_position.y = -((newPos.x + newPos.y)     * size - 0);
-//             m_position.z = depthTL;
-            
+            std::lock_guard<std::mutex> lg(m_mutex);            
             m_position = newPos;
-        }
-        
+        }        
 
     private:
         void build_position() {
             set_vertex_attr_dimension(0, 3);
 
-            add_vertex_attr(0, 0);
-            add_vertex_attr(0, 0);
-            add_vertex_attr(0, 0);
-
-            add_vertex_attr(0, 1);
+            add_vertex_attr(0, -0.5);
             add_vertex_attr(0, 0);
             add_vertex_attr(0, 0);
 
-            add_vertex_attr(0, 0);
-            add_vertex_attr(0, 1);
-            add_vertex_attr(0, 0);
-
-            add_vertex_attr(0, 1);
-            add_vertex_attr(0, 1);
-            add_vertex_attr(0, 0);
-
-            add_vertex_attr(0, 1);
+            add_vertex_attr(0, 0.5);
             add_vertex_attr(0, 0);
             add_vertex_attr(0, 0);
 
+            add_vertex_attr(0, -0.5);
+            add_vertex_attr(0, 1);
             add_vertex_attr(0, 0);
+
+            add_vertex_attr(0, 0.5);
+            add_vertex_attr(0, 1);
+            add_vertex_attr(0, 0);
+
+            add_vertex_attr(0, 0.5);
+            add_vertex_attr(0, 0);
+            add_vertex_attr(0, 0);
+
+            add_vertex_attr(0, -0.5);
             add_vertex_attr(0, 1);
             add_vertex_attr(0, 0);
         }
@@ -119,6 +110,7 @@ namespace graphic {
             add_vertex_attr(1, 1);
         }
 
+        std::mutex m_mutex;
         region::vec3<float> m_position;
         std::shared_ptr<data_texture> m_dataTexture;
         std::shared_ptr<img_texture> m_texture;

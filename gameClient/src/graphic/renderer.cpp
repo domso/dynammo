@@ -27,29 +27,30 @@ void graphic::renderer::remove_mesh(graphic::base_mesh* oldMesh) {
     m_removeQueue.push(oldMesh);
 }
 
+void graphic::renderer::close() {
+    currentState.set(states::closing);
+}
+
+
 void graphic::renderer::realize() {
     m_glarea->make_current();
 
     glEnable(GL_DEPTH_TEST);
     glDepthFunc(GL_LESS);
 
-
-
     if (m_glarea->has_error()) {
         std::cout << "An error occured making the context current during realize:" << std::endl;
         currentState.set(states::error);
     } else {
         currentState.set(states::realized);
-    }    
+    }
 }
 
 void graphic::renderer::unrealize() {
     m_glarea->make_current();
 
-    for (graphic::base_mesh* currentMesh : m_renderMeshes) {
-        currentMesh->unrealize();
-    }
-    
+    // for some reasons, this methode has no GL-context!
+
     if (m_glarea->has_error()) {
         std::cerr << "An error occured making the context current during unrealize" << std::endl;
         currentState.set(states::error);
@@ -88,6 +89,10 @@ void graphic::renderer::update_meshes() {
     std::lock_guard<std::mutex> lg(m_mutex);
     add_new_mesh();
     remove_old_mesh();
+    
+    if (currentState.is(states::closing)) {
+        remove_all_meshes();
+    }    
 }
 
 
@@ -107,4 +112,12 @@ void graphic::renderer::remove_old_mesh() {
         m_renderMeshes.erase(oldMesh);
         m_removeQueue.pop();
     }
+}
+
+void graphic::renderer::remove_all_meshes() {
+    for (graphic::base_mesh* currentMesh : m_renderMeshes) {
+        currentMesh->unrealize();
+    }
+    
+    currentState.set(states::unrealized);
 }

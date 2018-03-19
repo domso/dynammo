@@ -4,11 +4,11 @@ graphic::base_texture::base_texture() {
     m_linked = false;
 }
 
-graphic::base_texture::base_texture(graphic::base_texture&&  move) : m_linked(move.m_linked), m_textureHandle(move.m_textureHandle) {
+graphic::base_texture::base_texture(graphic::base_texture&& move) : m_linked(move.m_linked), m_textureHandle(move.m_textureHandle) {
     move.m_linked = false;
 }
 
-
+#include <iostream>
 graphic::base_texture::~base_texture() {
     if (m_linked) {
         glDeleteTextures(1, &m_textureHandle);

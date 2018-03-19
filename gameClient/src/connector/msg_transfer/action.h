@@ -3,7 +3,7 @@
 #include "network/udp_socket.h"
 #include "src/message/msg_header.h"
 #include "src/message/msg_types.h"
-#include "src/message/content.h"
+#include "src/types/msg_transfer/content.h"
 #include "src/types/game_events.h"
 #include "src/session/controller.h"
 
@@ -11,12 +11,19 @@ namespace connector {
     namespace msg_transfer {
         class action {
         public:
-//             typedef message::content::auth content;
+            typedef types::msg_transfer::content::action content;
 
-            constexpr static const auto id = 'H';//content::id;
+            constexpr static const auto id = content::id;
 
             static bool request(message::msg_header_t& header, network::ipv4_addr& destAddr, network::pkt_buffer& outputBuffer, network::udp_socket<network::ipv4_addr>& socket, types::game_events event, session::controller* sessionCtrl) {
-                std::cout << event << std::endl;
+                auto request = outputBuffer.push_next<content::types::request>();
+
+                if (request != nullptr) {
+                    request->accountID = 0;
+                    request->actionID = event;
+                    return true;
+                }
+
                 return false;
             }
 

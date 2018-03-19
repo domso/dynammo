@@ -16,6 +16,7 @@ namespace user_interface {
         
         bool on_key_press_event(GdkEventKey* event) override;
         bool on_key_release_event(GdkEventKey* event) override;
+        bool on_delete_event(GdkEventAny* event) override;
     protected:
         key_controller m_keyCtrl;
         graphic::renderer& m_renderer;

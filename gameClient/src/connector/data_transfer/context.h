@@ -9,6 +9,7 @@
 #include "src/region/context.h"
 #include "src/region/controller.h"
 #include "src/session/controller.h"
+#include "src/types/data_transfer/content.h"
 
 namespace connector {
     namespace data_transfer {
@@ -18,13 +19,14 @@ namespace connector {
         private:
             region::controller& m_regCtrl;
 
-            obj_link<0, authentication::ticket_t, session::controller> tcpTicketLink;
-            obj_link<1, region::layer<uint32_t>, region::controller> layerLink;
-            obj_link<2, region::dynamic_obj, region::controller> dynObjLink;
             
-            static void complete_tcp_ticket_link(obj_link<0, authentication::ticket_t, session::controller>& obj, session::controller* sessionCtrl);
-            static void complete_layer_link(obj_link<1, region::layer<uint32_t>, region::controller>& obj, region::controller* regCtrl);
-            static void complete_dynamic_objects_link(obj_link<2, region::dynamic_obj, region::controller>& obj, region::controller* regCtrl);
+            obj_link<types::data_transfer::content::auth_ticket, session::controller> tcpTicketLink;
+            obj_link<types::data_transfer::content::region_layer, region::controller> layerLink;
+            obj_link<types::data_transfer::content::dynamic_object, region::controller> dynObjLink;
+            
+            static void complete_tcp_ticket_link(obj_link<types::data_transfer::content::auth_ticket, session::controller>& obj, session::controller* sessionCtrl);
+            static void complete_layer_link(obj_link<types::data_transfer::content::region_layer, region::controller>& obj, region::controller* regCtrl);
+            static void complete_dynamic_objects_link(obj_link<types::data_transfer::content::dynamic_object, region::controller>& obj, region::controller* regCtrl);
         };
     }
 }

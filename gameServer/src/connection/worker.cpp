@@ -1,4 +1,7 @@
-#include "worker.h"
+#include "src/connection/worker.h"
+
+#include "src/connection/sender.h"
+#include "src/types/data_transfer/content.h"
 
 connection::worker::worker() : m_error(false), m_running(true), m_mutexes(max_number_of_pending_connections), m_connections(max_number_of_pending_connections) {
     
@@ -10,18 +13,15 @@ connection::worker::~worker() {
 
 void connection::worker::accept_new_connections(const uint16_t port) {    
     network::tcp_socket<network::ipv4_addr> tcpSocket;
-    uint32_t position = 0;
+    int32_t position = 0;
     
     if (tcpSocket.accept_on(port, 10)) {        
         tcpSocket.set_timeout(1);
         while (m_running) {
             std::lock_guard<std::mutex> lg(m_mutexes[position]);
-            if (tcpSocket.accept_connection(m_connections[position])) {   
-                uint8_t protID = 0;
-                uint16_t count = 1;
-                m_connections[position].send_data<uint8_t>(&protID, 1);
-                m_connections[position].send_data<uint16_t>(&count, 1);
-                m_connections[position].send_data<uint32_t>(&position, 1);
+            if (tcpSocket.accept_connection(m_connections[position])) {                
+                sender::send<types::data_transfer::content::auth_ticket>(m_connections[position], position);
+                
                 position = ((position + 1) % max_number_of_pending_connections);
             }
         }

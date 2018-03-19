@@ -46,26 +46,34 @@ namespace util {
             return current == reqState;
         }
         
-        bool wait_for(const stateT target, const double timeOutSec = 10) {
+        bool wait_for(const stateT target, const double timeOutSec = -1) {
             std::unique_lock<std::mutex> ul(m_mutex);
                        
             while (current != target) {
-                std::chrono::duration<double> duration(timeOutSec);
-                if (m_cond.wait_for(ul, duration) != std::cv_status::no_timeout) {
-                    return false;
+                if (timeOutSec > 0) {
+                    std::chrono::duration<double> duration(timeOutSec);
+                    if (m_cond.wait_for(ul, duration) != std::cv_status::no_timeout) {
+                        return false;
+                    }
+                } else {
+                    m_cond.wait(ul);
                 }
             }
             
             return true;
         }
         
-        bool wait_for_not(const stateT target, const double timeOutSec = 10) {
+        bool wait_for_not(const stateT target, const double timeOutSec = -1) {
             std::unique_lock<std::mutex> ul(m_mutex);
                        
             while (current == target) {
-                std::chrono::duration<double> duration(timeOutSec);
-                if (m_cond.wait_for(ul, duration) != std::cv_status::no_timeout) {
-                    return false;
+                if (timeOutSec > 0) {
+                    std::chrono::duration<double> duration(timeOutSec);
+                    if (m_cond.wait_for(ul, duration) != std::cv_status::no_timeout) {
+                        return false;
+                    }
+                } else {
+                    m_cond.wait(ul);
                 }
             }
             

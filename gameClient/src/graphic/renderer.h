@@ -24,12 +24,15 @@ namespace graphic {
         enum states {
             unrealized,
             realized,
+            closing,
+            closed,
             error            
         };
         
-        util::state_machine<states> currentState = states::unrealized;
-    private:       
+        void close();
         
+        util::state_machine<states> currentState = states::unrealized;
+    private:  
         void realize();
         void unrealize();
         bool render(const Glib::RefPtr<Gdk::GLContext>& context);
@@ -37,8 +40,8 @@ namespace graphic {
         void render_meshes();
         void update_meshes();
         void add_new_mesh();
-        void remove_old_mesh();
-        
+        void remove_old_mesh();      
+        void remove_all_meshes();
         
         std::thread m_thread;
         std::mutex m_mutex;

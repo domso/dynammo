@@ -32,3 +32,10 @@ bool user_interface::window::on_key_press_event(GdkEventKey* event) {
 bool user_interface::window::on_key_release_event(GdkEventKey* event) {
     m_keyCtrl.key_was_released(event->keyval);
 }
+
+bool user_interface::window::on_delete_event(GdkEventAny* event) {
+    m_renderer.close();
+    return true;
+}
+
+
