@@ -6,6 +6,7 @@
 #include "src/types/msg_transfer/content.h"
 #include "src/types/game_events.h"
 #include "src/session/controller.h"
+#include "src/connector/msg_transfer/sign_buffer.h"
 
 namespace connector {
     namespace msg_transfer {
@@ -21,7 +22,7 @@ namespace connector {
                 if (request != nullptr) {
                     request->accountID = 0;
                     request->actionID = event;
-                    return true;
+                    return sign_buffer(outputBuffer, *sessionCtrl);
                 }
 
                 return false;

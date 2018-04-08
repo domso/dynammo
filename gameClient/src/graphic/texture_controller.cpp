@@ -9,6 +9,15 @@ std::shared_ptr<graphic::img_texture> graphic::texture_controller::load_img_text
     return m_imgTextures[filename];
 }
 
+std::shared_ptr<graphic::img_block_texture> graphic::texture_controller::load_img_block_texture(const std::string& filename, const int first, const int last, const int dimension) {
+    if (m_imgBlockTextures.count(filename) == 0) {
+        auto result = m_imgBlockTextures.emplace(std::make_pair(filename, std::make_shared<graphic::img_block_texture>(filename, first, last, dimension)));
+        return (result.first)->second;
+    }
+
+    return m_imgBlockTextures.at(filename);
+}
+
 std::shared_ptr<graphic::data_texture> graphic::texture_controller::load_data_texture(const uint32_t* data, const int width, const int height) {
     intptr_t index = (intptr_t) data;
     if (m_dataTextures.count(index) == 0) {

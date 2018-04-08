@@ -18,13 +18,15 @@ file(GLOB src_graphic "${CMAKE_CURRENT_SOURCE_DIR}/src/graphic/*.cpp")
 add_library(graphicGameClient STATIC ${src_graphic})
 
 file(GLOB src_user_interface "${CMAKE_CURRENT_SOURCE_DIR}/src/user_interface/*.cpp")
-add_library(user_interfaceGameClient STATIC ${src_user_interface})
+file(GLOB src_user_interface_views "${CMAKE_CURRENT_SOURCE_DIR}/src/user_interface/views/*.cpp")
+add_library(user_interfaceGameClient STATIC ${src_user_interface} ${src_user_interface_views})
 
 file(GLOB src_region "${CMAKE_CURRENT_SOURCE_DIR}/src/region/*.cpp")
 add_library(regionGameClient STATIC ${src_region})
 
 file(GLOB src_session "${CMAKE_CURRENT_SOURCE_DIR}/src/session/*.cpp")
 add_library(sessionGameClient STATIC ${src_session})
+target_link_libraries(sessionGameClient encryptionGeneral)
 
 file(GLOB src_connector "${CMAKE_CURRENT_SOURCE_DIR}/src/connector/*.cpp")
 file(GLOB src_connector_data_transfer "${CMAKE_CURRENT_SOURCE_DIR}/src/connector/data_transfer/*.cpp")

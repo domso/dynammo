@@ -24,7 +24,7 @@ util::locked_ref<region::context> region::controller::get_region(const uint64_t 
     std::lock_guard<std::mutex> lg(m_mutex);
     
     if (m_regionMap.count(id) == 0) {
-    m_regionMap.emplace(id, id);
+        m_regionMap.emplace(id, id);
         m_regionUpdateQueue.insert(id);
     }
     

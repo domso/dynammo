@@ -6,6 +6,7 @@
 #include "src/types/msg_transfer/content.h"
 #include "src/types/game_events.h"
 #include "src/session/controller.h"
+#include "src/connector/msg_transfer/sign_buffer.h"
 
 namespace connector {
     namespace msg_transfer {
@@ -16,12 +17,13 @@ namespace connector {
             constexpr static const auto id = content::id;
 
             static bool request(message::msg_header_t& header, network::ipv4_addr& destAddr, network::pkt_buffer& outputBuffer, network::udp_socket<network::ipv4_addr>& socket, types::game_events event, session::controller* sessionCtrl) {
-                auto request = outputBuffer.push_next<content::types::request>();
-
+                auto request = outputBuffer.push_next<content::types::request>();            
+                
                 if (request != nullptr) {
                     request->accountID = 0;
                     request->tcpTicket = sessionCtrl->get_tcp_link();
-                    return true;
+                                        
+                    return sign_buffer(outputBuffer, *sessionCtrl);
                 }
 
                 return false;

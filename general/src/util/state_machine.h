@@ -6,7 +6,8 @@
 #include <condition_variable>
 
 namespace util {
-    
+    //TODO: change to std::atomic
+    //--> leads to incomplete type errors with enums
     template <typename stateT>
     class state_machine {
     public:
@@ -19,37 +20,42 @@ namespace util {
             set(newState);
         }
         
-        void operator==(const stateT reqState) {
+        bool operator==(const stateT reqState) {
             return is(reqState);
         }
         
         stateT get() {
             std::lock_guard<std::mutex> lg(m_mutex);
-            return current;
+            return m_current;
         }
         
         void set(const stateT newState) {
             std::lock_guard<std::mutex> lg(m_mutex);
-            current = newState;
+            m_current = newState;
             m_cond.notify_all();
         }
         
         bool set_from(const stateT oldState, const stateT newState) {
-            std::lock_guard<std::mutex> lg(m_mutex);
-            bool result = current.compare_exchange_strong(oldState, newState, std::memory_order_release);
+            std::lock_guard<std::mutex> lg(m_mutex);            
+            bool result = (m_current == oldState);
+            
+            if (result) {
+                m_current = newState;
+            }
+                         
             m_cond.notify_all();
             return result;
         }
         
         bool is(const stateT reqState) {
             std::lock_guard<std::mutex> lg(m_mutex);
-            return current == reqState;
+            return m_current == reqState;
         }
         
         bool wait_for(const stateT target, const double timeOutSec = -1) {
             std::unique_lock<std::mutex> ul(m_mutex);
                        
-            while (current != target) {
+            while (m_current != target) {
                 if (timeOutSec > 0) {
                     std::chrono::duration<double> duration(timeOutSec);
                     if (m_cond.wait_for(ul, duration) != std::cv_status::no_timeout) {
@@ -66,7 +72,7 @@ namespace util {
         bool wait_for_not(const stateT target, const double timeOutSec = -1) {
             std::unique_lock<std::mutex> ul(m_mutex);
                        
-            while (current == target) {
+            while (m_current == target) {
                 if (timeOutSec > 0) {
                     std::chrono::duration<double> duration(timeOutSec);
                     if (m_cond.wait_for(ul, duration) != std::cv_status::no_timeout) {
@@ -80,7 +86,7 @@ namespace util {
             return true;
         }
     private:
-        stateT current;
+        stateT m_current;
         std::mutex m_mutex;
         std::condition_variable m_cond;
     };    

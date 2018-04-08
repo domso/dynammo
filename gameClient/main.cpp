@@ -21,7 +21,9 @@ int main(int argc, char* argv[]) {
     // graphic-layer
     graphic::controller graphicCtrl(argc, argv, eventCtrl);
     graphicCtrl.open();
-        
+    
+    
+    
     // data-layer
     region::controller regionCtrl(graphicCtrl);
     session::controller sessionCtrl(eventCtrl);
@@ -29,8 +31,7 @@ int main(int argc, char* argv[]) {
     // network-layer
     connector::controller connectorCtrl(tcpAddr, udpAddr, regionCtrl, sessionCtrl, eventCtrl);   
     connectorCtrl.open();
-
+    
     graphicCtrl.wait_for_close();
-
     return 0;
 }

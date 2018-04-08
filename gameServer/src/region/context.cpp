@@ -34,17 +34,43 @@ void region::context::load() {
     }
     
     region::dynamic_obj obj;
-    obj.id = 0;
+    obj.id = 1;
     obj.position.x = 5;
     obj.position.y = 5;
     obj.position.z = 0;
     
-    insert_new_dynamic_object(obj);    
+    insert_new_dynamic_object(obj);      
+    
+    region::static_obj sObj;
+    
+    sObj.durability = 100;
+    sObj.type = 0;
+    sObj.position.x = 38;
+    sObj.position.y = 6;
+    sObj.position.z = 0;    
+    
+    insert_new_static_object(sObj);     
+    
+    sObj.durability = 100;
+    sObj.type = 0;
+    sObj.position.x = 90;
+    sObj.position.y = 64;
+    sObj.position.z = 0;    
+    
+    insert_new_static_object(sObj);  
+    
+    sObj.durability = 100;
+    sObj.type = 0;
+    sObj.position.x = 25;
+    sObj.position.y = 50;
+    sObj.position.z = 0;    
+    
+    insert_new_static_object(sObj);  
 }
 
 void region::context::save() {
+    
 }
-
 
 region::dynamic_obj* region::context::action_for_dynamic_object(const uint32_t id, const types::game_events action) {   
     if (id < m_dynamicObjects2.size()) {
@@ -60,11 +86,19 @@ void region::context::insert_new_dynamic_object(const region::dynamic_obj& obj) 
     m_dynamicObjects2.push_back(obj);
 }
 
+void region::context::insert_new_static_object(const region::static_obj& obj) {
+    m_staticObjects.push_back(obj);
+}
+
 region::layer<uint32_t>& region::context::get_layer() {
     return m_testLayer;
 }
 
 std::vector<region::dynamic_obj>& region::context::get_dynamic_obj() {
-    std::cout << m_dynamicObjects2.size() << std::endl;
     return m_dynamicObjects2;
 }
+
+std::vector<region::static_obj>& region::context::get_static_obj() {
+    return m_staticObjects;
+}
+

@@ -4,10 +4,12 @@ connector::data_transfer::context::context(session::controller& sessionCtrl, con
     : m_regCtrl(regCtrl),
       tcpTicketLink(&complete_tcp_ticket_link, &sessionCtrl),
       layerLink(&complete_layer_link, &m_regCtrl),
+      staticObjLink(&complete_static_objects_link, &m_regCtrl),
       dynObjLink(&complete_dynamic_objects_link, &m_regCtrl) {
 
     tcpRecv.register_callbacks(&tcpTicketLink);
     tcpRecv.register_callbacks(&layerLink);
+    tcpRecv.register_callbacks(&staticObjLink);
     tcpRecv.register_callbacks(&dynObjLink);
 }
 
@@ -20,6 +22,13 @@ void connector::data_transfer::context::complete_layer_link(obj_link<types::data
     util::locked_ref<region::context> currentRegion = (*regCtrl)[0];
     currentRegion->load_layers(std::move(obj.data));
     obj.reset();
+}
+
+void connector::data_transfer::context::complete_static_objects_link(obj_link<types::data_transfer::content::static_object, region::controller>& obj, region::controller* regCtrl) {
+    util::locked_ref<region::context> currentRegion = (*regCtrl)[0];
+    currentRegion->load_static_objects(obj.data);
+    obj.data.clear();
+    obj.reset();    
 }
 
 void connector::data_transfer::context::complete_dynamic_objects_link(obj_link<types::data_transfer::content::dynamic_object, region::controller>& obj, region::controller* regCtrl) {

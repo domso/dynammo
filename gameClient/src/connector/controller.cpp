@@ -31,4 +31,6 @@ bool connector::controller::open() {
         m_msgCtrlThread = std::thread(&message::msg_controller::recv, &m_msgCtrl);
         m_tcpRecvThread = std::thread(&connector::tcp_receiver::recv, &m_tcpRecv);
     }
+    
+    return m_status;
 }

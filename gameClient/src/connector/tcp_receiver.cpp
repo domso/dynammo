@@ -16,7 +16,7 @@ connector::tcp_receiver::~tcp_receiver() {
 
 bool connector::tcp_receiver::init(const network::ipv4_addr& addr) {
     if (m_connection.connect_to(addr)) {
-        m_connection.set_timeout(5);
+        m_connection.set_timeout(0.5);
 
         return true;
     }

@@ -8,13 +8,16 @@
 #include <unordered_map>
 #include <type_traits>
 #include <memory>
+#include <atomic>
 
 #include "src/region/layer.h"
+#include "src/region/static_obj.h"
 #include "src/region/dynamic_obj.h"
 #include "src/graphic/renderer.h"
 #include "src/graphic/texture_controller.h"
 #include "src/graphic/region_mesh.h"
 #include "src/graphic/sprite_mesh.h"
+#include "src/graphic/animated_sprite_mesh.h"
 #include "src/user_interface/window.h"
 #include "src/util/event_controller.h"
 #include "src/types/game_events.h"
@@ -55,8 +58,14 @@ namespace graphic {
         }
                 
         template <typename T>
+        typename std::enable_if<std::is_same<T, std::pair<region::static_obj*, region::layer<uint32_t>*>>::value, void>::type add_mesh(const T* newObj, const uint32_t id) {
+             base_mesh* newMesh = m_spriteMeshes.emplace(id, new sprite_mesh(newObj, m_texCtrl)).first->second.get();
+             m_renderer.add_mesh(newMesh);
+        }
+                
+        template <typename T>
         typename std::enable_if<std::is_same<T, std::pair<region::dynamic_obj*, region::layer<uint32_t>*>>::value, void>::type add_mesh(const T* newObj, const uint32_t id) {
-              base_mesh* newMesh = m_spriteMeshes.emplace(id, new sprite_mesh(newObj, m_texCtrl)).first->second.get();
+             base_mesh* newMesh = m_animatedSpriteMeshes.emplace(id, new animated_sprite_mesh(newObj, m_texCtrl)).first->second.get();
              m_renderer.add_mesh(newMesh);
         }
                
@@ -68,21 +77,42 @@ namespace graphic {
         }
                 
         template <typename T>
-        typename std::enable_if<std::is_same<T, std::pair<region::dynamic_obj*, region::layer<uint32_t>*>>::value, void>::type remove_mesh(const uint32_t id) {
+        typename std::enable_if<std::is_same<T, std::pair<region::static_obj*, region::layer<uint32_t>*>>::value, void>::type remove_mesh(const uint32_t id) {
              auto it = m_spriteMeshes.find(id);
              m_renderer.remove_mesh(it->second.get());
              m_spriteMeshes.erase(it);
+        }
+                
+        template <typename T>
+        typename std::enable_if<std::is_same<T, std::pair<region::dynamic_obj*, region::layer<uint32_t>*>>::value, void>::type remove_mesh(const uint32_t id) {
+             auto it = m_animatedSpriteMeshes.find(id);
+             m_renderer.remove_mesh(it->second.get());
+             m_animatedSpriteMeshes.erase(it);
         }
         
         template <typename T>
         typename std::enable_if<std::is_same<T, region::layer<uint32_t>>::value, void>::type update_mesh(const T* newObj, const uint32_t id) {            
              auto& mesh = m_regionMeshes.find(id)->second;
         }
-                
+              
         template <typename T>
-        typename std::enable_if<std::is_same<T, region::dynamic_obj>::value, void>::type update_mesh(const T* newObj, const uint32_t id) {
+        typename std::enable_if<std::is_same<T, region::static_obj>::value, void>::type update_mesh(const T* newObj, const uint32_t id) {
              auto& mesh = m_spriteMeshes.find(id)->second;
              mesh->set_position(newObj->position);
+        }
+              
+        template <typename T>
+        typename std::enable_if<std::is_same<T, region::dynamic_obj>::value, void>::type update_mesh(const T* newObj, const uint32_t id) {
+             auto& mesh = m_animatedSpriteMeshes.find(id)->second;           
+             mesh->set_position(newObj->position);  
+             switch (newObj->animation) {
+                case types::game_animations::move_up:    mesh->set_animation(60, 74, false);    break;
+                case types::game_animations::move_left:  mesh->set_animation(90, 104, false);  break;
+                case types::game_animations::move_down:  mesh->set_animation(0, 14, false);  break;
+                case types::game_animations::move_right: mesh->set_animation(30, 44, false); break;
+                default: break;
+            }
+            
         }
         
         void clear();
@@ -96,9 +126,10 @@ namespace graphic {
         std::mutex m_mutex;
         std::unordered_map<uint32_t, std::unique_ptr<region_mesh>> m_regionMeshes;        
         std::unordered_map<uint32_t, std::unique_ptr<sprite_mesh>> m_spriteMeshes;        
+        std::unordered_map<uint32_t, std::unique_ptr<animated_sprite_mesh>> m_animatedSpriteMeshes; 
+        
         graphic::renderer m_renderer;
         graphic::texture_controller m_texCtrl;
-        user_interface::window* m_window;
         Glib::RefPtr<Gtk::Application> m_app;
     };
 }

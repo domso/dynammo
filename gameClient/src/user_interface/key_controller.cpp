@@ -20,10 +20,10 @@ user_interface::key_controller::~key_controller() {
         m_thread.join();
     }
 }
-
+#include <iostream>
 void user_interface::key_controller::key_was_pressed(uint32_t key) {
-    std::lock_guard<std::mutex> lg(m_mutex);
-
+    std::lock_guard<std::mutex> lg(m_mutex);    
+    
     if (m_pressedKeys.count(key) == 0) {
         create_pressed_events(key);
         m_pressedKeys.insert(key);

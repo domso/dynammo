@@ -9,7 +9,7 @@
 #include <openssl/bio.h>
 #include <openssl/err.h>
 #include <openssl/rand.h>
-
+#include <iostream>
 namespace encryption {
     //______________________________________________________________________________________________________
     //
@@ -19,11 +19,19 @@ namespace encryption {
     public:
         base_key();
         ~base_key();
+        
+        base_key(const base_key& copy) = delete;
+        base_key(base_key&& move);
         //______________________________________________________________________________________________________
         //
         // Return: pointer to the internal RSA-instance
         //______________________________________________________________________________________________________
         RSA* getRSA() const;
+        //______________________________________________________________________________________________________
+        //
+        // Return: true, if the key is valid
+        //______________________________________________________________________________________________________
+        bool valid() const;
         //______________________________________________________________________________________________________
         //
         // Description:
@@ -161,18 +169,20 @@ namespace encryption {
     // - number of valid signature bytes in the output buffer | on success
     // - zero | on any error
     //______________________________________________________________________________________________________
+
+    
     template <typename T>
     int sign(const encryption::private_key& key, signature& signature, const T* in, const int n = 1) {
         int result;
-        uint8_t hash[20];
-
+        uint8_t hash[SHA256_DIGEST_LENGTH];
+                
         if (signature.length < key.getRequiredSize()) {
             return -1;
         }
 
-        SHA1((unsigned char*)in, sizeof(T) * n, hash);
-        result = RSA_private_encrypt(20, hash, signature.data, key.getRSA(), RSA_PKCS1_PADDING);
-
+        SHA256((uint8_t*)in, sizeof(T) * n, hash);
+        result = RSA_private_encrypt(SHA256_DIGEST_LENGTH, hash, signature.data, key.getRSA(), RSA_PKCS1_PADDING);
+        
         if (result < 0) {
             return 0;
         }
@@ -195,13 +205,13 @@ namespace encryption {
     //______________________________________________________________________________________________________
     template <typename T>
     bool verify(const encryption::public_key& key, const signature& signature, const T* in, const int n = 1) {
-        uint8_t hash[20];
-        SHA1((uint8_t*)in, sizeof(T) * n, hash);
-
+        uint8_t hash[SHA256_DIGEST_LENGTH];
+        SHA256((uint8_t*)in, sizeof(T) * n, hash);
+        
         uint8_t calcSignatureBuffer[key.getRequiredSize()];
-
-        if (RSA_public_decrypt(signature.length, signature.data, calcSignatureBuffer, key.getRSA(), RSA_PKCS1_PADDING) == 20) {
-            return memcmp(hash, calcSignatureBuffer, 20) == 0;
+        
+        if (RSA_public_decrypt(signature.length, signature.data, calcSignatureBuffer, key.getRSA(), RSA_PKCS1_PADDING) == SHA256_DIGEST_LENGTH) {
+            return memcmp(hash, calcSignatureBuffer, SHA256_DIGEST_LENGTH) == 0;
         }
 
         return false;

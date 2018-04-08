@@ -26,9 +26,11 @@ namespace connection {
             uint16_t count = objs.size();
             bool result = true;
             
-            result &= connection.send_data<uint8_t>(&protocolID, 1).first;
-            result &= connection.send_data<uint16_t>(&count, 1).first;
-            result &= connection.send_data<typename T::content>(objs.data(), count).first;
+            if (count > 0) {
+                result &= connection.send_data<uint8_t>(&protocolID, 1).first;
+                result &= connection.send_data<uint16_t>(&count, 1).first;
+                result &= connection.send_data<typename T::content>(objs.data(), count).first;
+            }
             
             return result;
         }

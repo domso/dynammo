@@ -13,7 +13,7 @@ namespace connector {
         public:
             constexpr static const auto id = T::id;
 
-            obj_link(const std::function<void(obj_link<T, callbackParamT>&, callbackParamT*)> callback = nullptr, callbackParamT* param = nullptr) : m_callback(callback), m_additionArg(param) {
+            obj_link(const std::function<void(obj_link<T, callbackParamT>&, callbackParamT*)> callback, callbackParamT* param) : m_callback(callback), m_additionArg(param) {
 
             }
 

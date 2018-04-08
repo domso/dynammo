@@ -5,7 +5,12 @@ in vec2 UV;
 uniform sampler2D tex;
 
 void main() {
-    vec4 pixelColor = texture(tex, UV );    
+    vec4 pixelColor = texture(tex, UV );   
+    
+    if (pixelColor.a < 0.5) {
+        discard;
+    }
+    
     outputColor = pixelColor;
 }
 

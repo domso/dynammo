@@ -14,6 +14,11 @@ namespace region {
             
         }
         
+        template<typename destT>
+        vec3<destT> convertTo() const {            
+            return vec3<destT>(x, y, z);
+        }
+        
         void normalize() {
             T sum = length();
             x /= sum;
@@ -24,7 +29,7 @@ namespace region {
         T length() {
             return std::sqrt(x * x + y * y + z * z);
         }
-        
+       
         vec3 operator*=(const T c) {
             x *= c;
             y *= c;
@@ -37,7 +42,7 @@ namespace region {
             vec3 result = *this;
             result *= c;
             return result;
-        }
+        }                   
         
         vec3 operator*=(const vec3<T> v) {
             vec3 tmp;

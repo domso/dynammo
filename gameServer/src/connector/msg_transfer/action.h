@@ -6,9 +6,10 @@
 #include "src/types/msg_transfer/content.h"
 #include "src/connector/context.h"
 #include "src/types/game_events.h"
+#include "src/connector/msg_transfer/verify_buffer.h"
 
-namespace message {
-    namespace callback {
+namespace connector {
+    namespace msg_transfer {
         class action {
         public:
             typedef ::types::msg_transfer::content::action content;
@@ -24,16 +25,21 @@ namespace message {
                 
                 if (request != nullptr) {
                     auto info = context->userCtrl.get_info(request->accountID);
-                    auto region = context->regionCtrl.get_region(0);
-                    ::types::game_events action = (::types::game_events) request->actionID;
-                    region::dynamic_obj* obj = region->action_for_dynamic_object(0, action);
-                    if (obj != nullptr) {
-                        connection::sender::send<::types::data_transfer::content::dynamic_object>(info->connection, *obj);
-                    }
-                    
-                    return message::status::close;
+                    if (verify_buffer(inputBuffer, *info.data())) {
+                        auto region = context->regionCtrl.get_region(0);
+                        ::types::game_events action = (::types::game_events) request->actionID;
+                        region::dynamic_obj* obj = region->action_for_dynamic_object(0, action);
+                        if (obj != nullptr) {
+                            connection::sender::send<::types::data_transfer::content::dynamic_object>(info->connection, *obj);
+                        }
+                        
+                        result = message::status::close;
+                    } else {
+                        result = message::status::error::auth;
+                    }                   
                 }
 
+                header.status = result;
                 return result;
             }
 

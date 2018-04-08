@@ -14,7 +14,8 @@ add_library(connectionGameServer STATIC ${src_connection})
 target_link_libraries(connectionGameServer utilGeneral messageGeneral)
 
 file(GLOB src_connector "${CMAKE_CURRENT_SOURCE_DIR}/src/connector/*.cpp")
-add_library(connectorGameServer STATIC ${src_connector})
+file(GLOB src_connector_msg_transfer "${CMAKE_CURRENT_SOURCE_DIR}/src/connector/msg_transfer/*.cpp")
+add_library(connectorGameServer STATIC ${src_connector} ${src_connector_msg_transfer})
 target_link_libraries(connectorGameServer utilGeneral messageGeneral)
 
 file(GLOB src_user "${CMAKE_CURRENT_SOURCE_DIR}/src/user/*.cpp")

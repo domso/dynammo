@@ -21,12 +21,11 @@ namespace graphic {
         void add_mesh(graphic::base_mesh* newMesh);
         void remove_mesh(graphic::base_mesh* oldMesh);
         
-        enum states {
+        enum class states {
             unrealized,
             realized,
             closing,
-            closed,
-            error            
+            error
         };
         
         void close();
@@ -43,7 +42,7 @@ namespace graphic {
         void remove_old_mesh();      
         void remove_all_meshes();
         
-        std::thread m_thread;
+        
         std::mutex m_mutex;
         Gtk::GLArea* m_glarea;
         std::unordered_set<graphic::base_mesh*> m_renderMeshes;

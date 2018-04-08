@@ -22,9 +22,18 @@ namespace encryption {
             RSA_free(m_rsa);
         }
     }
+    
+    base_key::base_key(base_key&& move) : m_rsa(move.m_rsa), m_requiredSize(move.m_requiredSize) {
+        move.m_rsa = nullptr;
+        move.m_requiredSize = 0;
+    }
 
     RSA* base_key::getRSA() const {
         return m_rsa;
+    }
+    
+    bool base_key::valid() const {
+        return m_rsa != nullptr;
     }
 
     bool base_key::load(const std::string filename) {
@@ -103,7 +112,7 @@ namespace encryption {
         return offset;
     }
 
-    signature::signature(uint8_t* const d, const int l) : data(d), length(l) {
+    signature::signature(uint8_t* const d, const int l) : data(d), length((d == nullptr) ? 0 : l) {
         
     }
 
