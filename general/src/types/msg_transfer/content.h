@@ -51,6 +51,7 @@ namespace types {
                 struct types {
                     struct request {
                         authentication::accountID_t accountID;
+                        uint32_t objID;
                         uint32_t actionID;
                     };
 

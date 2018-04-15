@@ -5,8 +5,9 @@
 #include <epoxy/gl.h>
 #include <glm/glm.hpp>
 
-#include "src/graphic/renderer.h"
 #include "src/util/state_machine.h"
+#include "src/util/config_file.h"
+#include "src/graphic/renderer.h"
 #include "src/user_interface/key_controller.h"
 #include "src/user_interface/view_controller.h"
 #include "src/user_interface/views/start_view.h"
@@ -15,7 +16,7 @@
 namespace user_interface {
     class window : public Gtk::Window {
     public:
-        window(graphic::renderer& renderer, util::event_controller<types::game_events>& eventCtrl);
+        window(graphic::renderer& renderer, util::event_controller<types::game_events>& eventCtrl, util::config_file& config);
         ~window() override;
         
         enum class states {       
@@ -26,6 +27,8 @@ namespace user_interface {
         bool key_press_event(GdkEventKey* event) ;
         bool key_release_event(GdkEventKey* event);
         bool on_delete_event(GdkEventAny* event) override;
+        
+        std::string get_option(const std::string& key);
     protected:        
         key_controller m_keyCtrl;
         graphic::renderer& m_renderer;

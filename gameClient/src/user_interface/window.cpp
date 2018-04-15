@@ -1,9 +1,9 @@
 #include "src/user_interface/window.h"
 
-user_interface::window::window(graphic::renderer& renderer, util::event_controller<types::game_events>& eventCtrl) :
+user_interface::window::window(graphic::renderer& renderer, util::event_controller<types::game_events>& eventCtrl, util::config_file& config) :
     m_keyCtrl(eventCtrl),
     m_renderer(renderer),
-    m_viewCtrl(m_rootBox),
+    m_viewCtrl(m_rootBox, eventCtrl, config),
     m_startView(m_viewCtrl),
     m_mainGameView(m_viewCtrl, renderer, m_keyCtrl)
 {
@@ -36,4 +36,8 @@ bool user_interface::window::key_release_event(GdkEventKey* event) {
 bool user_interface::window::on_delete_event(GdkEventAny* event) {
     m_renderer.close();
     return false;
+}
+
+std::string user_interface::window::get_option(const std::string& key) {
+    return m_viewCtrl.get_option(key);
 }

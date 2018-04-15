@@ -17,9 +17,10 @@ namespace region {
         ~context();
               
         void add_user(const authentication::accountID_t accountID);
-        void remove_user(const authentication::accountID_t accountID);        
+        const std::unordered_set<authentication::accountID_t>& get_users() const;
+        void remove_user(const authentication::accountID_t accountID);     
         
-        region::dynamic_obj* action_for_dynamic_object(const uint32_t id, const types::game_events action);
+        region::dynamic_obj* action_for_dynamic_object(const uint32_t id, const types::game_events action, const authentication::accountID_t accountID);
         bool update();
         
         region::layer<uint32_t>& get_layer();

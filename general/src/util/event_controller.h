@@ -19,7 +19,7 @@ namespace util {
             std::vector<eventT> eventStack;
             eventStack.push_back(newEvent);
             
-            while (eventStack.back() != m_clearEvent) {
+            while (!eventStack.empty()) {
                 eventT currentEvent = eventStack.back();
                 auto callbacks = m_callbacks.find(currentEvent);
                 eventStack.pop_back();
@@ -36,7 +36,13 @@ namespace util {
             std::lock_guard<std::mutex> lg(m_mutex);
             eventT(*typeGuard)(eventT ID, additionalT*) = &T::handle;
             m_callbacks[T::trigger].push_back(std::make_pair((eventT(*)(eventT ID, void*)) typeGuard, (void*)param));
-        }        
+        }   
+        
+        template <typename T>
+        void unregister_event_handler() {
+            std::lock_guard<std::mutex> lg(m_mutex);
+            m_callbacks.erase(T::trigger);
+        }       
         
     private:
         eventT m_clearEvent;

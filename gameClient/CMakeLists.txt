@@ -20,6 +20,7 @@ add_library(graphicGameClient STATIC ${src_graphic})
 file(GLOB src_user_interface "${CMAKE_CURRENT_SOURCE_DIR}/src/user_interface/*.cpp")
 file(GLOB src_user_interface_views "${CMAKE_CURRENT_SOURCE_DIR}/src/user_interface/views/*.cpp")
 add_library(user_interfaceGameClient STATIC ${src_user_interface} ${src_user_interface_views})
+target_link_libraries(user_interfaceGameClient utilGeneral)
 
 file(GLOB src_region "${CMAKE_CURRENT_SOURCE_DIR}/src/region/*.cpp")
 add_library(regionGameClient STATIC ${src_region})

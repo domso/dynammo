@@ -3,247 +3,113 @@
 
 #include <string>
 #include <unordered_map>
+#include <type_traits>
 
 namespace util {
-    //______________________________________________________________________________________________________
-    //
-    // simple class to load, parse, validate and access a configuration file
-    //______________________________________________________________________________________________________
+    /**
+    * @brief simple class to load, parse, validate and access a configuration file
+    * 
+    */
     class config_file {
     public:
-        config_file();
-        ~config_file();
-        //______________________________________________________________________________________________________
-        //
-        // Description:
-        // - tries to open the file specified by filename
-        // - every line will be parsed into a key-value pair with ':' as seperator
-        // - empty space will be ignored
-        // Parameter:
-        // - filename: the absolut or relative path to the config file
-        //______________________________________________________________________________________________________
+        /**
+        * @brief tries to open the file specified by filename;
+        * every line will be parsed into a key-value pair with ':' as seperator;
+        * empty space will be ignored
+        * 
+        * @param filename the absolut or relative path to the config file
+        */
         void load(const std::string& filename);
-        //______________________________________________________________________________________________________
-        //
-        // Description:
-        // - if the loaded config file does not contain a specific string-entry, an internal error will be generated (see isError() and getErrorMsgs())
-        // - exspects the value of the entry specified by key as a string
-        // Parameter:
-        // - key: the required key
-        //______________________________________________________________________________________________________
-        void requireString(const std::string& key);
-        //______________________________________________________________________________________________________
-        //
-        // Description:
-        // - if the loaded config file does not contain a specific string-entry, an internal warning will be generated (see isWarning() and getWarningMsgs())
-        // - any missing recommend entry will be added with defaultValue as value
-        // - exspects the value of the entry specified by key as a string
-        // Parameters:
-        // - key: the recommend key
-        // - defaultValue: the default value for missing entries
-        //______________________________________________________________________________________________________
-        void recommendString(const std::string& key, const std::string& defaultValue = "");
-        //______________________________________________________________________________________________________
-        //
-        // Description:
-        // - Returns the string-value of the entry specified by the given key
-        // - if the entry is not available, defaultValue will be returned, but the internal value remains unchanged
-        // - exspects the value of the entry specified by key as a string
-        // Parameters:
-        // - key: the searched-key
-        // - defaultValue: the default value for missing entries
-        // Return:
-        // - the entry-value  | for an existing entry
-        // - the defaultValue | for a missing entry
-        //______________________________________________________________________________________________________
-        std::string getString(const std::string& key, const std::string& defaultValue = "") const;
-        //______________________________________________________________________________________________________
-        //
-        // Description:
-        // - if any requireString() or requireNumeric() call fails, the function will return true
-        // Return:
-        // - true  | on any error
-        // - false | no error
-        //______________________________________________________________________________________________________
-        bool isError() const;
-        //______________________________________________________________________________________________________
-        //
-        // Description:
-        // - if any requireString() or requireNumeric() call fails, the function will return a string containing ALL generated error messages!
-        // - the messages itself wont be deleted
-        // Returns:
-        // - string containing all available error messages
-        //______________________________________________________________________________________________________
-        const std::string& getErrorMsgs() const;
-        //______________________________________________________________________________________________________
-        //
-        // Description:
-        // - if any recommendString() or recommendNumeric() call fails, the function will return true
-        // Return:
-        // - true  | on any warning
-        // - false | no warning
-        //______________________________________________________________________________________________________
-        bool isWarning() const;
-        //______________________________________________________________________________________________________
-        //
-        // Description:
-        // - if any recommendString() or recommendNumeric() call fails, the function will return a string containing ALL generated warning messages!
-        // - the messages itself wont be deleted
-        // Returns:
-        // - string containing all available warning messages
-        //______________________________________________________________________________________________________
-        const std::string& getWarningMsgs() const;
-        //______________________________________________________________________________________________________
-        //
-        // Description:
-        // - clears all errors and warnings
-        //______________________________________________________________________________________________________
-        void clear();
-        //______________________________________________________________________________________________________
-        //
-        // Description:
-        // - if the loaded config file does not contain a specific numeric-entry, an internal error will be generated (see isError() and getErrorMsgs())
-        // - exspects the value of the entry specified by key as an instance of the numeric type T
-        // Parameter:
-        // - key: the required key
-        //______________________________________________________________________________________________________
+               
+        /**
+        * @brief gets the stored value for the given key, or inserts the given defaultValue as the new value
+        * 
+        * @param T any arithmetic type or std::string
+        * @param key the data-key
+        * @param defaultValue defaultValue for inserts
+        * @return {no insertion, storedValue}
+        */ 
         template <typename T>
-        void requireNumeric(const std::string& key) {
-            if (m_filename.empty()) {
-                return;
-            }
-
-            auto result = m_map.find(key);
-
-            if (result != m_map.end()) {
-                if (result->second != "") {
-                    char* endPtr = nullptr;
-                    double value = strtod(result->second.c_str(), &endPtr);
-
-                    if (endPtr != result->second.c_str()) {
-                        if ((T)value != value) {
-                            result->second = std::to_string((T)value);
-                            m_warningMsg += "[WARNING] Wrong numeric format for '" + key + "'";
-                            m_warningMsg += " in " + m_filename + ".";
-                            m_warningMsg += " Will use '" + result->second + "' instead.\n";
-                        }
-
-                        return;
-                    }
-                }
-
-                m_errorMsg += "[ERROR] Require '" + key + "' as numeric value.\n";
-                return;
-            }
-
-            m_errorMsg += "[ERROR] Require '" + key + "'";
-            m_errorMsg += " in " + m_filename + ".\n";
+        typename std::enable_if<std::is_arithmetic<T>::value, std::pair<bool, T>>::type get(const std::string& key, const T defaultValue = T()) {
+            auto result = convert_string<T>(m_configMap[key]);
+            if (!result.first) {          
+                m_configMap[key] = std::to_string(defaultValue);
+                return std::pair<bool, T>(false, defaultValue);
+            }         
+            
+            return std::pair<bool, T>(true, result.second);
         }
-        //______________________________________________________________________________________________________
-        //
-        // Description:
-        // - if the loaded config file does not contain a specific numeric-entry, an internal warning will be generated (see isWarning() and getWarningMsgs())
-        // - any missing recommend entry will be added with defaultValue as value
-        // - exspects the value of the entry specified by key as an instance of the numeric type T
-        // - if the existing value is a general numeric value, but not of numeric type T, the internal entry will be changed to a casted version of the numeric entry and a warning is generated
-        // Parameters:
-        // - key: the recommend key
-        // - defaultValue: the default value for missing entries
-        //______________________________________________________________________________________________________
+        
+        /**
+        * @brief gets the stored value for the given key, or inserts the given defaultValue as the new value
+        * 
+        * @param T any arithmetic type or std::string
+        * @param key the data-key
+        * @param defaultValue defaultValue for inserts
+        * @return {no insertion, storedValue}
+        */ 
         template <typename T>
-        void recommendNumeric(const std::string& key, const T defaultValue = -1) {
-            if (m_filename.empty()) {
-                return;
+        typename std::enable_if<std::is_same<T, std::string>::value, std::pair<bool, T>>::type get(const std::string& key, const T defaultValue = T()) {
+            auto result = m_configMap[key];
+            if (result == "") {      
+                m_configMap[key] = defaultValue;
+                return std::pair<bool, T>(false, defaultValue);
             }
-
-            auto result = m_map.find(key);
-
-            if (result != m_map.end()) {
-                if (result->second != "") {
-                    char* endPtr = nullptr;
-                    double value = strtod(result->second.c_str(), &endPtr);
-
-                    if (endPtr != result->second.c_str()) {
-                        // simple 'hack' to verify that value is a instance of T
-                        if ((T)value != value) {
-                            result->second = std::to_string((T)value);
-                            m_warningMsg += "[WARNING] Wrong numeric format for '" + key + "'";
-                            m_warningMsg += " in " + m_filename + ".";
-                            m_warningMsg += " Will use '" + result->second + "' instead.\n";
-                        }
-
-                        return;
-                    }
-                }
-
-                m_warningMsg += "[WARNING] Ignore non-numeric value '" + result->second + "'";
-                m_warningMsg += " for '" + key + "'.\n";
-            }
-
-            m_map[key] = std::to_string(defaultValue);
-            m_warningMsg += "[WARNING] Recommend '" + key + "'";
-            m_warningMsg += " (Default = " + std::to_string(defaultValue) + ")";
-            m_warningMsg += " in " + m_filename + ".\n";
+            
+            return std::pair<bool, T>(true, result);
         }
-        //______________________________________________________________________________________________________
-        //
-        // Description:
-        // - Returns the numeric-value of the entry specified by the given key
-        // - if the entry is not available, defaultValue will be returned, but the internal value remains unchanged
-        // - exspects the value of the entry specified by key as an instance of the numeric type T
-        // Parameters:
-        // - key: the searched-key
-        // - defaultValue: the default value for missing entries
-        // Return:
-        // - the entry-value  | for an existing entry
-        // - the defaultValue | for a missing entry
-        //______________________________________________________________________________________________________
+        
+        /**
+        * @brief overrides any conflicting configuration with the given key-value pair
+        * 
+        * @param T anything working with std::to_string
+        * @param key 
+        * @param value 
+        */
         template <typename T>
-        T getNumeric(const std::string& key, const T defaultValue = -1) const {
-            if (m_filename.empty()) {
-                return defaultValue;
-            }
-
-            auto result = m_map.find(key);
-
-            if (result != m_map.end()) {
-                if (result->second != "") {
-                    char* endPtr = nullptr;
-                    double value = strtod(result->second.c_str(), &endPtr);
-
-                    if (endPtr != result->second.c_str()) {
-                        if ((T)value == value) {
-                            return (T)value;
-                        }
-                    }
+        void set(const std::string& key, const T& value) {
+            m_configMap[key] = std::to_string(value);
+        }
+        
+        /**
+        * @brief clears all key-value pairs
+        * 
+        */
+        void clear();        
+    private:                
+        template <typename T>
+        std::pair<bool, T> convert_string(const std::string& key) const {            
+            char* endPtr = nullptr;
+            const char* cPtr = key.c_str();
+            T result;
+            bool castFailure = false;
+            
+            if (std::is_integral<T>::value) {
+                if (std::is_signed<T>::value) {
+                    auto tmp = strtoll(cPtr, &endPtr, 10);
+                    // tmp is too large for T, than a comparision will fail
+                    result = tmp;
+                    castFailure = result != tmp;
+                } else {
+                    auto tmp = strtoull(cPtr, &endPtr, 10);
+                    result = tmp;
+                    castFailure = result != tmp;
                 }
             }
-
-            return defaultValue;
+            
+            if (std::is_floating_point<T>::value) {
+                auto tmp = strtold(cPtr, &endPtr);
+                result = tmp;
+                castFailure = result != tmp;
+            }
+                                
+            return std::pair<bool, T>(!castFailure && endPtr != cPtr, result);
         }
-    private:
-        //______________________________________________________________________________________________________
-        //
-        // Description:
-        // - tries to extract new entry from the given string
-        // - the string will be parsed into a key-value pair with ':' as seperator
-        // - empty space will be ignored
-        // Parameter:
-        // - input: string containing a line from a config file
-        // Return:
-        // - true  | on success
-        // - false | on any error
-        //______________________________________________________________________________________________________
-        bool insert(const std::string input);
+                
+        bool insert_new_pair(const std::string input);
+        std::string remove_whitespace(const std::string input);
 
-        // the filename of last loaded config file
-        std::string m_filename;
-        // string containing all error messages
-        std::string m_errorMsg;
-        // string containing all warning messages
-        std::string m_warningMsg;
-        // internal representation of the key-value pair
-        std::unordered_map<std::string, std::string> m_map;
+        std::unordered_map<std::string, std::string> m_configMap;
     };
 }
 

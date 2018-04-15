@@ -71,13 +71,14 @@ namespace message {
         //______________________________________________________________________________________________________
         template <typename T, typename instant_argT = void*>
         bool exec_request(network::ipv4_addr& destAddr, network::pkt_buffer& outputBuffer, instant_argT arg = instant_argT()) {
+            static_assert((sizeof(T::id) == 1));
             message::msg_header_t* outputHeader = outputBuffer.push_next<message::msg_header_t>();
 
-            if (outputHeader != nullptr) {
+            
+            if (outputHeader != nullptr && !m_networkSocket.is_closed()) {
                 outputHeader->msgType = T::id;
                 outputHeader->status = message::status::ok;
                 outputHeader->attr = 0;
-                assert(sizeof(T::id) == 1);
                 
                 // T::request exspects an actual type as parameter, internal we store only void*
                 // Type-Safety is guaranteed by the register-call

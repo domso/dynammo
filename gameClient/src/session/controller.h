@@ -2,26 +2,29 @@
 
 #include <mutex>
 
+#include "src/util/event_controller.h"
+#include "src/util/config_file.h"
 #include "src/authentication/types.h"
 #include "src/encryption/rsa.h"
-#include "src/util/event_controller.h"
 #include "src/types/game_events.h"
 
 namespace session {
     class controller {
     public:
-        controller(util::event_controller<types::game_events>& eventCtrl);
+        controller(util::event_controller<types::game_events>& eventCtrl, util::config_file& config);
         controller(const controller& copy) = delete;
         controller(controller&& move) = delete;
         
-        void load_local_account(const authentication::accountID_t accID);
-        void close_local_account(const authentication::accountID_t accID);
         int get_signature_length();        
         bool sign_data(encryption::signature& destSignature, const int8_t* data, const int length);
         
         void set_tcp_link(const authentication::ticket_t newLink);
         authentication::ticket_t get_tcp_link();
+        
+        authentication::accountID_t get_accountID();   
     private:
+        void load_from_config();
+        
         std::mutex m_mutex;
         util::event_controller<types::game_events>& m_eventCtrl;
         
@@ -33,6 +36,7 @@ namespace session {
             encryption::private_key privateKey;
         };        
         
+        util::config_file& m_config;
         session_info m_currentSession;
     };
 }

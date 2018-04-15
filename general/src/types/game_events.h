@@ -10,7 +10,7 @@ namespace types {
         move_left,
         
         
-        
+        request_login,
         recv_tcp_link
     };
 }

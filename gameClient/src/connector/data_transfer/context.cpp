@@ -26,15 +26,13 @@ void connector::data_transfer::context::complete_layer_link(obj_link<types::data
 
 void connector::data_transfer::context::complete_static_objects_link(obj_link<types::data_transfer::content::static_object, region::controller>& obj, region::controller* regCtrl) {
     util::locked_ref<region::context> currentRegion = (*regCtrl)[0];
-    currentRegion->load_static_objects(obj.data);
-    obj.data.clear();
+    currentRegion->load_static_objects(std::move(obj.data));
     obj.reset();    
 }
 
 void connector::data_transfer::context::complete_dynamic_objects_link(obj_link<types::data_transfer::content::dynamic_object, region::controller>& obj, region::controller* regCtrl) {
     util::locked_ref<region::context> currentRegion = (*regCtrl)[0];
-    currentRegion->load_dynamic_objects(obj.data);
-    obj.data.clear();
+    currentRegion->load_dynamic_objects(std::move(obj.data));
     obj.reset();
 }
 

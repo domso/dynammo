@@ -26,18 +26,11 @@ user_interface::views::start_view::start_view(view_controller& viewCtrl) : m_vie
     
     m_button.signal_clicked().connect( sigc::mem_fun(*this, &start_view::run_button_clicked) );
     
-    
-    
     m_entry.show();
     m_entry.property_width_chars().set_value(20);
     m_entry.property_placeholder_text().set_value("Username");    
     m_entry.set_editable(true);
-    
-    
-    
-    
-    
-    
+
     viewCtrl.register_view(*this);
 }
 
@@ -54,5 +47,9 @@ Gtk::Container& user_interface::views::start_view::container() {
 }
 
 void user_interface::views::start_view::run_button_clicked() {
+    m_viewCtrl.config().clear();
+    m_viewCtrl.config().load("../" + m_entry.get_text() + ".config");   
+    
+    m_viewCtrl.create_event(types::game_events::request_login);    
     m_viewCtrl.change_view(view_list::views::main_game);
 }

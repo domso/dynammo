@@ -6,12 +6,12 @@
 #include "src/types/game_events.h"
 #include "src/types/game_animations.h"
 
-#include <iostream>
-
 namespace region {
     class dynamic_obj {
     public:
         uint32_t id;
+        uint32_t ownerID;
+        
         float speed;
         vec3<float> position;
         vec3<float> direction;
@@ -35,16 +35,19 @@ namespace region {
             position.y -= 1;
             animation = types::game_animations::move_up;
         }
+        
         void move_left() {
             position.x += 1;
             position.y -= 1;
             animation = types::game_animations::move_left;
         }
+        
         void move_down() {
             position.x += 1;
             position.y += 1;
             animation = types::game_animations::move_down;
         }
+        
         void move_right() {
             position.x -= 1;
             position.y += 1;

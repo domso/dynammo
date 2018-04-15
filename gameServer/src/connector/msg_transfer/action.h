@@ -22,18 +22,27 @@ namespace connector {
             static message::msg_status_t requestHandler(message::msg_header_t& header, network::ipv4_addr& srcAddr, network::pkt_buffer& inputBuffer, network::pkt_buffer& outputBuffer, network::udp_socket<network::ipv4_addr>& socket, message::msg_option_t& options, connector::context* context) {
                 auto request = inputBuffer.get_next<content::types::request>();
                 auto result = message::status::error::unknown;
+                bool verified = false;
+                
                 
                 if (request != nullptr) {
-                    auto info = context->userCtrl.get_info(request->accountID);
-                    if (verify_buffer(inputBuffer, *info.data())) {
+                    {
+                        auto info = context->userCtrl.get_info(request->accountID);
+                        verified = verify_buffer(inputBuffer, *info.data());
+                    }
+                    
+                    if (verified) {
                         auto region = context->regionCtrl.get_region(0);
                         ::types::game_events action = (::types::game_events) request->actionID;
-                        region::dynamic_obj* obj = region->action_for_dynamic_object(0, action);
+                        region::dynamic_obj* obj = region->action_for_dynamic_object(request->objID, action, request->accountID);
                         if (obj != nullptr) {
-                            connection::sender::send<::types::data_transfer::content::dynamic_object>(info->connection, *obj);
+                            for (auto& destUserID : region->get_users()) {
+                                auto info = context->userCtrl.get_info(destUserID);
+                                connection::sender::send<::types::data_transfer::content::dynamic_object>(info->connection, *obj);    
+                            }
+                            
+                            result = message::status::close;
                         }
-                        
-                        result = message::status::close;
                     } else {
                         result = message::status::error::auth;
                     }                   

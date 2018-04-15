@@ -12,22 +12,28 @@
 namespace connector {
     class requester {
     public:
-        requester(network::ipv4_addr& udpDestAddr, util::event_controller<types::game_events>& eventCtrl, message::msg_controller& msgCtrl, region::controller& regCtrl, session::controller& sessionCtrl);
+        requester(network::ipv4_addr& udpDestAddr, util::event_controller<types::game_events>& eventCtrl, message::msg_controller& msgCtrl);
         requester(const requester& copy) = delete;
         requester(requester&& move) = delete;
+        ~requester();
+        
+        void open();
+        void close();
     private:
         template <types::game_events triggerT, typename T>
         struct event_handler {
             constexpr static const auto trigger = triggerT;
-            static types::game_events handle(types::game_events event, requester* req) {
+            static types::game_events handle(const types::game_events event, requester* req) {
                 std::lock_guard<std::mutex> lg(req->m_mutex);
-                req->execute<T>(event);
+                if (req->m_open) {
+                    req->execute<T>(event);
+                }
                 return types::game_events::clear;
             }
         };
 
         template <typename T>
-        void execute(types::game_events event) {
+        void execute(const types::game_events event) {
             m_buffer.clear();
             m_msgCtrl.exec_request<T, types::game_events>(m_udpDestAddr, m_buffer, event);
         }
@@ -37,6 +43,7 @@ namespace connector {
             return *(m_msgCtrl.additional_datatype<T>());
         }
 
+        bool m_open = false;
         std::mutex m_mutex;
         constexpr static const auto bufferSize = 1500;
         network::pkt_buffer m_buffer;
@@ -44,7 +51,5 @@ namespace connector {
 
         util::event_controller<types::game_events>& m_eventCtrl;
         message::msg_controller& m_msgCtrl;
-        region::controller& m_regCtrl;
-        session::controller& m_sessionCtrl;
     };
 }

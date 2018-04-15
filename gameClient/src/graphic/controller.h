@@ -10,6 +10,7 @@
 #include <memory>
 #include <atomic>
 
+#include "src/util/config_file.h"
 #include "src/region/layer.h"
 #include "src/region/static_obj.h"
 #include "src/region/dynamic_obj.h"
@@ -25,7 +26,7 @@
 namespace graphic {
     class controller {
     public:
-        controller(int argc, char* argv[], util::event_controller<types::game_events>& eventCtrl);
+        controller(int argc, char* argv[], util::event_controller<types::game_events>& eventCtrl, util::config_file& config);
         controller(const controller& copy) = delete;
         controller(controller&& move) = delete;
         ~controller();
@@ -50,6 +51,8 @@ namespace graphic {
             std::lock_guard<std::mutex> lg(m_mutex);
             update_mesh<T>(newObj, id);
         }
+        
+        std::string get_option(const std::string& key);
     private:        
         template <typename T>
         typename std::enable_if<std::is_same<T, region::layer<uint32_t>>::value, void>::type add_mesh(const T* newObj, const uint32_t id) {            
@@ -127,6 +130,8 @@ namespace graphic {
         std::unordered_map<uint32_t, std::unique_ptr<region_mesh>> m_regionMeshes;        
         std::unordered_map<uint32_t, std::unique_ptr<sprite_mesh>> m_spriteMeshes;        
         std::unordered_map<uint32_t, std::unique_ptr<animated_sprite_mesh>> m_animatedSpriteMeshes; 
+        std::unique_ptr<user_interface::window> m_window;
+        util::config_file& m_config;
         
         graphic::renderer m_renderer;
         graphic::texture_controller m_texCtrl;

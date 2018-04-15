@@ -14,6 +14,10 @@ void region::context::add_user(const authentication::accountID_t accountID) {
 
 }
 
+const std::unordered_set<authentication::accountID_t>& region::context::get_users() const {
+    return m_activeUsers;
+}
+
 void region::context::remove_user(const authentication::accountID_t accountID) {
     m_activeUsers.erase(accountID);
 }
@@ -34,13 +38,20 @@ void region::context::load() {
     }
     
     region::dynamic_obj obj;
-    obj.id = 1;
+    obj.ownerID = 1;
     obj.position.x = 5;
     obj.position.y = 5;
     obj.position.z = 0;
     
-    insert_new_dynamic_object(obj);      
+    insert_new_dynamic_object(obj); 
     
+    obj.ownerID = 2;
+    obj.position.x = 50;
+    obj.position.y = 50;
+    obj.position.z = 0;
+    
+    insert_new_dynamic_object(obj); 
+        
     region::static_obj sObj;
     
     sObj.durability = 100;
@@ -72,9 +83,9 @@ void region::context::save() {
     
 }
 
-region::dynamic_obj* region::context::action_for_dynamic_object(const uint32_t id, const types::game_events action) {   
-    if (id < m_dynamicObjects2.size()) {
-        if (m_dynamicObjects2[id].action(action)) {
+region::dynamic_obj* region::context::action_for_dynamic_object(const uint32_t id, const types::game_events action, const authentication::accountID_t accountID) {   
+    if (id < m_dynamicObjects2.size()) {        
+        if (m_dynamicObjects2[id].ownerID == accountID && m_dynamicObjects2[id].action(action)) {
             return &m_dynamicObjects2[id];
         }
     }
@@ -84,6 +95,7 @@ region::dynamic_obj* region::context::action_for_dynamic_object(const uint32_t i
 
 void region::context::insert_new_dynamic_object(const region::dynamic_obj& obj) {
     m_dynamicObjects2.push_back(obj);
+    m_dynamicObjects2.back().id = m_dynamicObjects2.size() - 1;
 }
 
 void region::context::insert_new_static_object(const region::static_obj& obj) {
