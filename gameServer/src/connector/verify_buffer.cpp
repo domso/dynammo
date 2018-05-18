@@ -1,4 +1,4 @@
-#include "src/connector/msg_transfer/verify_buffer.h"
+#include "src/connector/verify_buffer.h"
 
 bool connector::msg_transfer::verify_buffer(network::pkt_buffer& inputBuffer, user::info& userData) {
     bool result = false;

@@ -1,6 +1,9 @@
 #include "src/connector/worker.h"
 #include "src/connector/msg_transfer/auth.h"
 #include "src/connector/msg_transfer/action.h"
+#include "src/connector/msg_transfer/transfer_action.h"
+#include "src/connector/msg_transfer/enter_region.h"
+#include "src/connector/msg_transfer/leave_region.h"
 
 connector::worker::worker(connector::context& context) : m_context(context), m_msgCtrl(bufferSize) {
 
@@ -36,6 +39,9 @@ void connector::worker::init_as_receiver() {
     m_msgCtrl.init(1851);
     m_msgCtrl.register_handler<msg_transfer::auth>(&m_context);
     m_msgCtrl.register_handler<msg_transfer::action>(&m_context);
+    m_msgCtrl.register_handler<msg_transfer::transfer_action>(&m_context);
+    m_msgCtrl.register_handler<msg_transfer::enter_region>(&m_context);
+    m_msgCtrl.register_handler<msg_transfer::leave_region>(&m_context);
     m_thread = std::thread(&message::msg_controller::recv, &m_msgCtrl);
 }
 

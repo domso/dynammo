@@ -14,17 +14,17 @@ namespace region {
         controller(const controller& copy) = delete;
         controller(controller&& copy) = delete;
         
-        void open_region(const uint64_t id);
-        bool is_open(const uint64_t id);
-        util::locked_ref<region::context> get_region(const uint64_t id);        
+        void open_region(const uint32_t id);
+        bool is_open(const uint32_t id);
+        util::locked_ref<region::context> get_region(const uint32_t id);        
         
         void update();
     private:        
-        void close_region(const uint64_t id);
+        void close_region(const uint32_t id);
         
         std::mutex m_mutex;
         update_queue m_regionUpdateQueue;
-        std::unordered_map<uint64_t, region::context> m_regionMap;
+        std::unordered_map<uint32_t, region::context> m_regionMap;
     };
 }
 

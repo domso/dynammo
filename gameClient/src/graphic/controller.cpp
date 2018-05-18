@@ -24,8 +24,12 @@ std::string graphic::controller::get_option(const std::string& key) {
     if (m_window.get() != nullptr) {
         return m_window->get_option(key);
     }
-    
+
     return "";
+}
+
+graphic::region_mesh_controller& graphic::controller::get_region_meshes(const uint32_t regionID) {
+    return m_regionMeshes.try_emplace(regionID, regionID, m_renderer, m_texCtrl).first->second;
 }
 
 void graphic::controller::clear() {
@@ -36,6 +40,6 @@ void graphic::controller::clear() {
 
 void graphic::controller::thread_main() {
     assert(m_app);
-    
+
     m_app->run(*m_window);
 }

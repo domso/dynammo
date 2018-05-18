@@ -14,11 +14,11 @@
 #include "src/graphic/texture_controller.h"
 
 namespace graphic {
-    class region_mesh : public base_mesh {
+    class layer_mesh : public base_mesh {
     public:
         constexpr static const int resolution = 128;
 
-        region_mesh(const region::layer<uint32_t>* layer, texture_controller& texCtrl) :
+        layer_mesh(const region::layer<uint32_t>* layer, texture_controller& texCtrl) :
             m_dataTexture(texCtrl.load_data_texture(layer->data(), layer->size, layer->size)),
             m_testTexture(texCtrl.load_img_texture("../res/tile.png")) {
 
@@ -35,16 +35,22 @@ namespace graphic {
 
             m_shaders.add_uniform_attr("groundTex");
             m_shaders.add_uniform_attr("mapData");
+            m_shaders.add_uniform_attr("regionID");
             m_shaders.link();
         }
 
         void free() {
 
         }
+        
+        void update_data(const region::layer<uint32_t>* layer) {
+            
+        }
 
         void update() {
             m_shaders.set_uniform_attr<int>("groundTex", 0);
             m_shaders.set_uniform_attr<int>("mapData", 1);
+            m_shaders.set_uniform_attr<int>("regionID", get_id());
         }
 
         void build() {

@@ -14,17 +14,17 @@ namespace region {
         update_queue(const update_queue& copy) = delete;
         update_queue(update_queue&& move) = delete;
                 
-        typedef util::timed_queue<uint64_t>::itemT timed_obj;
+        typedef util::timed_queue<uint32_t>::itemT timed_obj;
         
         void insert(const timed_obj newObj);        
-        void insert(const uint64_t newObj);     
-        bool wait_and_get(uint64_t* obj);        
+        void insert(const uint32_t newObj);     
+        bool wait_and_get(uint32_t* obj);        
     private:
         constexpr static const int msDelay = 2500;
         constexpr static const int secTimeout = 1;
         
         std::mutex m_mutex;
         std::condition_variable m_cond;
-        util::timed_queue<uint64_t> m_queue;
+        util::timed_queue<uint32_t> m_queue;
     };
 }

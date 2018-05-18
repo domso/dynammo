@@ -18,8 +18,8 @@ namespace graphic {
         renderer(renderer&& move) = delete;
         
         void link_glarea(Gtk::GLArea& glarea);
-        void add_mesh(graphic::base_mesh* newMesh);
-        void remove_mesh(graphic::base_mesh* oldMesh);
+        void add_mesh(std::shared_ptr<graphic::base_mesh> newMesh);
+        void remove_mesh(std::shared_ptr<graphic::base_mesh> oldMesh);
         
         enum class states {
             unrealized,
@@ -45,9 +45,9 @@ namespace graphic {
         
         std::mutex m_mutex;
         Gtk::GLArea* m_glarea;
-        std::unordered_set<graphic::base_mesh*> m_renderMeshes;
-        std::queue<graphic::base_mesh*> m_addQueue;
-        std::queue<graphic::base_mesh*> m_removeQueue;
+        std::unordered_set<std::shared_ptr<graphic::base_mesh>> m_renderMeshes;
+        std::queue<std::shared_ptr<graphic::base_mesh>> m_addQueue;
+        std::queue<std::shared_ptr<graphic::base_mesh>> m_removeQueue;
     };
 }
 

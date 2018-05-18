@@ -17,7 +17,7 @@ int main() {
     connector::worker w1(c1);
     connector::worker w2(c1);
     w1.init_as(connector::worker::receiver);
-    w2.init_as(connector::worker::updater);
+//     w2.init_as(connector::worker::updater);
     
     util::signals::wait_for_sigint();
     std::cout << "Close Server" << std::endl;   

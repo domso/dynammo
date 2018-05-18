@@ -15,13 +15,13 @@
 namespace graphic {
     class animated_sprite_mesh : public base_mesh {
     public:        
-        animated_sprite_mesh(const std::pair<region::dynamic_obj*, region::layer<uint32_t>*>* obj, texture_controller& texCtrl) :         
-        m_dataTexture(texCtrl.load_data_texture(obj->second->data(), obj->second->size, obj->second->size)),
+        animated_sprite_mesh(const region::dynamic_obj* obj, texture_controller& texCtrl, const region::layer<uint32_t>* layer) :         
+        m_dataTexture(texCtrl.load_data_texture(layer->data(), layer->size, layer->size)),
 //         m_texture(texCtrl.load_img_texture("../res/tile.png"))        
 //         m_texture(texCtrl.load_img_texture("../res/_tree_01/_tree_01_00000.png"))
         m_textureBlock(texCtrl.load_img_block_texture("../res/isometric_Mini-Crusader/walk/crusader_walk_", 0, 119, 15))
         {
-            set_position(obj->first->position);
+            set_position(obj->position);
             m_currentFrame = 0;
             m_firstFrame = 0;
             m_lastFrame = 0;            
@@ -52,6 +52,17 @@ namespace graphic {
 
         void free() {
             std::lock_guard<std::mutex> lg(m_mutex);            
+        }     
+        
+        void update_data(const region::dynamic_obj* obj) {
+            set_position(obj->position); 
+             switch (obj->animation) {
+                case types::game_animations::move_up:    set_animation(60, 74, false);    break;
+                case types::game_animations::move_left:  set_animation(90, 104, false);  break;
+                case types::game_animations::move_down:  set_animation(0, 14, false);  break;
+                case types::game_animations::move_right: set_animation(30, 44, false); break;
+                default: break;
+            }    
         }
 
         void update() {

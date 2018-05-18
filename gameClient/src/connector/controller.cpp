@@ -41,7 +41,7 @@ bool connector::controller::open() {
     return status;
 }
 
-types::game_events connector::controller::open_event::handle(const types::game_events event, connector::controller* ctrl) {
+types::game_events connector::controller::open_event::handle(const types::game_events event, const uint64_t& arg, connector::controller* ctrl) {
     ctrl->open();
     return types::game_events::clear;
 }

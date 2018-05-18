@@ -55,7 +55,7 @@ void user_interface::key_controller::create_pressed_events(uint32_t key) {
     auto result = m_eventsByPress.find(key);
 
     if (result != m_eventsByPress.end()) {
-        m_eventCtrl.new_event(result->second);
+        m_eventCtrl.new_event(result->second, result->second);
     }
 }
 
@@ -63,7 +63,7 @@ void user_interface::key_controller::create_release_events(uint32_t key) {
     auto result = m_eventsByRelease.find(key);
 
     if (result != m_eventsByRelease.end()) {
-        m_eventCtrl.new_event(result->second);
+        m_eventCtrl.new_event(result->second, result->second);
     }
 }
 

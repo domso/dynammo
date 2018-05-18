@@ -3,7 +3,7 @@
 #include "src/message/msg_controller.h"
 #include "src/region/controller.h"
 #include "src/session/controller.h"
-#include "src/connector/msg_transfer/data.h"
+#include "src/connector/data.h"
 
 namespace connector {
     namespace msg_transfer {

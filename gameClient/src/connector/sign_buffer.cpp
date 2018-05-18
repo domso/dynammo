@@ -1,4 +1,4 @@
-#include "src/connector/msg_transfer/sign_buffer.h"
+#include "src/connector/sign_buffer.h"
 
 bool connector::msg_transfer::sign_buffer(network::pkt_buffer& outputBuffer, session::controller& sessionCtrl) {
     int sigLength = sessionCtrl.get_signature_length();

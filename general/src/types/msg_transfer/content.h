@@ -3,6 +3,8 @@
 #include <stdint.h>
 #include "src/authentication/types.h"
 #include "src/message/msg_types.h"
+#include "src/region/dynamic_obj.h"
+
 
 namespace types {
     namespace msg_transfer {
@@ -11,7 +13,10 @@ namespace types {
                 enum {
                     info,
                     auth,
-                    action
+                    action,    
+                    transfer_action,                    
+                    enter_region,
+                    leave_region
                 };          
             };
             
@@ -51,8 +56,66 @@ namespace types {
                 struct types {
                     struct request {
                         authentication::accountID_t accountID;
+                        uint32_t regionID;
                         uint32_t objID;
-                        uint32_t actionID;
+                        uint32_t actionID;                        
+                    };
+
+                    struct response {
+                        uint32_t regionID;
+                        region::dynamic_obj obj;
+                    };
+                    
+                    struct response_extension {
+                        uint32_t oldRegionID;
+                        uint32_t oldObjID;
+                    };
+                };
+            };
+
+            struct transfer_action {
+                constexpr static const uint8_t id = ids::transfer_action;
+
+                struct types {
+                    struct request {
+                        authentication::accountID_t accountID;
+                        uint32_t srcRegionID;
+                        uint32_t destRegionID;
+                        uint32_t objID;
+                        uint32_t actionID;                        
+                    };
+
+                    struct response {
+                        uint32_t srcRegionID;
+                        uint32_t oldObjID;
+                        uint32_t destRegionID;
+                        region::dynamic_obj obj;
+                    };
+                };
+            };
+
+            struct enter_region {
+                constexpr static const uint8_t id = ids::enter_region;
+
+                struct types {
+                    struct request {
+                        authentication::accountID_t accountID;
+                        uint32_t regionID;                      
+                    };
+
+                    struct response {
+                        //-
+                    };
+                };
+            };
+
+            struct leave_region {
+                constexpr static const uint8_t id = ids::leave_region;
+
+                struct types {
+                    struct request {
+                        authentication::accountID_t accountID;
+                        uint32_t regionID;                      
                     };
 
                     struct response {

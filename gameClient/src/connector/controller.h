@@ -10,7 +10,7 @@
 #include "src/connector/tcp_receiver.h"
 #include "src/connector/requester.h"
 #include "src/connector/data_transfer/context.h"
-#include "src/connector/msg_transfer/context.h"
+#include "src/connector/context.h"
 #include "src/region/controller.h"
 #include "src/session/controller.h"
 
@@ -30,7 +30,7 @@ namespace connector {
         
         struct open_event {
             constexpr static const auto trigger = types::game_events::request_login;
-            static types::game_events handle(const types::game_events event, connector::controller* ctrl);
+            static types::game_events handle(const types::game_events event, const uint64_t& arg, connector::controller* ctrl);
         };
 
         network::ipv4_addr m_udpDestAddr;

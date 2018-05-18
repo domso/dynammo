@@ -22,6 +22,12 @@ namespace session {
         authentication::ticket_t get_tcp_link();
         
         authentication::accountID_t get_accountID();   
+        
+        void set_auth_state(const bool state);
+        bool get_auth_state();
+
+
+        uint32_t regUserID = 0; //TODO
     private:
         void load_from_config();
         
@@ -30,6 +36,7 @@ namespace session {
         
         struct session_info {
             bool valid = false;
+            bool auth_state = false;
             authentication::accountID_t accountID;        
             authentication::ticket_t tcpTicket;
             

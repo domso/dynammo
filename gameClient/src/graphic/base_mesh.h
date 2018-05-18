@@ -20,6 +20,9 @@ namespace graphic {
         virtual void free() = 0;
         virtual void update() = 0;
                        
+        void set_id(const uint32_t id);
+        uint32_t get_id() const;
+        
         void add_vertex_attr(const int attrNr, const float value);
         void set_vertex_attr(const int attrNr, const int vertexNr, const float value);
         void set_vertex_attr_dimension(const int attrNr, const int dim);
@@ -35,9 +38,10 @@ namespace graphic {
     private:               
         std::vector<std::vector<GLfloat>> m_internalVertexBuffer;
         std::vector<GLuint> m_externalVertexBuffer;
-        std::vector<GLuint> m_externalVertexGroup;
+        GLuint m_externalVertexGroup;
         std::vector<int> m_externalVertexAttrDimension;
         
+        uint32_t m_id;
         
         std::vector<base_texture*> m_textures;
     };

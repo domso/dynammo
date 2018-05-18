@@ -21,7 +21,7 @@ int main(int argc, char* argv[]) {
     
     // data-layer
     session::controller sessionCtrl(eventCtrl, config);
-    region::controller regionCtrl(graphicCtrl, sessionCtrl);
+    region::controller regionCtrl(graphicCtrl, sessionCtrl, eventCtrl);
     
     // network-layer    
     connector::controller connectorCtrl(regionCtrl, sessionCtrl, eventCtrl, config);   

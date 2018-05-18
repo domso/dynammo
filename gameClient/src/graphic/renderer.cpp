@@ -17,12 +17,12 @@ void graphic::renderer::link_glarea(Gtk::GLArea& glarea) {
     glarea.signal_render().connect(sigc::mem_fun(*this, &renderer::render), false);
 }
 
-void graphic::renderer::add_mesh(graphic::base_mesh* newMesh) {
+void graphic::renderer::add_mesh(std::shared_ptr<graphic::base_mesh> newMesh) {
     std::lock_guard<std::mutex> lg(m_mutex);
     m_addQueue.push(newMesh);
 }
 
-void graphic::renderer::remove_mesh(graphic::base_mesh* oldMesh) {
+void graphic::renderer::remove_mesh(std::shared_ptr<graphic::base_mesh> oldMesh) {
     std::lock_guard<std::mutex> lg(m_mutex);
     m_removeQueue.push(oldMesh);
 }
@@ -87,7 +87,7 @@ bool graphic::renderer::render(const Glib::RefPtr<Gdk::GLContext>& context) {
 }
 
 void graphic::renderer::render_meshes() {
-    for (graphic::base_mesh* currentMesh : m_renderMeshes) {
+    for (auto& currentMesh : m_renderMeshes) {
         currentMesh->render();
     }
 }
@@ -118,7 +118,7 @@ void graphic::renderer::remove_old_mesh() {
 }
 
 void graphic::renderer::remove_all_meshes() {
-    for (graphic::base_mesh* currentMesh : m_renderMeshes) {
+    for (auto& currentMesh : m_renderMeshes) {
         currentMesh->unrealize();
     }
     

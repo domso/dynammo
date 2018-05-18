@@ -9,11 +9,11 @@ void region::update_queue::insert(const timed_obj newObj) {
     m_cond.notify_all();
 }
 
-void region::update_queue::insert(const uint64_t newObj) {
+void region::update_queue::insert(const uint32_t newObj) {
     insert(timed_obj(newObj));
 }
 
-bool region::update_queue::wait_and_get(uint64_t* obj) {
+bool region::update_queue::wait_and_get(uint32_t* obj) {
     std::unique_lock<std::mutex> ul(m_mutex);
 
     while (m_queue.empty()) {

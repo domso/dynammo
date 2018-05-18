@@ -12,6 +12,7 @@ namespace types {
             struct ids {
                 enum uint8_t {
                     auth_ticket,
+                    region_select,
                     region_layer,
                     static_object,
                     dynamic_object
@@ -21,6 +22,11 @@ namespace types {
             struct auth_ticket {
                 constexpr static const uint8_t id = ids::auth_ticket;
                 typedef authentication::ticket_t content;
+            };
+            
+            struct region_select {
+                constexpr static const uint8_t id = ids::region_select;
+                typedef uint32_t content;
             };
             
             struct region_layer {

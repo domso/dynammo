@@ -17,6 +17,7 @@ namespace user {
         ~info();
 
         network::tcp_connection<network::ipv4_addr> connection;
+        network::ipv4_addr udpAddr;
         encryption::public_key publicKey;
     };
 }

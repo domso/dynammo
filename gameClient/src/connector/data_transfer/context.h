@@ -20,11 +20,14 @@ namespace connector {
             region::controller& m_regCtrl;
 
             obj_link<types::data_transfer::content::auth_ticket, session::controller> tcpTicketLink;
+            obj_link<types::data_transfer::content::region_select, region::controller> regionSelectLink;
             obj_link<types::data_transfer::content::region_layer, region::controller> layerLink;
             obj_link<types::data_transfer::content::static_object, region::controller> staticObjLink;
             obj_link<types::data_transfer::content::dynamic_object, region::controller> dynObjLink;
             
             static void complete_tcp_ticket_link(obj_link<types::data_transfer::content::auth_ticket, session::controller>& obj, session::controller* sessionCtrl);
+            
+            static void complete_region_select_link(obj_link<types::data_transfer::content::region_select, region::controller>& obj, region::controller* regCtrl);            
             static void complete_layer_link(obj_link<types::data_transfer::content::region_layer, region::controller>& obj, region::controller* regCtrl);
             static void complete_static_objects_link(obj_link<types::data_transfer::content::static_object, region::controller>& obj, region::controller* regCtrl);
             static void complete_dynamic_objects_link(obj_link<types::data_transfer::content::dynamic_object, region::controller>& obj, region::controller* regCtrl);

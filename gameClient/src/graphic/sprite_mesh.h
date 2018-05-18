@@ -15,19 +15,19 @@
 namespace graphic {
     class sprite_mesh : public base_mesh {
     public:
-        sprite_mesh(const std::pair<region::static_obj*, region::layer<uint32_t>*>* obj, texture_controller& texCtrl) :         
-        m_dataTexture(texCtrl.load_data_texture(obj->second->data(), obj->second->size, obj->second->size)),
+        sprite_mesh(const region::static_obj* obj, texture_controller& texCtrl, const region::layer<uint32_t>* layer) :         
+        m_dataTexture(texCtrl.load_data_texture(layer->data(), layer->size, layer->size)),
         m_texture(texCtrl.load_img_texture("../res/_tree_01/_tree_01_00000.png"))
         {
-            set_position(obj->first->position);
+            set_position(obj->position);
         }
         
-        sprite_mesh(const std::pair<region::dynamic_obj*, region::layer<uint32_t>*>* obj, texture_controller& texCtrl) :         
-        m_dataTexture(texCtrl.load_data_texture(obj->second->data(), obj->second->size, obj->second->size)),
+        sprite_mesh(const region::dynamic_obj*  obj, texture_controller& texCtrl, const region::layer<uint32_t>* layer) :         
+        m_dataTexture(texCtrl.load_data_texture(layer->data(), layer->size, layer->size)),
 //         m_texture(texCtrl.load_img_texture("../res/tile.png"))        
         m_texture(texCtrl.load_img_texture("../res/_tree_01/_tree_01_00000.png"))
         {
-            set_position(obj->first->position);
+            set_position(obj->position);
         }
 
         void load() {
@@ -50,8 +50,16 @@ namespace graphic {
 
         void free() {
             std::lock_guard<std::mutex> lg(m_mutex);            
+        }       
+        
+        void update_data(const region::dynamic_obj* obj) {
+            set_position(obj->position);
+        }    
+        
+        void update_data(const region::static_obj* obj) {
+            set_position(obj->position);
         }
-
+        
         void update() {
             std::lock_guard<std::mutex> lg(m_mutex);
             m_shaders.set_uniform_attr<int>("tex", 0);

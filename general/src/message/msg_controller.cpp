@@ -34,19 +34,18 @@ void message::msg_controller::recv() {
 
                 message::msg_option_t option = message::option::clear;
                 message::msg_header_t* outputHeader = m_outputBuffer.push_next<message::msg_header_t>();
-                message::msg_status_t status = m_callbacks[header->msgType](*header, m_srcAddr, m_inputBuffer, m_outputBuffer, m_networkSocket, option, m_additional_data[header->msgType]);
 
-                if (status == message::status::wait) {
-                    m_inputBuffer.reset();
-                } else {
-                    m_inputBuffer.set_msg_length(0);
-                }
-
-                if (status == message::status::ok && outputHeader != nullptr) {
-                    outputHeader->status = status;
+                if (outputHeader != nullptr) {
+                    outputHeader->status = message::status::ok;
                     outputHeader->msgType = header->msgType ^ (message::request_switch_mask * ((option & message::option::no_request_response_switch) == 0));
                     outputHeader->attr = header->attr;
 
+                    outputHeader->status = m_callbacks[header->msgType](*header, m_srcAddr, m_inputBuffer, m_outputBuffer, m_networkSocket, option, m_additional_data[header->msgType]);
+
+                    outputHeader->msgType = header->msgType ^ (message::request_switch_mask * ((option & message::option::no_request_response_switch) == 0));
+                    outputHeader->attr = header->attr;
+
+                    m_inputBuffer.set_msg_length(0);
                     internal_send(m_networkSocket, m_srcAddr,  m_outputBuffer);
                 }
             }
@@ -64,7 +63,7 @@ bool message::msg_controller::internal_recv() {
     if (m_inputBuffer.msg_length() != 0) {
         return true;
     }
-    
+
     return m_networkSocket.recv_pkt(m_srcAddr, m_inputBuffer).first;
 }
 

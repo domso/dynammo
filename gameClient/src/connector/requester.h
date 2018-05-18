@@ -23,7 +23,19 @@ namespace connector {
         template <types::game_events triggerT, typename T>
         struct event_handler {
             constexpr static const auto trigger = triggerT;
-            static types::game_events handle(const types::game_events event, requester* req) {
+            static types::game_events handle(const types::game_events event, const uint64_t& arg, requester* req) {
+                std::lock_guard<std::mutex> lg(req->m_mutex);
+                if (req->m_open) {
+                    req->execute<T>(arg);
+                }
+                return types::game_events::clear;
+            }
+        };
+        
+        template <types::game_events triggerT, typename T>
+        struct event_handler2 {
+            constexpr static const auto trigger = triggerT;
+            static types::game_events handle(const types::game_events event, const uint64_t& arg, requester* req) {
                 std::lock_guard<std::mutex> lg(req->m_mutex);
                 if (req->m_open) {
                     req->execute<T>(event);
@@ -33,9 +45,9 @@ namespace connector {
         };
 
         template <typename T>
-        void execute(const types::game_events event) {
+        void execute(const uint64_t arg) {
             m_buffer.clear();
-            m_msgCtrl.exec_request<T, types::game_events>(m_udpDestAddr, m_buffer, event);
+            m_msgCtrl.exec_request<T, uint64_t>(m_udpDestAddr, m_buffer, arg);
         }
 
         template <typename T>
