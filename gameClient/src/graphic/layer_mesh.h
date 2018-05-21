@@ -16,7 +16,7 @@
 namespace graphic {
     class layer_mesh : public base_mesh {
     public:
-        constexpr static const int resolution = 128;
+        constexpr static const int resolution = 512;
 
         layer_mesh(const region::layer<uint32_t>* layer, texture_controller& texCtrl) :
             m_dataTexture(texCtrl.load_data_texture(layer->data(), layer->size, layer->size)),
@@ -36,6 +36,9 @@ namespace graphic {
             m_shaders.add_uniform_attr("groundTex");
             m_shaders.add_uniform_attr("mapData");
             m_shaders.add_uniform_attr("regionID");
+            m_shaders.add_uniform_attr("zoom");
+            m_shaders.add_uniform_attr("camera");
+            m_shaders.add_uniform_attr("screenResolution");
             m_shaders.link();
         }
 
@@ -47,10 +50,14 @@ namespace graphic {
             
         }
 
-        void update() {
+        void update(const graphic::settings& settings) {
             m_shaders.set_uniform_attr<int>("groundTex", 0);
             m_shaders.set_uniform_attr<int>("mapData", 1);
             m_shaders.set_uniform_attr<int>("regionID", get_id());
+            m_shaders.set_uniform_attr<float>("zoom", settings.zoomX, settings.zoomY);
+            m_shaders.set_uniform_attr<float>("screenResolution", settings.currentWidth, settings.currentHeight);
+            m_shaders.set_uniform_attr<float>("camera", settings.cameraX, settings.cameraY);
+            
         }
 
         void build() {

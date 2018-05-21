@@ -6,7 +6,9 @@ layout(location = 1) in vec2 vertexUV;
 uniform vec3 position;
 uniform vec2 scale;
 uniform sampler2D mapData;
-
+uniform vec2 camera;
+uniform vec2 screenResolution;
+uniform vec2 zoom;
 
 uniform int frameDimension;
 uniform int frame;
@@ -15,8 +17,8 @@ out vec2 UV;
 
 void main() {    
     vec3 scaledCoord = vCoord;
-    scaledCoord.x *= scale.x;
-    scaledCoord.y *= scale.y;
+    scaledCoord.x *= scale.x * zoom.x;
+    scaledCoord.y *= scale.y * zoom.y * (screenResolution.x / screenResolution.y);
     
     float size = 0.005;
     float resolution = 128;
@@ -27,12 +29,12 @@ void main() {
     
     vec3 outputPosition;
     
-    outputPosition.x = -((position.x - position.y) * 2 * size);
-    outputPosition.y = -((position.x + position.y) * size - center);
+    outputPosition.x = -((position.x - position.y) * 2 * size) * zoom.x;
+    outputPosition.y = -((position.x + position.y) * size - center) * zoom.y * (screenResolution.x / screenResolution.y);
     outputPosition.z = -((position.x + position.y) * depthMargin);
     
     
-    gl_Position = vec4(scaledCoord + outputPosition, 1);  
+    gl_Position = vec4(scaledCoord + outputPosition - vec3(camera, 0), 1);  
     
     
     vec2 frameUV = vertexUV;

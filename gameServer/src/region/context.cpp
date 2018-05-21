@@ -31,11 +31,22 @@ bool region::context::update() {
 
 void region::context::load() {
     util::file_storage file;
-    file.init("data/testLayer.layer");
+    file.init("data/export.ppm");
+    
+    int whiteSpaceCounter = 0;
+    while (whiteSpaceCounter != 4) {
+        char c;        
+        file.read<char>(&c);
+        
+        whiteSpaceCounter += c == ' ';
+    }
+    
 
     for (int i = 0; i < m_testLayer.size * m_testLayer.size; i++) {
-        file.read<uint32_t>(&m_testLayer[i]);
-        m_testLayer[i] = 0;
+        uint8_t c;        
+        file.read<uint8_t>(&c);
+        
+        m_testLayer[i] = c;
     }
 
     if (m_id == 0) {

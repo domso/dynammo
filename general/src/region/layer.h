@@ -51,7 +51,7 @@ namespace region {
             return m_tiles[y * size + x];
         }
         
-        constexpr static const int size = 128; //TODO add into general config file
+        constexpr static const int size = 512; //TODO add into general config file
     private:
         tileT m_tiles[size * size];
     };

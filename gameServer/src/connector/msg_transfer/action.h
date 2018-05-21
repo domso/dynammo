@@ -41,7 +41,7 @@ namespace connector {
 
                         region::vec3<float> positionOffset;
                         uint32_t destRegionID = request->regionID;
-
+//TODO
                         {
                             auto region = context->regionCtrl.get_region(request->regionID);
                             region::dynamic_obj* obj = region->get_dynamic_obj(request->objID);
@@ -89,8 +89,8 @@ namespace connector {
                                 response->obj = *obj;
                             }
                         }
-
-
+//TODO
+/*
                         if (positionOffset.x != 0 || positionOffset.y != 0) {                                
                             auto srcRegion = context->regionCtrl.get_region(request->regionID);
                             auto destRegion = context->regionCtrl.get_region(destRegionID);
@@ -126,7 +126,7 @@ namespace connector {
                                 }
                             }
                         }
-
+*/
                         result = message::status::ok;
                     } else {
                         result = message::status::error::auth;

@@ -9,7 +9,6 @@ namespace types {
         key_right,
         key_left,
         
-        
         move_up,
         move_down,
         move_right,

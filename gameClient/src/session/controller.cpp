@@ -49,17 +49,17 @@ void session::controller::set_auth_state(const bool state) {
     }
     
     if (state) {        
-        m_eventCtrl.new_event(types::game_events::enter_region, 0xFFFF'FFFF);
-        m_eventCtrl.new_event(types::game_events::enter_region, 0x0000'FFFF);
-        m_eventCtrl.new_event(types::game_events::enter_region, 0x0001'FFFF);
-        
-        m_eventCtrl.new_event(types::game_events::enter_region, 0xFFFF'0000);
+//         m_eventCtrl.new_event(types::game_events::enter_region, 0xFFFF'FFFF);
+//         m_eventCtrl.new_event(types::game_events::enter_region, 0x0000'FFFF);
+//         m_eventCtrl.new_event(types::game_events::enter_region, 0x0001'FFFF);
+//         
+//         m_eventCtrl.new_event(types::game_events::enter_region, 0xFFFF'0000);
         m_eventCtrl.new_event(types::game_events::enter_region, 0x0000'0000);
-        m_eventCtrl.new_event(types::game_events::enter_region, 0x0001'0000);
-        
-        m_eventCtrl.new_event(types::game_events::enter_region, 0xFFFF'0001);
-        m_eventCtrl.new_event(types::game_events::enter_region, 0x0000'0001);
-        m_eventCtrl.new_event(types::game_events::enter_region, 0x0001'0001);
+//         m_eventCtrl.new_event(types::game_events::enter_region, 0x0001'0000);
+//         
+//         m_eventCtrl.new_event(types::game_events::enter_region, 0xFFFF'0001);
+//         m_eventCtrl.new_event(types::game_events::enter_region, 0x0000'0001);
+//         m_eventCtrl.new_event(types::game_events::enter_region, 0x0001'0001);
     }
 }
 

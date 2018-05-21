@@ -33,6 +33,12 @@ void graphic::renderer::close() {
     }    
 }
 
+void graphic::renderer::publish_settings() {
+    std::lock_guard<std::mutex> lg(m_mutex);
+    m_currentSettings = unpublishedSettings;
+}
+
+
 void graphic::renderer::realize() {
     m_glarea->make_current();
 
@@ -77,9 +83,15 @@ bool graphic::renderer::render(const Glib::RefPtr<Gdk::GLContext>& context) {
     glClearColor(0.5, 0.5, 0.5, 1.0);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-    update_meshes();
-    render_meshes();
-
+    {
+        std::lock_guard<std::mutex> lg(m_mutex);
+        m_currentSettings.currentWidth = m_glarea->get_allocated_width();
+        m_currentSettings.currentHeight = m_glarea->get_allocated_height();
+        
+        update_meshes();
+        render_meshes();
+    }
+    
     glFlush();
 
     m_glarea->queue_draw();
@@ -88,16 +100,14 @@ bool graphic::renderer::render(const Glib::RefPtr<Gdk::GLContext>& context) {
 
 void graphic::renderer::render_meshes() {
     for (auto& currentMesh : m_renderMeshes) {
-        currentMesh->render();
+        currentMesh->render(m_currentSettings);
     }
 }
 
 void graphic::renderer::update_meshes() {
-    std::lock_guard<std::mutex> lg(m_mutex);
     add_new_mesh();
     remove_old_mesh();
 }
-
 
 void graphic::renderer::add_new_mesh() {
     if (!m_addQueue.empty()) {

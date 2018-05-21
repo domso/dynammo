@@ -26,7 +26,10 @@ namespace user_interface {
         
         bool key_press_event(GdkEventKey* event) ;
         bool key_release_event(GdkEventKey* event);
+                
+        bool on_scroll_event(GdkEventScroll* scroll_event) override;
         bool on_delete_event(GdkEventAny* event) override;
+     
         
         std::string get_option(const std::string& key);
     protected:        

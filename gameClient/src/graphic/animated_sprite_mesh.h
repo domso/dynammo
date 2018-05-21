@@ -41,6 +41,9 @@ namespace graphic {
             m_shaders.add_uniform_attr("tex");
             m_shaders.add_uniform_attr("mapData");
             m_shaders.add_uniform_attr("scale");
+            m_shaders.add_uniform_attr("camera");
+            m_shaders.add_uniform_attr("screenResolution");
+            m_shaders.add_uniform_attr("zoom");
             m_shaders.add_uniform_attr("position");
             m_shaders.add_uniform_attr("frameDimension");
             m_shaders.add_uniform_attr("frame");
@@ -65,11 +68,14 @@ namespace graphic {
             }    
         }
 
-        void update() {
+        void update(const graphic::settings& settings) {
             std::lock_guard<std::mutex> lg(m_mutex);
             m_shaders.set_uniform_attr<int>("tex", 0);
             m_shaders.set_uniform_attr<int>("mapData", 1);
-            m_shaders.set_uniform_attr<float>("scale", 0.25, 0.25);
+            m_shaders.set_uniform_attr<float>("scale", 0.025, 0.025);
+            m_shaders.set_uniform_attr<float>("zoom", settings.zoomX, settings.zoomY);
+            m_shaders.set_uniform_attr<float>("screenResolution", settings.currentWidth, settings.currentHeight);
+            m_shaders.set_uniform_attr<float>("camera", settings.cameraX, settings.cameraY);
             
             m_shaders.set_uniform_attr<float>("position", m_position.x, m_position.y, m_position.z);
             

@@ -7,8 +7,10 @@
 #include <unordered_set>
 #include <queue>
 #include <thread>
+
 #include "src/util/state_machine.h"
 #include "src/graphic/base_mesh.h"
+#include "src/graphic/settings.h"
 
 namespace graphic {
     class renderer {
@@ -31,7 +33,12 @@ namespace graphic {
         void close();
         
         util::state_machine<states> currentState = states::unrealized;
-    private:  
+        
+        graphic::settings unpublishedSettings;
+        void publish_settings();
+    private:
+        graphic::settings m_currentSettings;
+        
         void realize();
         void unrealize();
         bool render(const Glib::RefPtr<Gdk::GLContext>& context);

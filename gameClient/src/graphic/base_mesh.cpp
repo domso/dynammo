@@ -90,9 +90,9 @@ void graphic::base_mesh::unrealize() {
      m_externalVertexBuffer.clear();
 }
 
-void graphic::base_mesh::render() {     
+void graphic::base_mesh::render(const graphic::settings& settings) {     
     m_shaders.enable();
-    update();
+    update(settings);
     
     int i = 0;
     for (base_texture* tex : m_textures) {

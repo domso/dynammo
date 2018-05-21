@@ -7,6 +7,7 @@
 #include <functional>
 #include "shader_program.h"
 #include "base_texture.h"
+#include "src/graphic/settings.h"
 
 namespace graphic {
     class base_mesh {
@@ -18,7 +19,7 @@ namespace graphic {
                         
         virtual void load() = 0;
         virtual void free() = 0;
-        virtual void update() = 0;
+        virtual void update(const graphic::settings& settings) = 0;
                        
         void set_id(const uint32_t id);
         uint32_t get_id() const;
@@ -31,7 +32,7 @@ namespace graphic {
                 
         void realize();
         void unrealize();
-        void render();
+        void render(const graphic::settings& settings);
         
     protected:
         shader_program m_shaders;
