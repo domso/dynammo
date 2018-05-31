@@ -18,8 +18,8 @@ namespace graphic {
         animated_sprite_mesh(const region::dynamic_obj* obj, texture_controller& texCtrl, const region::layer<uint32_t>* layer) :         
         m_dataTexture(texCtrl.load_data_texture(layer->data(), layer->size, layer->size)),
 //         m_texture(texCtrl.load_img_texture("../res/tile.png"))        
-//         m_texture(texCtrl.load_img_texture("../res/_tree_01/_tree_01_00000.png"))
-        m_textureBlock(texCtrl.load_img_block_texture("../res/isometric_Mini-Crusader/walk/crusader_walk_", 0, 119, 15))
+        m_texture(texCtrl.load_img_texture("../res/Sprites/CitizenSheet.png"))
+//         m_textureBlock(texCtrl.load_img_block_texture("../res/isometric_Mini-Crusader/walk/crusader_walk_", 0, 119, 15))
         {
             set_position(obj->position);
             m_currentFrame = 0;
@@ -32,7 +32,7 @@ namespace graphic {
             build_position();
             build_uv();
 
-            add_texture(*m_textureBlock.get());
+            add_texture(*m_texture.get());
             add_texture(*m_dataTexture.get());
             
             m_shaders.add_shader<graphic::shader_program::shader_types::vertex>("../shader/animated_sprite_vertex.glsl");
@@ -47,6 +47,7 @@ namespace graphic {
             m_shaders.add_uniform_attr("position");
             m_shaders.add_uniform_attr("frameDimension");
             m_shaders.add_uniform_attr("frame");
+            m_shaders.add_uniform_attr("frameInvert");
             
             
             
@@ -60,10 +61,15 @@ namespace graphic {
         void update_data(const region::dynamic_obj* obj) {
             set_position(obj->position); 
              switch (obj->animation) {
-                case types::game_animations::move_up:    set_animation(60, 74, false);    break;
-                case types::game_animations::move_left:  set_animation(90, 104, false);  break;
-                case types::game_animations::move_down:  set_animation(0, 14, false);  break;
-                case types::game_animations::move_right: set_animation(30, 44, false); break;
+//                 case types::game_animations::move_up:    set_animation(60, 74, false);    break;
+//                 case types::game_animations::move_left:  set_animation(90, 104, false);  break;
+//                 case types::game_animations::move_down:  set_animation(0, 14, false);  break;
+//                 case types::game_animations::move_right: set_animation(30, 44, false); break;
+                 
+                case types::game_animations::move_up:    set_animation(4, 7, false, false);    break;
+                case types::game_animations::move_left:  set_animation(4, 7, false, true);  break;
+                case types::game_animations::move_down:  set_animation(0, 3, false, true);  break;
+                case types::game_animations::move_right: set_animation(0, 3, false, false); break;
                 default: break;
             }    
         }
@@ -72,7 +78,7 @@ namespace graphic {
             std::lock_guard<std::mutex> lg(m_mutex);
             m_shaders.set_uniform_attr<int>("tex", 0);
             m_shaders.set_uniform_attr<int>("mapData", 1);
-            m_shaders.set_uniform_attr<float>("scale", 0.025, 0.025);
+            m_shaders.set_uniform_attr<float>("scale", 0.005, 0.005);
             m_shaders.set_uniform_attr<float>("zoom", settings.zoomX, settings.zoomY);
             m_shaders.set_uniform_attr<float>("screenResolution", settings.currentWidth, settings.currentHeight);
             m_shaders.set_uniform_attr<float>("camera", settings.cameraX, settings.cameraY);
@@ -82,6 +88,7 @@ namespace graphic {
             m_shaders.set_uniform_attr<int>("frameDimension", 15);
             
             m_shaders.set_uniform_attr<int>("frame", m_currentFrame);
+            m_shaders.set_uniform_attr<int>("frameInvert", m_invert);
             
             if (m_currentFrame == m_lastFrame) {
                 if (m_loopFrame) {
@@ -102,11 +109,12 @@ namespace graphic {
             m_position = newPos;
         }  
         
-        void set_animation(const int first, const int last, const bool loop) {
+        void set_animation(const int first, const int last, const bool loop, const bool invert) {
             m_currentFrame = first;
             m_firstFrame = first;
             m_lastFrame = last;
             m_loopFrame = loop;
+            m_invert = invert;
         }
 
     private:
@@ -171,6 +179,7 @@ namespace graphic {
         int m_firstFrame;
         int m_lastFrame;
         bool m_loopFrame;
+        bool m_invert;
         
         std::shared_ptr<img_block_texture> m_textureBlock;
     };

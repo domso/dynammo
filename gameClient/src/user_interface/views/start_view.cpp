@@ -2,10 +2,10 @@
 
 user_interface::views::start_view::start_view(view_controller& viewCtrl) : m_viewCtrl(viewCtrl) {
     
-    m_background.set("../res/background.png");
-    m_background.set_vexpand(true);
-    m_background.set_hexpand(true);
-    m_background.show();
+//     m_background.set("../res/background.png");
+//     m_background.set_vexpand(true);
+//     m_background.set_hexpand(true);
+//     m_background.show();
     
     
     m_VBox.add(m_background);
@@ -21,7 +21,7 @@ user_interface::views::start_view::start_view(view_controller& viewCtrl) : m_vie
     m_loginBox.add(m_entry);
     m_loginBox.add(m_button);
     
-    m_button.set_label("Hi");
+    m_button.set_label("Start");
     m_button.show();
     
     m_button.signal_clicked().connect( sigc::mem_fun(*this, &start_view::run_button_clicked) );

@@ -50,7 +50,7 @@ void main() {
     
 //     vec3 scaleV = vec3(scale, scale, scale);
     
-    gl_Position = vec4(outputPosition - vec3(camera, 0), 1);
+    gl_Position = vec4(outputPosition - vec3(camera * zoom, 0), 1);
     UV = vertexUV;
     normal = normalize(normalVector);
 }

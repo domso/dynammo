@@ -5,18 +5,51 @@ Isometric game written in C++ using
 - openGL
 - gtk
 - "network" wrapper (https://github.com/domso/network)
+- "mapgen" map-generator (https://github.com/domso/mapgen)
 
-The project is divided into 3 sub-projects:
+Project Structure:
+- general
+    - Shared code between Server and Client; mostly type-definitions and generic wrappers/helpers
 - gameServer
 - gameClient
-- loginServer
-  - This project comes from early versions and will be removed/replaced/rewritten someday
 
-The current goal is to develop a "minimal viable product" with the following features:
-- simple UI
-- user-authentication
-- moving a sprite-character
-- region-layer with some static objects(e.g. trees)
-- multiplayer
+Current State Server:
+- Authentication of an User by his RSA-Signature
+- Sending of the heightmap and some random objects
+- Executing requested actions like moving
 
-Currently all ressources (images, textures, etc.) are NOT provided by this repository.
+Current State Client:
+- Rendering the received heightmap and sprites
+- Allowing Viewport-Changes (Zoom, Window-Rescale, Moving)
+- Requesting actions to the server.
+- Overlay-UI
+- Animated Sprites
+
+Next goal:
+- Better animation-logic (currently just a counter for each frame)
+- Better movement-logic with collision and smoothing
+- Refactor the serverside-logic for game-objects
+- Build small test-village
+
+Screenshots:
+<p float="left">
+  <img src="/gameClient/res/Screenshots/full.png" width="45%"/>
+  <img src="/gameClient/res/Screenshots/small.png" width="45%"/>
+</p>
+
+Usage:
+- Start the gameServer in the root-path of the gameServer-directory. (./bin/gameServer)
+- Start the gameClient in the build-path of the gameClient-directory. (./gameClient)
+- Type 'test' into the username-field and click start
+- Use wasd to move your character. (He is in the upper left corner of the map)
+- Use WASD to move the camera.
+- Use the mouse-wheel to zoom in/out.
+
+Build:
+```
+mkdir build
+cd build
+cmake ..
+make
+```
+

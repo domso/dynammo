@@ -19,8 +19,8 @@ user_interface::views::main_game_view::main_game_view(view_controller& viewCtrl,
     m_button.set_margin_bottom(100);
     m_button.set_size_request(200,5);
     
-    m_button.show();
-    m_VBox.add_overlay(m_button);
+//     m_button.show();
+//     m_VBox.add_overlay(m_button);
     
     
     m_sidebar.property_halign().set_value(Gtk::Align::ALIGN_END);
@@ -40,7 +40,7 @@ user_interface::views::main_game_view::main_game_view(view_controller& viewCtrl,
     
     
     m_sidebar.add(m_button2);
-    m_button2.set_label("aioshdaiudhaidhaidhaisudhaisudhaiudhaidh");
+    m_button2.set_label("Overlay");
     m_button2.show();
     
     

@@ -1,8 +1,0 @@
-dbUsername: test
-dbPassword: testpw
-dbName: test
-dbHost: localhost
-
-port: 1890
-serverID: 1
-privateKey: ../keys/private.pem

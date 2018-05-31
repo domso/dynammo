@@ -1,6 +1,8 @@
 #include "src/region/context.h"
 #include "src/util/file_storage.h"
 
+#include <random>
+
 region::context::context(const uint32_t id) : m_id(id) {
     load();
 }
@@ -68,30 +70,19 @@ void region::context::load() {
 
         region::static_obj sObj;
 
-        sObj.durability = 100;
-        sObj.type = 0;
-        sObj.position.x = 38;
-        sObj.position.y = 6;
-        sObj.position.z = 0;
+        std::random_device rd;
+        std::mt19937 mt(rd());
+        std::uniform_int_distribution<int> dis(0, 511);
+        
+        for (int i = 0; i < 100; i++) {
+            sObj.durability = 100;
+            sObj.type = 0;
+            sObj.position.x = dis(mt);
+            sObj.position.y = dis(mt);
+            sObj.position.z = 0;
 
-        insert_new_static_object(sObj);
-
-        sObj.durability = 100;
-        sObj.type = 0;
-        sObj.position.x = 90;
-        sObj.position.y = 64;
-        sObj.position.z = 0;
-
-        insert_new_static_object(sObj);
-
-        sObj.durability = 100;
-        sObj.type = 0;
-        sObj.position.x = 25;
-        sObj.position.y = 50;
-        sObj.position.z = 0;
-
-        insert_new_static_object(sObj);
-
+            insert_new_static_object(sObj);
+        }
 
     }
 }

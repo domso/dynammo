@@ -17,7 +17,7 @@ void main() {
     scaledCoord.y *= scale.y * zoom.y;
     
     float size = 0.005;
-    float resolution = 128;
+    float resolution = 512;
     float scale = 2;
     float depthMargin = 1.0f / (2.0f * resolution);
     
@@ -30,7 +30,7 @@ void main() {
     outputPosition.z = -((position.x + position.y) * depthMargin);
     
     
-    gl_Position = vec4(scaledCoord + outputPosition - vec3(camera, 0), 1);    
+    gl_Position = vec4(scaledCoord + outputPosition - vec3(camera * zoom, 0), 1);    
     UV = vertexUV;
 }
 

@@ -20,7 +20,7 @@ namespace graphic {
 
         layer_mesh(const region::layer<uint32_t>* layer, texture_controller& texCtrl) :
             m_dataTexture(texCtrl.load_data_texture(layer->data(), layer->size, layer->size)),
-            m_testTexture(texCtrl.load_img_texture("../res/tile.png")) {
+            m_testTexture(texCtrl.load_img_texture("../res/newgrass.png")) {
 
         }
 
@@ -45,9 +45,9 @@ namespace graphic {
         void free() {
 
         }
-        
+
         void update_data(const region::layer<uint32_t>* layer) {
-            
+
         }
 
         void update(const graphic::settings& settings) {
@@ -57,7 +57,7 @@ namespace graphic {
             m_shaders.set_uniform_attr<float>("zoom", settings.zoomX, settings.zoomY);
             m_shaders.set_uniform_attr<float>("screenResolution", settings.currentWidth, settings.currentHeight);
             m_shaders.set_uniform_attr<float>("camera", settings.cameraX, settings.cameraY);
-            
+
         }
 
         void build() {
@@ -102,6 +102,25 @@ namespace graphic {
                     add_vertex_attr(1, 0.5);
                     add_vertex_attr(1, 0);
 
+
+//                     add_vertex_attr(1, 0);
+//                     add_vertex_attr(1, 1);
+// 
+//                     add_vertex_attr(1, 1);
+//                     add_vertex_attr(1, 1);
+// 
+//                     add_vertex_attr(1, 0);
+//                     add_vertex_attr(1, 0);
+// 
+// 
+//                     add_vertex_attr(1, 1);
+//                     add_vertex_attr(1, 0);
+// 
+//                     add_vertex_attr(1, 1);
+//                     add_vertex_attr(1, 1);
+// 
+//                     add_vertex_attr(1, 0);
+//                     add_vertex_attr(1, 0);
                 }
 
             }

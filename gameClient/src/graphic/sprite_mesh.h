@@ -17,7 +17,7 @@ namespace graphic {
     public:
         sprite_mesh(const region::static_obj* obj, texture_controller& texCtrl, const region::layer<uint32_t>* layer) :         
         m_dataTexture(texCtrl.load_data_texture(layer->data(), layer->size, layer->size)),
-        m_texture(texCtrl.load_img_texture("../res/_tree_01/_tree_01_00000.png"))
+        m_texture(texCtrl.load_img_texture("../res/Sprites/oaktree.png"))
         {
             set_position(obj->position);
         }
@@ -25,7 +25,7 @@ namespace graphic {
         sprite_mesh(const region::dynamic_obj*  obj, texture_controller& texCtrl, const region::layer<uint32_t>* layer) :         
         m_dataTexture(texCtrl.load_data_texture(layer->data(), layer->size, layer->size)),
 //         m_texture(texCtrl.load_img_texture("../res/tile.png"))        
-        m_texture(texCtrl.load_img_texture("../res/_tree_01/_tree_01_00000.png"))
+        m_texture(texCtrl.load_img_texture("../res/Sprites/oaktree.png"))
         {
             set_position(obj->position);
         }

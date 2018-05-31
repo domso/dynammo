@@ -12,6 +12,7 @@ uniform vec2 zoom;
 
 uniform int frameDimension;
 uniform int frame;
+uniform int frameInvert;
 
 out vec2 UV;
 
@@ -21,7 +22,7 @@ void main() {
     scaledCoord.y *= scale.y * zoom.y * (screenResolution.x / screenResolution.y);
     
     float size = 0.005;
-    float resolution = 128;
+    float resolution = 512;
     float scale = 2;
     float depthMargin = 1.0f / (2.0f * resolution);
     
@@ -33,18 +34,26 @@ void main() {
     outputPosition.y = -((position.x + position.y) * size - center) * zoom.y * (screenResolution.x / screenResolution.y);
     outputPosition.z = -((position.x + position.y) * depthMargin);
     
-    
-    gl_Position = vec4(scaledCoord + outputPosition - vec3(camera, 0), 1);  
+    gl_Position = vec4(scaledCoord + outputPosition - vec3(camera * zoom, 0), 1);  
     
     
     vec2 frameUV = vertexUV;
     
-    frameUV.x /= frameDimension;
-    frameUV.y /= frameDimension;
+    frameUV.x /= 12;
+    frameUV.y /= 5;
+
+    int selectedFrame = frame;
     
-    frameUV.x += (frame % frameDimension) * (1f / frameDimension);
-    frameUV.y += (frame / frameDimension) * (1f / frameDimension);
+    if (frameInvert == 1) {
+        selectedFrame = 11 - frame; 
+        frameUV.x *= -1;
+        frameUV.x -= (selectedFrame % 12) * (1f / 12);
+    } else {
+        frameUV.x += (selectedFrame % 12) * (1f / 12);
+    }
     
+    frameUV.y += (frame / 12) * (1f / 5);
+        
     UV = frameUV;
 }
 
