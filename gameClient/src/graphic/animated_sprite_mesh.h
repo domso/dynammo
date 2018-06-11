@@ -1,6 +1,7 @@
 #pragma once
 
 #include <mutex>
+#include <chrono>
 
 #include "src/region/vec3.h"
 #include "src/region/dynamic_obj.h"
@@ -66,10 +67,10 @@ namespace graphic {
 //                 case types::game_animations::move_down:  set_animation(0, 14, false);  break;
 //                 case types::game_animations::move_right: set_animation(30, 44, false); break;
                  
-                case types::game_animations::move_up:    set_animation(4, 7, false, false);    break;
-                case types::game_animations::move_left:  set_animation(4, 7, false, true);  break;
-                case types::game_animations::move_down:  set_animation(0, 3, false, true);  break;
-                case types::game_animations::move_right: set_animation(0, 3, false, false); break;
+                case types::game_animations::move_up:    set_animation(4, 7, true, false, 2);    break;
+                case types::game_animations::move_left:  set_animation(4, 7, true, true, 2);  break;
+                case types::game_animations::move_down:  set_animation(0, 3, true, true, 2);  break;
+                case types::game_animations::move_right: set_animation(0, 3, true, false, 2); break;
                 default: break;
             }    
         }
@@ -87,16 +88,17 @@ namespace graphic {
             
             m_shaders.set_uniform_attr<int>("frameDimension", 15);
             
-            m_shaders.set_uniform_attr<int>("frame", m_currentFrame);
+            m_shaders.set_uniform_attr<int>("frame", (int)m_currentFrame);
             m_shaders.set_uniform_attr<int>("frameInvert", m_invert);
             
-            if (m_currentFrame == m_lastFrame) {
+            
+            m_currentFrame += m_speed * settings.frameDuration;  
+            if (m_currentFrame >= m_lastFrame + 1) {
+                m_currentFrame = m_lastFrame;
                 if (m_loopFrame) {
                     m_currentFrame = m_firstFrame;                    
                 }                
-            } else {
-                m_currentFrame++;
-            }     
+            } 
         }
         
         void set_position(const region::vec3<uint8_t>& newPos) {
@@ -109,12 +111,16 @@ namespace graphic {
             m_position = newPos;
         }  
         
-        void set_animation(const int first, const int last, const bool loop, const bool invert) {
-            m_currentFrame = first;
+        void set_animation(const int first, const int last, const bool loop, const bool invert, const float speed) {            
+            if (m_currentFrame < first || last < m_currentFrame) {
+                m_currentFrame = first;
+            }
+            
             m_firstFrame = first;
             m_lastFrame = last;
             m_loopFrame = loop;
             m_invert = invert;
+            m_speed = speed;
         }
 
     private:
@@ -175,9 +181,10 @@ namespace graphic {
         region::vec3<float> m_position;
         std::shared_ptr<data_texture> m_dataTexture;
         std::shared_ptr<img_texture> m_texture;
-        int m_currentFrame;
+        float m_currentFrame;
         int m_firstFrame;
         int m_lastFrame;
+        float m_speed;
         bool m_loopFrame;
         bool m_invert;
         

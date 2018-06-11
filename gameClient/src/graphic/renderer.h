@@ -7,6 +7,7 @@
 #include <unordered_set>
 #include <queue>
 #include <thread>
+#include <chrono>
 
 #include "src/util/state_machine.h"
 #include "src/graphic/base_mesh.h"
@@ -49,6 +50,7 @@ namespace graphic {
         void remove_old_mesh();      
         void remove_all_meshes();
         
+        std::chrono::time_point<std::chrono::high_resolution_clock> lastRender;
         
         std::mutex m_mutex;
         Gtk::GLArea* m_glarea;

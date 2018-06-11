@@ -9,5 +9,6 @@ namespace graphic {
         float currentHeight;
         float cameraX = 0;
         float cameraY = 0;
+        float frameDuration = 0;
     };
 }

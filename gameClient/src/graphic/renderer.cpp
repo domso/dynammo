@@ -1,7 +1,7 @@
 #include "src/graphic/renderer.h"
 
 graphic::renderer::renderer() : m_glarea(nullptr) {
-
+    
 }
 
 void graphic::renderer::link_glarea(Gtk::GLArea& glarea) {
@@ -57,6 +57,8 @@ void graphic::renderer::realize() {
     } else {
         currentState.set(states::realized);
     }
+    
+    lastRender = std::chrono::high_resolution_clock::now();
 }
 
 void graphic::renderer::unrealize() {
@@ -87,6 +89,10 @@ bool graphic::renderer::render(const Glib::RefPtr<Gdk::GLContext>& context) {
         std::lock_guard<std::mutex> lg(m_mutex);
         m_currentSettings.currentWidth = m_glarea->get_allocated_width();
         m_currentSettings.currentHeight = m_glarea->get_allocated_height();
+        auto currentTP = std::chrono::high_resolution_clock::now();
+        std::chrono::duration<float> fsec = currentTP - lastRender;
+        m_currentSettings.frameDuration = fsec.count();
+        lastRender = currentTP;
         
         update_meshes();
         render_meshes();
