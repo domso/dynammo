@@ -4,12 +4,15 @@
 
 #include "src/types/game_events.h"
 #include "src/region/dynamic_obj.h"
-
+#include "src/region/controller.h"
+#include "src/util/optional_ref.h"
 
 
 namespace action {
     class controller {
     public:
+        
+        controller(region::controller& regionCtrl);
         
         enum class return_code {
             ok,
@@ -17,18 +20,8 @@ namespace action {
             error
         };
         
-        template <typename T>        
-        typename std::enable_if<std::is_same<T, region::dynamic_obj>::value, std::pair<return_code, uint32_t>>::type execute_action(T& obj, const types::game_events action) {         
-            switch (action) {
-                case types::game_events::move_up:    return move_up(obj);    break;
-                case types::game_events::move_left:  return move_left(obj);  break;
-                case types::game_events::move_down:  return move_down(obj);  break;
-                case types::game_events::move_right: return move_right(obj); break;
-                default: break;
-            }               
-            
-            return {return_code::error, 0};
-        }
+        util::optional_ref<region::dynamic_obj> execute_action(const uint32_t regionID, const uint32_t objID, const types::game_events action);
+        
     private:        
         std::pair<return_code, uint32_t> move_up(region::dynamic_obj& obj) {
             obj.position.x -= 0.1;
@@ -61,5 +54,8 @@ namespace action {
             
             return {return_code::ok, 0};
         }
+        
+        
+        region::controller& m_regionCtrl;        
     };
 }

@@ -10,7 +10,6 @@
 #include "src/region/dynamic_obj.h"
 #include "src/region/layer.h"
 #include "src/types/game_events.h"
-#include "src/action/controller.h"
 
 
 namespace region {
@@ -34,9 +33,7 @@ namespace region {
         const std::unordered_map<uint32_t, region::dynamic_obj>& get_dynamic_objs() const;
         
         const std::vector<region::static_obj>& get_static_objs() const;
-        
-        action::controller actionCtrl;
-        
+               
         
         uint32_t insert_new_dynamic_object(const region::dynamic_obj& obj);        
         void remove_dynamic_object(const uint32_t id);

@@ -42,12 +42,19 @@ namespace connector {
                         region::vec3<float> positionOffset;
                         uint32_t destRegionID = request->regionID;
 //TODO
+                        
+                        auto actionObj = context->actionCtrl.execute_action(request->regionID, request->objID, action);
+                        if (actionObj) {
+                            response->obj = actionObj.value();
+                        }
+                        
+                        /*
                         {
                             auto region = context->regionCtrl.get_region(request->regionID);
                             region::dynamic_obj* obj = region->get_dynamic_obj(request->objID);
 
                             if (obj != nullptr) {
-                                region->actionCtrl.execute_action(*obj, action);
+                                context->actionCtrl.execute_action(*obj, action);
 
                                 if (obj->position.x < 0) {
                                     positionOffset.x = 127;
@@ -89,6 +96,7 @@ namespace connector {
                                 response->obj = *obj;
                             }
                         }
+                        */
 //TODO
 /*
                         if (positionOffset.x != 0 || positionOffset.y != 0) {                                

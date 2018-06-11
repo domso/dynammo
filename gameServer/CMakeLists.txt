@@ -22,8 +22,12 @@ file(GLOB src_user "${CMAKE_CURRENT_SOURCE_DIR}/src/user/*.cpp")
 add_library(userGameServer STATIC ${src_user})
 target_link_libraries(connectorGameServer utilGeneral messageGeneral)
 
+file(GLOB src_action "${CMAKE_CURRENT_SOURCE_DIR}/src/action/*.cpp")
+add_library(actionGameServer STATIC ${src_action})
+# target_link_libraries(connectorGameServer utilGeneral messageGeneral)
+
 #file(GLOB src_message "${CMAKE_CURRENT_SOURCE_DIR}/src/message/*.cpp")
 #add_library(messageGameServer STATIC ${src_message} )
 
 add_executable(gameServer main.cpp)
-target_link_libraries(gameServer utilGeneral messageGeneral regionGameServer connectionGameServer connectorGameServer userGameServer encryptionGeneral ) #messageGameServer
+target_link_libraries(gameServer utilGeneral messageGeneral regionGameServer connectionGameServer connectorGameServer userGameServer actionGameServer encryptionGeneral ) #messageGameServer

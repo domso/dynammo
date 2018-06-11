@@ -1,7 +1,7 @@
 #include "src/connector/context.h"
 
-connector::context::context(region::controller& rCtrl, user::controller& uCtrl, connection::controller& cCtrl) :
-regionCtrl(rCtrl), userCtrl(uCtrl), connectionCtrl(cCtrl)
+connector::context::context(region::controller& rCtrl, action::controller& aCtrl, user::controller& uCtrl, connection::controller& cCtrl) :
+regionCtrl(rCtrl), actionCtrl(aCtrl), userCtrl(uCtrl), connectionCtrl(cCtrl)
 {
 }
 
