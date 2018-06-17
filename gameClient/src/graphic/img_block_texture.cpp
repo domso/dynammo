@@ -2,7 +2,7 @@
 #include <assert.h>
 #include <string.h>
 
-#include <iostream>
+#include "src/util/int.h"
 
 graphic::img_block_texture::img_block_texture(const std::string& filename, const int first, const int last, const int dimension) {    
     for (int i = first; i <= last; i++) {
@@ -20,7 +20,6 @@ graphic::img_block_texture::img_block_texture(const std::string& filename, const
     
     m_pixelData.resize(m_width * m_height, 0xFF00FFFF);    
     
-    std::cout << m_pixelData.size() << std::endl;
     
     group_img_block(dimension);
 }
@@ -39,7 +38,7 @@ void graphic::img_block_texture::group_img_block(const int dimension) {
     int currentHeight;
     int currentPosition = 0;
     
-    for (int i = 0; i < m_images.size(); i++) {
+    for (uint i = 0; i < m_images.size(); i++) {
         currentPosition = (i % dimension) * m_blockWidth + (i / dimension) * m_blockHeight * m_width;        
         
         currentWidth = m_images[i].get_pixbuf()->get_width();

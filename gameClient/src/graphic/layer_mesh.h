@@ -19,7 +19,7 @@ namespace graphic {
         constexpr static const int resolution = 512;
 
         layer_mesh(const region::layer<uint32_t>* layer, texture_controller& texCtrl) :
-            m_dataTexture(texCtrl.load_data_texture(layer->data(), layer->size, layer->size)),
+            m_dataTexture(texCtrl.load_data_texture(layer->data(), layer->width, layer->height)),
             m_testTexture(texCtrl.load_img_texture("../res/newgrass.png")) {
 
         }

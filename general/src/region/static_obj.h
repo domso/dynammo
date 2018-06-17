@@ -5,12 +5,12 @@
 
 namespace region {
     struct static_obj {
-        vec3<uint8_t> position;
-        uint8_t durability;
-        uint32_t type;
+        vec3<uint16_t> position;
+        uint8_t durability = 0;
+        uint32_t type = 0;
         
-        uint32_t id() const {
-            return position.x + (position.y << 8) + (position.z << 16);
+        uint64_t id() const {
+            return position.x + (position.y << 16) + (position.z << 16);
         }
     };
 }

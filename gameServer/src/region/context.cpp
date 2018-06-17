@@ -44,11 +44,11 @@ void region::context::load() {
     }
     
 
-    for (int i = 0; i < m_testLayer.size * m_testLayer.size; i++) {
+    for (int i = 0; i < m_terrainLayer.size; i++) {
         uint8_t c;        
         file.read<uint8_t>(&c);
         
-        m_testLayer[i] = c;
+        m_terrainLayer[i] = c;
     }
 
     if (m_id == 0) {
@@ -72,7 +72,7 @@ void region::context::load() {
 
         std::random_device rd;
         std::mt19937 mt(rd());
-        std::uniform_int_distribution<int> dis(0, 511);
+        std::uniform_int_distribution<int> dis(0, 100);
         
         for (int i = 0; i < 100; i++) {
             sObj.durability = 100;
@@ -92,8 +92,6 @@ void region::context::save() {
 }
 
 uint32_t region::context::insert_new_dynamic_object(const region::dynamic_obj& obj) {
-//     m_dynamicObjects2.push_back(obj);
-//     m_dynamicObjects2.back().id = m_dynamicObjects2.size() - 1;
     uint32_t id = m_dynIdCounter++;
     auto& destObj = m_dynamicObjects[id];
     destObj = obj;
@@ -107,13 +105,20 @@ void region::context::remove_dynamic_object(const uint32_t id) {
 }
 
 void region::context::insert_new_static_object(const region::static_obj& obj) {
-    m_staticObjects.push_back(obj);
+    if (obj.position.z >= m_staticObjLayers.size()) {
+        m_staticObjLayers.resize(obj.position.z + 1);
+    }
+    
+    m_staticObjLayers[obj.position.z].get_nearest(obj.position.x, obj.position.y) = obj;
 }
 
 const region::layer<uint32_t>& region::context::get_layer() const {
-    return m_testLayer;
+    return m_terrainLayer;
 }
 
+const region::layer<region::static_obj>& region::context::get_obj_layer(const int level) const {
+    return m_staticObjLayers[level];
+}
 
 region::dynamic_obj* region::context::get_dynamic_obj(const uint32_t id) {
     auto it = m_dynamicObjects.find(id);
@@ -125,16 +130,21 @@ region::dynamic_obj* region::context::get_dynamic_obj(const uint32_t id) {
     return nullptr;
 }
 
-
-// const std::vector<region::dynamic_obj>& region::context::get_dynamic_objs() const {
-//     return m_dynamicObjects2;
-// }
-
 const std::unordered_map<uint32_t, region::dynamic_obj>& region::context::get_dynamic_objs() const {
     return m_dynamicObjects;
 }
 
-const std::vector<region::static_obj>& region::context::get_static_objs() const {
-    return m_staticObjects;
+std::vector<region::static_obj> region::context::get_static_objs() const {
+    std::vector<region::static_obj> result;
+    
+    for (auto& layer : m_staticObjLayers) {
+        for (int i = 0; i < layer.size; i++) {
+            if (layer[i].durability > 0) {
+                result.push_back(layer[i]);
+            }
+        }
+    }
+    
+    return result;
 }
 

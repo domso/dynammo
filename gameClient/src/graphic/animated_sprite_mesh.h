@@ -17,7 +17,7 @@ namespace graphic {
     class animated_sprite_mesh : public base_mesh {
     public:        
         animated_sprite_mesh(const region::dynamic_obj* obj, texture_controller& texCtrl, const region::layer<uint32_t>* layer) :         
-        m_dataTexture(texCtrl.load_data_texture(layer->data(), layer->size, layer->size)),
+        m_dataTexture(texCtrl.load_data_texture(layer->data(), layer->width, layer->height)),
 //         m_texture(texCtrl.load_img_texture("../res/tile.png"))        
         m_texture(texCtrl.load_img_texture("../res/Sprites/CitizenSheet.png"))
 //         m_textureBlock(texCtrl.load_img_block_texture("../res/isometric_Mini-Crusader/walk/crusader_walk_", 0, 119, 15))

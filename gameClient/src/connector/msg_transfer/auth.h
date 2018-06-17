@@ -34,7 +34,7 @@ namespace connector {
             }
 
             static message::msg_status_t responseHandler(message::msg_header_t& header, network::ipv4_addr& srcAddr, network::pkt_buffer& inputBuffer, network::pkt_buffer& outputBuffer, network::udp_socket<network::ipv4_addr>& socket, message::msg_option_t& options, connector::msg_transfer::data* data) {
-                auto response = inputBuffer.get_next<content::types::response>();
+//                 auto response = inputBuffer.get_next<content::types::response>();
                 data->sessionCtrl.set_auth_state(header.status == message::status::ok);
                 
                 return message::status::close;

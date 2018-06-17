@@ -2,6 +2,8 @@
 #define general_msg_controller_h
 
 #include <functional>
+#include <type_traits>
+
 #include "assert.h"
 #include "network/udp_socket.h"
 #include "src/message/msg_header.h"
@@ -74,16 +76,16 @@ namespace message {
             static_assert((sizeof(T::id) == 1));
             message::msg_header_t* outputHeader = outputBuffer.push_next<message::msg_header_t>();
 
-            
+
             if (outputHeader != nullptr && !m_networkSocket.is_closed()) {
                 outputHeader->msgType = T::id;
                 outputHeader->status = message::status::ok;
                 outputHeader->attr = 0;
-                
+
                 // T::request exspects an actual type as parameter, internal we store only void*
                 // Type-Safety is guaranteed by the register-call
                 auto castedRequest = (bool (*)(message::msg_header_t&, network::ipv4_addr&, network::pkt_buffer&, network::udp_socket<network::ipv4_addr>&, instant_argT, void*)) T::request;
-                
+
                 if (castedRequest(*outputHeader, destAddr, outputBuffer, m_networkSocket, arg, m_additional_data[T::id])) {
                     return internal_send(m_networkSocket, destAddr, outputBuffer);
                 }
@@ -108,18 +110,16 @@ namespace message {
         template <typename T, typename instant_argT = void*, typename additional_datatype_t = typename T::content>
         bool register_handler(additional_datatype_t* context)  {
             static_assert(sizeof(T::id) == 1, "");
+            static_assert(check<bool (*)(message::msg_header_t&, network::ipv4_addr&, network::pkt_buffer&, network::udp_socket<network::ipv4_addr>&, instant_argT, additional_datatype_t*)>(T::request));
+            static_assert(check<message::msg_status_t (*)(message::msg_header_t&, network::ipv4_addr&, network::pkt_buffer&, network::pkt_buffer&, network::udp_socket<network::ipv4_addr>&, message::msg_option_t&, additional_datatype_t*)>(T::requestHandler));
+            static_assert(check<message::msg_status_t (*)(message::msg_header_t&, network::ipv4_addr&, network::pkt_buffer&, network::pkt_buffer&, network::udp_socket<network::ipv4_addr>&, message::msg_option_t&, additional_datatype_t*)>(T::responseHandler));
+
             if (m_callbacks[T::id & 127] != nullptr || m_callbacks[(int)(T::id & 127) + 128] != nullptr) {
                 return false;
             }
 
-            //enforce type safety!
-            bool (*requestTypeGuard)(message::msg_header_t&, network::ipv4_addr&, network::pkt_buffer&, network::udp_socket<network::ipv4_addr>&, instant_argT, additional_datatype_t*) = &T::request;
-            message::msg_status_t (*requestHandlerTypeGuard)(message::msg_header_t&, network::ipv4_addr&, network::pkt_buffer&, network::pkt_buffer&, network::udp_socket<network::ipv4_addr>&, message::msg_option_t&, additional_datatype_t*) = &T::requestHandler;
-            message::msg_status_t (*responseHandlerTypeGuard)(message::msg_header_t&, network::ipv4_addr&, network::pkt_buffer&, network::pkt_buffer&, network::udp_socket<network::ipv4_addr>&, message::msg_option_t&, additional_datatype_t*) = &T::responseHandler;
-           
-            requestTypeGuard = nullptr;
-            m_callbacks[T::id & 127] = (message::msg_status_t (*)(message::msg_header_t&, network::ipv4_addr&, network::pkt_buffer&, network::pkt_buffer&, network::udp_socket<network::ipv4_addr>&, message::msg_option_t&, void*)) requestHandlerTypeGuard;
-            m_callbacks[(int)(T::id & 127) + 128] = (message::msg_status_t (*)(message::msg_header_t&, network::ipv4_addr&, network::pkt_buffer&, network::pkt_buffer&, network::udp_socket<network::ipv4_addr>&, message::msg_option_t&, void*)) responseHandlerTypeGuard;
+            m_callbacks[T::id & 127] = (message::msg_status_t (*)(message::msg_header_t&, network::ipv4_addr&, network::pkt_buffer&, network::pkt_buffer&, network::udp_socket<network::ipv4_addr>&, message::msg_option_t&, void*)) &T::requestHandler;
+            m_callbacks[(int)(T::id & 127) + 128] = (message::msg_status_t (*)(message::msg_header_t&, network::ipv4_addr&, network::pkt_buffer&, network::pkt_buffer&, network::udp_socket<network::ipv4_addr>&, message::msg_option_t&, void*)) &T::responseHandler;
 
 
             m_additional_data[T::id & 127] = (void*) context;
@@ -143,6 +143,12 @@ namespace message {
         //______________________________________________________________________________________________________
         uint16_t port() const;
     private:
+
+        
+        template <typename T, typename P>
+        static constexpr bool check(const P) {
+            return std::is_same<T, P>::value;
+        }
         //______________________________________________________________________________________________________
         //
         // dont use it outside of recv()

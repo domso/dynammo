@@ -5,6 +5,8 @@
 #include <vector>
 #include <string>
 #include <functional>
+
+#include "src/util/int.h"
 #include "shader_program.h"
 #include "base_texture.h"
 #include "src/graphic/settings.h"
@@ -24,9 +26,9 @@ namespace graphic {
         void set_id(const uint32_t id);
         uint32_t get_id() const;
         
-        void add_vertex_attr(const int attrNr, const float value);
-        void set_vertex_attr(const int attrNr, const int vertexNr, const float value);
-        void set_vertex_attr_dimension(const int attrNr, const int dim);
+        void add_vertex_attr(const uint attrNr, const float value);
+        void set_vertex_attr(const uint attrNr, const uint vertexNr, const float value);
+        void set_vertex_attr_dimension(const uint attrNr, const uint dim);
                 
         void add_texture(base_texture& tex);
                 

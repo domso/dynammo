@@ -32,6 +32,9 @@ namespace connector {
                 case states::recvData:
                     result = configure_data(obj);
                     break;
+                    
+                default:
+                    break;
                 }
                 
                 return result;
@@ -47,6 +50,9 @@ namespace connector {
 
                 case states::recvData:
                     result =  complete_data(obj);
+                    break;
+                    
+                default:
                     break;
                 }
 

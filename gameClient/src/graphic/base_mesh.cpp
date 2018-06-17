@@ -1,6 +1,8 @@
 #include "src/graphic/base_mesh.h"
 #include <glm/glm.hpp>
 
+#include "src/util/int.h"
+
 graphic::base_mesh::base_mesh() {
 }
 
@@ -16,7 +18,7 @@ uint32_t graphic::base_mesh::get_id() const {
     return m_id;
 }
 
-void graphic::base_mesh::add_vertex_attr(const int attrNr, const float value) {
+void graphic::base_mesh::add_vertex_attr(const uint attrNr, const float value) {
     if (m_internalVertexBuffer.size() <= attrNr) {
         m_internalVertexBuffer.resize(attrNr + 1);
     }
@@ -24,7 +26,7 @@ void graphic::base_mesh::add_vertex_attr(const int attrNr, const float value) {
     m_internalVertexBuffer[attrNr].push_back(value);
 }
 
-void graphic::base_mesh::set_vertex_attr(const int attrNr, const int vertexNr, const float value) {
+void graphic::base_mesh::set_vertex_attr(const uint attrNr, const uint vertexNr, const float value) {
     if (m_internalVertexBuffer.size() <= attrNr) {
         m_internalVertexBuffer.resize(attrNr + 1);
     }
@@ -36,7 +38,7 @@ void graphic::base_mesh::set_vertex_attr(const int attrNr, const int vertexNr, c
     m_internalVertexBuffer[attrNr][vertexNr] = value;
 }
 
-void graphic::base_mesh::set_vertex_attr_dimension(const int attrNr, const int dim) {
+void graphic::base_mesh::set_vertex_attr_dimension(const uint attrNr, const uint dim) {
     if (m_externalVertexAttrDimension.size() <= attrNr) {
         m_externalVertexAttrDimension.resize(attrNr + 1);
     }
@@ -62,7 +64,7 @@ void graphic::base_mesh::realize() {
     glGenVertexArrays(1, &m_externalVertexGroup);
     glBindVertexArray(m_externalVertexGroup);
 
-    for (int i = 0; i < m_externalVertexBuffer.size(); i++) {
+    for (uint i = 0; i < m_externalVertexBuffer.size(); i++) {
         glGenBuffers(1, &(m_externalVertexBuffer[i]));
         glBindBuffer(GL_ARRAY_BUFFER, m_externalVertexBuffer[i]);
 
@@ -75,13 +77,13 @@ void graphic::base_mesh::unrealize() {
  
     m_shaders.close();
     
-    for (base_texture* tex : m_textures) {
+//     for (base_texture* tex : m_textures) {
 //         tex->free();
-    }   
+//     }   
     
     glBindVertexArray(m_externalVertexGroup);
          
-    for (int i = 0; i < m_externalVertexBuffer.size(); i++) {
+    for (uint i = 0; i < m_externalVertexBuffer.size(); i++) {
          glDeleteBuffers(1, &(m_externalVertexBuffer[i]));        
     }
     
@@ -104,7 +106,7 @@ void graphic::base_mesh::render(const graphic::settings& settings) {
     
     m_shaders.disable();
     glBindVertexArray(m_externalVertexGroup);
-    for (int i = 0; i < m_externalVertexBuffer.size(); i++) {
+    for (uint i = 0; i < m_externalVertexBuffer.size(); i++) {
         glEnableVertexAttribArray(i);
         glBindBuffer(GL_ARRAY_BUFFER, m_externalVertexBuffer[i]);
         glVertexAttribPointer(i, m_externalVertexAttrDimension[i], GL_FLOAT, GL_FALSE, 0, nullptr);
@@ -122,7 +124,7 @@ void graphic::base_mesh::render(const graphic::settings& settings) {
     m_shaders.disable();
 
 
-    for (int i = 0; i < m_externalVertexBuffer.size(); i++) {
+    for (uint i = 0; i < m_externalVertexBuffer.size(); i++) {
         glDisableVertexAttribArray(i);
     }
 

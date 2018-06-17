@@ -16,14 +16,14 @@ namespace graphic {
     class sprite_mesh : public base_mesh {
     public:
         sprite_mesh(const region::static_obj* obj, texture_controller& texCtrl, const region::layer<uint32_t>* layer) :         
-        m_dataTexture(texCtrl.load_data_texture(layer->data(), layer->size, layer->size)),
+        m_dataTexture(texCtrl.load_data_texture(layer->data(), layer->width, layer->height)),
         m_texture(texCtrl.load_img_texture("../res/Sprites/oaktree.png"))
         {
             set_position(obj->position);
         }
         
         sprite_mesh(const region::dynamic_obj*  obj, texture_controller& texCtrl, const region::layer<uint32_t>* layer) :         
-        m_dataTexture(texCtrl.load_data_texture(layer->data(), layer->size, layer->size)),
+        m_dataTexture(texCtrl.load_data_texture(layer->data(), layer->width, layer->height)),
 //         m_texture(texCtrl.load_img_texture("../res/tile.png"))        
         m_texture(texCtrl.load_img_texture("../res/Sprites/oaktree.png"))
         {
@@ -75,7 +75,7 @@ namespace graphic {
             m_shaders.set_uniform_attr<float>("position", m_position.x, m_position.y, m_position.z);
         }
         
-        void set_position(const region::vec3<uint8_t>& newPos) {
+        void set_position(const region::vec3<uint16_t>& newPos) {
             std::lock_guard<std::mutex> lg(m_mutex);            
             m_position = newPos.convertTo<float>();
         }      

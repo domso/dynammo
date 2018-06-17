@@ -14,7 +14,7 @@ namespace util {
             
         }
                 
-        eventT new_event(const eventT newEvent, const argT arg = argT()) {
+        void new_event(const eventT newEvent, const argT arg = argT()) {
             std::lock_guard<std::mutex> lg(m_mutex);
             std::vector<eventT> eventStack;
             eventStack.push_back(newEvent);

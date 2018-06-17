@@ -12,8 +12,6 @@ namespace database {
         }
 
         bool prepared_statement::prepare(connection& conn) {
-            bool result;
-
             if (conn.getNativeHandler() != nullptr) {
                 m_statement = mysql_stmt_init(conn.getNativeHandler());
             } else {
@@ -39,7 +37,7 @@ namespace database {
             return m_statement != nullptr && result == 0;
         }
 
-        long unsigned int prepared_statement::getParamResultLength(const int paramID) {
+        long unsigned int prepared_statement::getParamResultLength(const size_t paramID) {
             if (paramID < m_resultInfo.size()) {
                 return m_resultInfo[paramID].length;
             }

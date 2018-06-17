@@ -40,7 +40,7 @@ namespace connector {
                         response->regionID = request->regionID;
 
                         region::vec3<float> positionOffset;
-                        uint32_t destRegionID = request->regionID;
+//                         uint32_t destRegionID = request->regionID;
 //TODO
                         
                         auto actionObj = context->actionCtrl.execute_action(request->regionID, request->objID, action);

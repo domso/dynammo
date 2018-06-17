@@ -57,7 +57,7 @@ namespace connector {
                     
 
                     if (verified) {
-                        ::types::game_events action = (::types::game_events) request->actionID;
+//                         ::types::game_events action = (::types::game_events) request->actionID;
                         response->srcRegionID = request->srcRegionID;
                         response->destRegionID = request->destRegionID;
                         response->oldObjID = request->objID;

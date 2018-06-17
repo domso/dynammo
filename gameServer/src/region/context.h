@@ -26,13 +26,12 @@ namespace region {
         bool update();
         
         const region::layer<uint32_t>& get_layer() const;
+        const region::layer<static_obj>& get_obj_layer(const int level) const;
         
-        region::dynamic_obj* get_dynamic_obj(const uint32_t id);
-//         const std::vector<region::dynamic_obj>& get_dynamic_objs() const;
-        
+        region::dynamic_obj* get_dynamic_obj(const uint32_t id);        
         const std::unordered_map<uint32_t, region::dynamic_obj>& get_dynamic_objs() const;
         
-        const std::vector<region::static_obj>& get_static_objs() const;
+        std::vector<region::static_obj> get_static_objs() const;
                
         
         uint32_t insert_new_dynamic_object(const region::dynamic_obj& obj);        
@@ -48,13 +47,9 @@ namespace region {
         uint32_t m_id;            
         std::unordered_set<authentication::accountID_t> m_activeUsers;
         
-        region::layer<uint32_t> m_testLayer;
-//         std::unordered_map<uint32_t, region::dynamic_obj> m_dynamicObjects;
-        
+        region::layer<uint32_t> m_terrainLayer;        
+        std::vector<region::layer<region::static_obj>> m_staticObjLayers;
         std::unordered_map<uint32_t, region::dynamic_obj> m_dynamicObjects;
-        
-        std::vector<region::dynamic_obj> m_dynamicObjects2;        
-        std::vector<region::static_obj> m_staticObjects;
     };     
 }
 

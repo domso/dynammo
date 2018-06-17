@@ -55,7 +55,7 @@ namespace database {
             // Return:
             // - number of valid bytes in the result-column
             //______________________________________________________________________________________________________
-            long unsigned int getParamResultLength(const int paramID);
+            long unsigned int getParamResultLength(const size_t paramID);
             //______________________________________________________________________________________________________
             //
             // Description:

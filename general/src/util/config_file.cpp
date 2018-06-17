@@ -25,7 +25,7 @@ void util::config_file::clear() {
 
 bool util::config_file::insert_new_pair(const std::string input) {    
     std::string clearedInput = remove_whitespace(input);
-    int position = clearedInput.find(":");    
+    auto position = clearedInput.find(":");    
     
     if (position != std::string::npos) {        
         m_configMap.insert({clearedInput.substr(0, position), clearedInput.substr(position + 1)});
