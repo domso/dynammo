@@ -9,6 +9,9 @@ namespace graphic {
         img_texture(const img_texture& copy) = delete;
         img_texture(img_texture&& move);
 
+        int width() const;
+        int height() const;
+        
         void copy();
     private:
         Gtk::Image m_image;

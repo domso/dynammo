@@ -64,8 +64,8 @@ namespace graphic {
             set_vertex_attr_dimension(0, 3);
             set_vertex_attr_dimension(1, 2);
 
-            for (int y = 1; y < resolution - 1; y++) {
-                for (int x = 1; x < resolution - 1; x++) {
+            for (int y = 0; y < resolution; y++) {
+                for (int x = 0; x < resolution; x++) {
                     add_vertex_attr(0, x);
                     add_vertex_attr(0, y);
                     add_vertex_attr(0, 0);
@@ -101,26 +101,6 @@ namespace graphic {
                     add_vertex_attr(0, 0);
                     add_vertex_attr(1, 0.5);
                     add_vertex_attr(1, 0);
-
-
-//                     add_vertex_attr(1, 0);
-//                     add_vertex_attr(1, 1);
-// 
-//                     add_vertex_attr(1, 1);
-//                     add_vertex_attr(1, 1);
-// 
-//                     add_vertex_attr(1, 0);
-//                     add_vertex_attr(1, 0);
-// 
-// 
-//                     add_vertex_attr(1, 1);
-//                     add_vertex_attr(1, 0);
-// 
-//                     add_vertex_attr(1, 1);
-//                     add_vertex_attr(1, 1);
-// 
-//                     add_vertex_attr(1, 0);
-//                     add_vertex_attr(1, 0);
                 }
 
             }

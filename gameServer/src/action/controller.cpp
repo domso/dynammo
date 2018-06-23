@@ -29,7 +29,7 @@ std::optional<region::dynamic_obj> action::controller::execute_action(const uint
         default:
             break;
         }
-        
+                
         return std::optional<region::dynamic_obj>(*obj);
     } else {
         return std::nullopt;

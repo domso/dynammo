@@ -34,21 +34,22 @@ bool region::context::update() {
 void region::context::load() {
     util::file_storage file;
     file.init("data/export.ppm");
-    
+
     int whiteSpaceCounter = 0;
+
     while (whiteSpaceCounter != 4) {
-        char c;        
+        char c;
         file.read<char>(&c);
-        
+
         whiteSpaceCounter += c == ' ';
     }
-    
+
 
     for (int i = 0; i < m_terrainLayer.size; i++) {
-        uint8_t c;        
+        uint8_t c;
         file.read<uint8_t>(&c);
-        
-        m_terrainLayer[i] = c;
+
+        m_terrainLayer[i] = 0;//c;
     }
 
     if (m_id == 0) {
@@ -73,10 +74,11 @@ void region::context::load() {
         std::random_device rd;
         std::mt19937 mt(rd());
         std::uniform_int_distribution<int> dis(0, 100);
-        
-        for (int i = 0; i < 100; i++) {
+        std::uniform_int_distribution<int> dis2(10, 12);
+
+        for (int i = 0; i < 1000; i++) {
             sObj.durability = 100;
-            sObj.type = 0;
+            sObj.type = dis2(mt);
             sObj.position.x = dis(mt);
             sObj.position.y = dis(mt);
             sObj.position.z = 0;
@@ -96,7 +98,7 @@ uint32_t region::context::insert_new_dynamic_object(const region::dynamic_obj& o
     auto& destObj = m_dynamicObjects[id];
     destObj = obj;
     destObj.id = id;
-    
+
     return id;
 }
 
@@ -108,7 +110,7 @@ void region::context::insert_new_static_object(const region::static_obj& obj) {
     if (obj.position.z >= m_staticObjLayers.size()) {
         m_staticObjLayers.resize(obj.position.z + 1);
     }
-    
+
     m_staticObjLayers[obj.position.z].get_nearest(obj.position.x, obj.position.y) = obj;
 }
 
@@ -136,7 +138,7 @@ const std::unordered_map<uint32_t, region::dynamic_obj>& region::context::get_dy
 
 std::vector<region::static_obj> region::context::get_static_objs() const {
     std::vector<region::static_obj> result;
-    
+
     for (auto& layer : m_staticObjLayers) {
         for (int i = 0; i < layer.size; i++) {
             if (layer[i].durability > 0) {
@@ -144,7 +146,7 @@ std::vector<region::static_obj> region::context::get_static_objs() const {
             }
         }
     }
-    
+
     return result;
 }
 

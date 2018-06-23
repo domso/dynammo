@@ -26,15 +26,19 @@ void main() {
     float scale = 2;
     float depthMargin = 1.0f / (2.0f * resolution);
     
-    float center = texture(mapData, vec2(position.x / resolution, position.y / resolution)).x * scale;
+    vec3 correctedPosition = position;
+    correctedPosition.x += 0.5;
+    correctedPosition.y += 0.5;    
+    
+    float center = texture(mapData, vec2(correctedPosition.x / resolution, correctedPosition.y / resolution)).x * scale;
     
     vec3 outputPosition;
     
-    outputPosition.x = -((position.x - position.y) * 2 * size) * zoom.x;
-    outputPosition.y = -((position.x + position.y) * size - center) * zoom.y * (screenResolution.x / screenResolution.y);
-    outputPosition.z = -((position.x + position.y) * depthMargin);
+    outputPosition.x = -((correctedPosition.x - correctedPosition.y) * 2 * size) * zoom.x;
+    outputPosition.y = -((correctedPosition.x + correctedPosition.y) * size - center) * zoom.y * (screenResolution.x / screenResolution.y);
+    outputPosition.z = -((correctedPosition.x + correctedPosition.y) * depthMargin);
     
-    gl_Position = vec4(scaledCoord + outputPosition - vec3(camera * zoom, 0), 1);  
+    gl_Position = vec4(scaledCoord + outputPosition - vec3(camera * zoom, 0), 1);
     
     
     vec2 frameUV = vertexUV;

@@ -79,7 +79,7 @@ namespace graphic {
             std::lock_guard<std::mutex> lg(m_mutex);
             m_shaders.set_uniform_attr<int>("tex", 0);
             m_shaders.set_uniform_attr<int>("mapData", 1);
-            m_shaders.set_uniform_attr<float>("scale", 0.005, 0.005);
+            m_shaders.set_uniform_attr<float>("scale", 0.01, 0.01);
             m_shaders.set_uniform_attr<float>("zoom", settings.zoomX, settings.zoomY);
             m_shaders.set_uniform_attr<float>("screenResolution", settings.currentWidth, settings.currentHeight);
             m_shaders.set_uniform_attr<float>("camera", settings.cameraX, settings.cameraY);
