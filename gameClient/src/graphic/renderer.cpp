@@ -17,14 +17,14 @@ void graphic::renderer::link_glarea(Gtk::GLArea& glarea) {
     glarea.signal_render().connect(sigc::mem_fun(*this, &renderer::render), false);
 }
 
-void graphic::renderer::add_mesh(std::shared_ptr<graphic::base_mesh> newMesh) {
+void graphic::renderer::add_mesh(const std::shared_ptr<graphic::base_mesh>& newMesh) {
     std::lock_guard<std::mutex> lg(m_mutex);
-    m_addQueue.push(newMesh);
+    m_addQueue.push(newMesh);    
 }
 
-void graphic::renderer::remove_mesh(std::shared_ptr<graphic::base_mesh> oldMesh) {
+void graphic::renderer::remove_mesh(const std::shared_ptr<graphic::base_mesh>& oldMesh) {
     std::lock_guard<std::mutex> lg(m_mutex);
-    m_removeQueue.push(oldMesh);
+    m_addQueue.push(oldMesh);
 }
 
 void graphic::renderer::close() {   
@@ -42,8 +42,8 @@ void graphic::renderer::publish_settings() {
 void graphic::renderer::realize() {
     m_glarea->make_current();
 
-    glEnable(GL_DEPTH_TEST);
-    glDepthFunc(GL_LESS);
+//     glEnable(GL_DEPTH_TEST);
+//     glDepthFunc(GL_LESS);
 //     glEnable(GL_BLEND);
     
 //     glBlendFunc(GL_SRC_ALPHA, GL_ONE);
@@ -116,7 +116,7 @@ void graphic::renderer::update_meshes() {
 }
 
 void graphic::renderer::add_new_mesh() {
-    if (!m_addQueue.empty()) {
+    while (!m_addQueue.empty()) {
         auto newMesh = m_addQueue.front();
         newMesh->realize();
         m_renderMeshes.insert(newMesh);
@@ -125,7 +125,7 @@ void graphic::renderer::add_new_mesh() {
 }
 
 void graphic::renderer::remove_old_mesh() {
-    if (!m_removeQueue.empty()) {
+    while (!m_removeQueue.empty()) {
         auto oldMesh = m_removeQueue.front();
         oldMesh->unrealize();
         m_renderMeshes.erase(oldMesh);

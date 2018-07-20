@@ -1,5 +1,8 @@
 #include "src/graphic/img_texture.h"
 
+graphic::img_texture::img_texture() {
+    
+}
 
 graphic::img_texture::img_texture(const std::string& filename) {
     m_image.set(filename);
@@ -7,6 +10,10 @@ graphic::img_texture::img_texture(const std::string& filename) {
 
 graphic::img_texture::img_texture(graphic::img_texture&&  move) : m_image(std::move(move.m_image)) {
 
+}
+
+void graphic::img_texture::set(const std::string& filename) {
+    m_image.set(filename);
 }
 
 int graphic::img_texture::width() const {

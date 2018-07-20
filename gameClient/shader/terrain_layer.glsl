@@ -5,11 +5,14 @@ layout(location = 1) in vec2 vertexUV;
 
 // Output data ; will be interpolated for each fragment.
 out vec2 UV;
+
 uniform sampler2D mapData;
 uniform int regionID;
 uniform vec2 camera;
 uniform vec2 screenResolution;
 uniform vec2 zoom;
+
+uniform float waterOffset;
 
 out float height;
 out vec3 normal;
@@ -20,7 +23,7 @@ out vec3 normal;
 void main() {
     float size = 0.005;
     float resolution = 512;
-    float scale = 2;
+    float scale = 1;
     float depthMargin = 1.0f / (2.0f * resolution);
     vec3 outputPosition;
     
@@ -30,6 +33,7 @@ void main() {
     float left = texture(mapData, vec2((position.x - 1) / resolution, (position.y) / resolution)).x * scale;
     float right = texture(mapData, vec2((position.x + 1) / resolution, (position.y) / resolution)).x * scale;
 
+    
     vec3 normalVector;
     normalVector.x = -(right - left);
     normalVector.y = -(bot - top);
@@ -43,6 +47,7 @@ void main() {
     scaledPosition.y -= ((regionID << 16) >> 16) * 126;
     
     float tmp = regionID;
+    //
     outputPosition.x = -((scaledPosition.x - scaledPosition.y) * 2 * size) * zoom.x;
     outputPosition.y = -((scaledPosition.x + scaledPosition.y) * size - center) * zoom.y * (screenResolution.x / screenResolution.y);
     outputPosition.z = -((scaledPosition.x + scaledPosition.y) * depthMargin);
@@ -50,7 +55,10 @@ void main() {
     
 //     vec3 scaleV = vec3(scale, scale, scale);
     
+        
+    
     gl_Position = vec4(outputPosition - vec3(camera * zoom, 0), 1);
     UV = vertexUV;
     normal = normalize(normalVector);
 }
+

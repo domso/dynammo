@@ -25,13 +25,15 @@ namespace graphic {
             auto newMesh = container<T>().emplace(id, new_mesh(newObj, arg)).first->second;
             newMesh->set_id(id);
             m_renderer.add_mesh(newMesh);
+//             m_uncommitedNewMeshes.push_back(newMesh);
         }
 
         template <typename T>
         void remove_mesh(const uint32_t id) {
             auto it = container<T>().find(id);
             m_renderer.remove_mesh(it->second);
-            container<T>().erase(it);
+//             m_uncommitedFreeMeshes.push_back(it->second);
+            container<T>().erase(it);            
         }
 
         template <typename T>
@@ -46,7 +48,7 @@ namespace graphic {
         }
 
         template <typename T>
-        typename std::enable_if<std::is_same<T, region::static_obj>::value, std::unordered_map<uint32_t, std::shared_ptr<sprite_mesh>>&>::type container() {
+        typename std::enable_if<std::is_same<T, std::vector<region::static_obj>>::value, std::unordered_map<uint32_t, std::shared_ptr<sprite_mesh>>&>::type container() {
             return m_spriteMeshes;
         }
 
@@ -61,7 +63,7 @@ namespace graphic {
         }
 
         template <typename T, typename argT = T>
-        typename std::enable_if<std::is_same<T, region::static_obj>::value, std::shared_ptr<sprite_mesh>>::type new_mesh(const T* newObj, const argT* arg) {
+        typename std::enable_if<std::is_same<T, std::vector<region::static_obj>>::value, std::shared_ptr<sprite_mesh>>::type new_mesh(const T* newObj, const argT* arg) {
             return std::make_shared<sprite_mesh>(newObj, m_texCtrl, arg);
         }
 
@@ -74,6 +76,9 @@ namespace graphic {
         std::unordered_map<uint32_t, std::shared_ptr<sprite_mesh>> m_spriteMeshes;
         std::unordered_map<uint32_t, std::shared_ptr<animated_sprite_mesh>> m_animatedSpriteMeshes;
 
+        std::vector<std::shared_ptr<graphic::base_mesh>> m_uncommitedNewMeshes;
+        std::vector<std::shared_ptr<graphic::base_mesh>> m_uncommitedFreeMeshes;
+        
         uint32_t m_regionID;
 
         graphic::renderer& m_renderer;

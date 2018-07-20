@@ -31,9 +31,10 @@ bool region::context::update() {
     //m_regionData.update();
 }
 
-void region::context::load() {
+void region::context::load_layer(region::layer<uint32_t>& layer, const std::string& filename) {
     util::file_storage file;
-    file.init("data/export.ppm");
+
+    file.init(filename);
 
     int whiteSpaceCounter = 0;
 
@@ -44,13 +45,18 @@ void region::context::load() {
         whiteSpaceCounter += c == ' ';
     }
 
-
-    for (int i = 0; i < m_terrainLayer.size; i++) {
+    for (int i = 0; i < layer.size; i++) {
         uint8_t c;
         file.read<uint8_t>(&c);
 
-        m_terrainLayer[i] = 0;//c;
+        layer[i] = c;
     }
+}
+
+void region::context::load() {
+    m_layers.resize(2);
+    load_layer(m_layers[0], "data/terrain.ppm");
+    load_layer(m_layers[1], "data/water.ppm");
 
     if (m_id == 0) {
 
@@ -73,19 +79,20 @@ void region::context::load() {
 
         std::random_device rd;
         std::mt19937 mt(rd());
-        std::uniform_int_distribution<int> dis(0, 100);
+        std::uniform_int_distribution<int> dis(0, 511);
         std::uniform_int_distribution<int> dis2(10, 12);
 
-        for (int i = 0; i < 1000; i++) {
+        for (int i = 0; i < 10000; i++) {
             sObj.durability = 100;
             sObj.type = dis2(mt);
-            sObj.position.x = dis(mt);
-            sObj.position.y = dis(mt);
+            do {
+                sObj.position.x = dis(mt);
+                sObj.position.y = dis(mt);
+            } while (m_layers[1][sObj.position.y * m_layers[1].width + sObj.position.x] >= m_layers[0][sObj.position.y * m_layers[0].width + sObj.position.x] - 0.008);
             sObj.position.z = 0;
 
             insert_new_static_object(sObj);
         }
-
     }
 }
 
@@ -114,8 +121,8 @@ void region::context::insert_new_static_object(const region::static_obj& obj) {
     m_staticObjLayers[obj.position.z].get_nearest(obj.position.x, obj.position.y) = obj;
 }
 
-const region::layer<uint32_t>& region::context::get_layer() const {
-    return m_terrainLayer;
+const std::vector<region::layer<uint32_t>>& region::context::get_layers() const {
+    return m_layers;
 }
 
 const region::layer<region::static_obj>& region::context::get_obj_layer(const int level) const {

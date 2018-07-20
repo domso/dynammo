@@ -13,16 +13,21 @@ region::context::~context() {
 void region::context::load_layers(std::vector<region::layer<uint32_t>>&&  move) {
     m_layers = move;
     m_graphicCtrl.add_obj<region::layer<uint32_t>>(m_regionID, &m_layers[0], m_regionID);
+    m_graphicCtrl.add_obj<region::layer<uint32_t>>(m_regionID, &m_layers[1], m_regionID + 1);
 }
 
 void region::context::load_static_objects(std::vector<region::static_obj>&& objs) {
     for (auto& obj : objs) {
         if (m_staticObjects.insert_or_assign(obj.id(), obj).second) {
-            m_graphicCtrl.add_obj<region::static_obj, region::layer<uint32_t>>(m_regionID, &obj, obj.id(), &m_layers[0]);
+//             m_graphicCtrl.add_obj<region::static_obj, region::layer<uint32_t>>(m_regionID, &obj, obj.id(), &m_layers[0]);
         } else {
-            m_graphicCtrl.update_obj<region::static_obj>(m_regionID, &obj, obj.id());
+//             m_graphicCtrl.update_obj<region::static_obj>(m_regionID, &obj, obj.id());
         }
-    } 
+    }
+    
+    m_graphicCtrl.add_obj<std::vector<region::static_obj>, region::layer<uint32_t>>(m_regionID, &objs, objs[0].id(), &m_layers[0]);
+    
+//     m_graphicCtrl.commit(m_regionID);
 }
 
 void region::context::load_dynamic_objects(std::vector<region::dynamic_obj>&& objs) {            

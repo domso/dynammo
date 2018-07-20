@@ -32,10 +32,9 @@ namespace connector {
                         region->add_user(request->accountID);
 
                         connection::sender::send<::types::data_transfer::content::region_select>(info->connection, request->regionID);
-                        connection::sender::send<::types::data_transfer::content::region_layer>(info->connection, region->get_layer());
+                        connection::sender::send<::types::data_transfer::content::region_layer>(info->connection, region->get_layers());
                         connection::sender::send<::types::data_transfer::content::static_object>(info->connection, region->get_static_objs());
-                        connection::sender::send<::types::data_transfer::content::dynamic_object>(info->connection, region->get_dynamic_objs());                            
-                        
+                        connection::sender::send<::types::data_transfer::content::dynamic_object>(info->connection, region->get_dynamic_objs());      
                         result = message::status::ok;
                     } else {
                         result = message::status::error::auth;

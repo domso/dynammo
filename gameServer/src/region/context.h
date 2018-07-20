@@ -25,7 +25,8 @@ namespace region {
                
         bool update();
         
-        const region::layer<uint32_t>& get_layer() const;
+        const std::vector<region::layer<uint32_t>>& get_layers() const;
+        
         const region::layer<static_obj>& get_obj_layer(const int level) const;
         
         region::dynamic_obj* get_dynamic_obj(const uint32_t id);        
@@ -39,6 +40,9 @@ namespace region {
         
         void insert_new_static_object(const region::static_obj& obj);
     private:        
+        
+        void load_layer(region::layer<uint32_t>& layer, const std::string& filename);
+        
         void load();
         void save();
         
@@ -47,7 +51,8 @@ namespace region {
         uint32_t m_id;            
         std::unordered_set<authentication::accountID_t> m_activeUsers;
         
-        region::layer<uint32_t> m_terrainLayer;        
+        std::vector<region::layer<uint32_t>> m_layers;    
+        
         std::vector<region::layer<region::static_obj>> m_staticObjLayers;
         std::unordered_map<uint32_t, region::dynamic_obj> m_dynamicObjects;
     };     

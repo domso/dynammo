@@ -21,8 +21,8 @@ namespace graphic {
         renderer(renderer&& move) = delete;
         
         void link_glarea(Gtk::GLArea& glarea);
-        void add_mesh(std::shared_ptr<graphic::base_mesh> newMesh);
-        void remove_mesh(std::shared_ptr<graphic::base_mesh> oldMesh);
+        void add_mesh(const std::shared_ptr<graphic::base_mesh>& newMesh);
+        void remove_mesh(const std::shared_ptr<graphic::base_mesh>& oldMesh);
         
         enum class states {
             unrealized,

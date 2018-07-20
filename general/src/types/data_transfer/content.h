@@ -33,7 +33,7 @@ namespace types {
                 constexpr static const uint8_t id = ids::region_layer;
                 typedef region::layer<uint32_t> content;
             };
-            
+                        
             struct static_object {
                 constexpr static const uint8_t id = ids::static_object;
                 typedef region::static_obj content;

@@ -104,7 +104,7 @@ void graphic::base_mesh::render(const graphic::settings& settings) {
         i++;
     }
     
-    m_shaders.disable();
+//     m_shaders.disable();
     glBindVertexArray(m_externalVertexGroup);
     for (uint i = 0; i < m_externalVertexBuffer.size(); i++) {
         glEnableVertexAttribArray(i);
@@ -114,19 +114,19 @@ void graphic::base_mesh::render(const graphic::settings& settings) {
 
 
 
-    m_shaders.enable();
+//     m_shaders.enable();
 
 
     if (m_internalVertexBuffer.size() != 0) {
         glDrawArrays(GL_TRIANGLES, 0, m_internalVertexBuffer[0].size() / 3);
     }
 
-    m_shaders.disable();
-
-
-    for (uint i = 0; i < m_externalVertexBuffer.size(); i++) {
-        glDisableVertexAttribArray(i);
-    }
-
-    glBindBuffer(GL_ARRAY_BUFFER, 0);
+//     m_shaders.disable();
+// 
+// 
+//     for (uint i = 0; i < m_externalVertexBuffer.size(); i++) {
+//         glDisableVertexAttribArray(i);
+//     }
+// 
+//     glBindBuffer(GL_ARRAY_BUFFER, 0);
 }

@@ -2,8 +2,9 @@
 
 layout(location = 0) in vec3 vCoord;
 layout(location = 1) in vec2 vertexUV;
+layout(location = 2) in vec3 position;
 
-uniform vec3 position;
+// uniform vec3 position;
 uniform vec2 scale;
 uniform sampler2D mapData;
 uniform vec2 camera;
@@ -18,7 +19,7 @@ void main() {
     
     float size = 0.005;
     float resolution = 512;
-    float scale = 2;
+    float scale = 1;
     float depthMargin = 1.0f / (2.0f * resolution);
     
     vec3 correctedPosition = position;
