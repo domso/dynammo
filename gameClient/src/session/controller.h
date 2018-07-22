@@ -5,7 +5,7 @@
 #include "src/util/event_controller.h"
 #include "src/util/config_file.h"
 #include "src/authentication/types.h"
-#include "src/encryption/rsa.h"
+#include "src/encryption/private_key.h"
 #include "src/types/game_events.h"
 
 namespace session {
@@ -16,7 +16,7 @@ namespace session {
         controller(controller&& move) = delete;
         
         int get_signature_length();        
-        bool sign_data(encryption::signature& destSignature, const int8_t* data, const int length);
+        bool sign_data(uint8_t* signature, const int sigLength, const int8_t* data, const int length);
         
         void set_tcp_link(const authentication::ticket_t newLink);
         authentication::ticket_t get_tcp_link();

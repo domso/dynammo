@@ -5,7 +5,7 @@
 #include "network/tcp_connection.h"
 #include "src/util/lock_ref.h"
 #include "src/authentication/types.h"
-#include "src/encryption/rsa.h"
+#include "src/encryption/public_key.h"
 
 
 namespace user {

@@ -10,8 +10,6 @@
 #include "src/graphic/renderer.h"
 #include "src/user_interface/key_controller.h"
 #include "src/user_interface/view_controller.h"
-#include "src/user_interface/views/start_view.h"
-#include "src/user_interface/views/main_game_view.h"
 
 namespace user_interface {
     class window : public Gtk::Window {
@@ -32,14 +30,13 @@ namespace user_interface {
      
         
         std::string get_option(const std::string& key);
+
     protected:        
         key_controller m_keyCtrl;
         graphic::renderer& m_renderer;
         Gtk::Box m_rootBox;
         
         view_controller m_viewCtrl;
-        views::start_view m_startView;
-        views::main_game_view m_mainGameView;
     };
 }
 

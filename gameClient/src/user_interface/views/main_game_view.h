@@ -17,8 +17,7 @@ namespace user_interface {
             
             void open();
             void close();            
-            Gtk::Container& container();
-            
+            Gtk::Container& container();            
         private:
             
             bool on_key_press_event(GdkEventKey* event);

@@ -7,15 +7,15 @@ session::controller::controller(util::event_controller<types::game_events>& even
 int session::controller::get_signature_length() {
     std::lock_guard<std::mutex> lg(m_mutex);
     load_from_config();
-    return m_currentSession.privateKey.getRequiredSize();
+    return m_currentSession.privateKey.required_size();
 }
 
-bool session::controller::sign_data(encryption::signature& destSignature, const int8_t* data, const int length) {
+bool session::controller::sign_data(uint8_t* signature, const int sigLength, const int8_t* data, const int length) {
     std::lock_guard<std::mutex> lg(m_mutex);
     load_from_config();
 
     if (m_currentSession.valid) {
-        return encryption::sign<int8_t>(m_currentSession.privateKey, destSignature, data, length) > 0;
+        return m_currentSession.privateKey.sign<int8_t>(signature, sigLength, data, length) > 0;
     } else {
         return false;
     }

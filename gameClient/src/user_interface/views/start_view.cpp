@@ -19,19 +19,25 @@ user_interface::views::start_view::start_view(view_controller& viewCtrl) : m_vie
     m_loginBox.show();
     
     m_loginBox.add(m_entry);
-    m_loginBox.add(m_button);
+    m_loginBox.add(m_loginButton);
+    m_loginBox.add(m_createAccountButton);
     
-    m_button.set_label("Start");
-    m_button.show();
+    m_loginButton.set_label("Login");
+    m_loginButton.show();
+    m_loginButton.signal_clicked().connect( sigc::mem_fun(*this, &start_view::run_button_clicked) );
     
-    m_button.signal_clicked().connect( sigc::mem_fun(*this, &start_view::run_button_clicked) );
+    m_createAccountButton.set_label("Create Account");
+    m_createAccountButton.show();
+    m_createAccountButton.signal_clicked().connect(sigc::mem_fun(*this, &start_view::create_button_clicked));
+    
+    
     
     m_entry.show();
     m_entry.property_width_chars().set_value(20);
     m_entry.property_placeholder_text().set_value("Username");    
     m_entry.set_editable(true);
 
-    viewCtrl.register_view(*this);
+//     viewCtrl.register_view(*this);
 }
 
 void user_interface::views::start_view::open() {
@@ -52,4 +58,8 @@ void user_interface::views::start_view::run_button_clicked() {
     
     m_viewCtrl.create_event(types::game_events::request_login);    
     m_viewCtrl.change_view(view_list::views::main_game);
+}
+
+void user_interface::views::start_view::create_button_clicked() {
+    m_viewCtrl.change_view(view_list::views::account_create);
 }

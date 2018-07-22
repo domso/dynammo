@@ -1,10 +1,6 @@
-
-
 #include "src/connector/context.h"
 #include "src/connector/worker.h"
 #include "src/util/signals.h"
-
-
 
 int main() {   
     std::cout << "Open Server" << std::endl;

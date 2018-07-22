@@ -2,7 +2,6 @@
 
 #include <vector>
 #include "network/ip_addr.h"
-#include "src/encryption/rsa.h"
 
 namespace authentication {
 

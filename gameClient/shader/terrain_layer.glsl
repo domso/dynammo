@@ -23,7 +23,7 @@ out vec3 normal;
 void main() {
     float size = 0.005;
     float resolution = 512;
-    float scale = 1;
+    float scale = 2;
     float depthMargin = 1.0f / (2.0f * resolution);
     vec3 outputPosition;
     

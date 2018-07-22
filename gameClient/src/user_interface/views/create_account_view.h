@@ -7,31 +7,26 @@
 
 namespace user_interface {
     namespace views {
-        class start_view : public base_view {
+        class create_account_view : public base_view {
         public:                        
-            constexpr static const auto id = view_list::views::start;
-            
-            start_view(view_controller& viewCtrl);
+            constexpr static const auto id = view_list::views::account_create;            
+            create_account_view(view_controller& viewCtrl);
             
             void open();
             void close();            
             Gtk::Container& container();
         private:
-            void run_button_clicked();
+            void back_button_clicked();
             void create_button_clicked();
-            
+            void entry_update();
             
             view_controller& m_viewCtrl;
-            Gtk::Overlay m_VBox;
-            Gtk::Image m_background;
             
-            
-            Gtk::Box m_loginBox;
-            Gtk::Button m_loginButton;
-            
-            Gtk::Button m_createAccountButton;
-            
+            Gtk::Button m_backButton;
+            Gtk::Button m_createButton;
             Gtk::Entry m_entry;
+            Gtk::Overlay m_VBox;
+            Gtk::Box m_Box;
         };
     }
 }

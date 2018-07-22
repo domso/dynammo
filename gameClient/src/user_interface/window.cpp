@@ -1,11 +1,23 @@
 #include "src/user_interface/window.h"
 
+#include "src/user_interface/views/start_view.h"
+#include "src/user_interface/views/main_game_view.h"
+#include "src/user_interface/views/create_account_view.h"
+
 user_interface::window::window(graphic::renderer& renderer, util::event_controller<types::game_events>& eventCtrl, util::config_file& config) :
     m_keyCtrl(eventCtrl),
     m_renderer(renderer),
-    m_viewCtrl(m_rootBox, eventCtrl, config),
-    m_startView(m_viewCtrl),
-    m_mainGameView(m_viewCtrl, renderer, m_keyCtrl) {
+    m_viewCtrl(m_rootBox, eventCtrl, config)
+//     m_startView(m_viewCtrl),
+//     m_mainGameView(m_viewCtrl, renderer, m_keyCtrl)
+{
+    m_viewCtrl.register_view<views::start_view>();
+    m_viewCtrl.register_view<views::create_account_view>();
+    m_viewCtrl.register_view<views::main_game_view>(std::ref(m_renderer), std::ref(m_keyCtrl));
+    
+    
+    
+    
     set_title("GL Area");
     set_default_size(800, 600);
     add_events(Gdk::KEY_PRESS_MASK | Gdk::KEY_RELEASE_MASK | Gdk::SCROLL_MASK);

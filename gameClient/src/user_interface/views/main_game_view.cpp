@@ -10,7 +10,7 @@ user_interface::views::main_game_view::main_game_view(view_controller& viewCtrl,
     m_VBox.add(m_GLArea);
     m_GLArea.show();
     
-    viewCtrl.register_view(*this);
+//     viewCtrl.register_view(*this);
     
     
     m_button.property_halign().set_value(Gtk::Align::ALIGN_CENTER);

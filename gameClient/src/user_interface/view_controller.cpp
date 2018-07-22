@@ -10,6 +10,15 @@ void user_interface::view_controller::change_view(const view_list::views newView
     open_current_view();
 }
 
+void user_interface::view_controller::return_to_last_view() {
+    if (m_viewHistory.size() > 1) {
+        m_viewHistory.pop_back();
+        view_list::views last = m_viewHistory.back();
+        m_viewHistory.pop_back();
+        change_view(last);
+    }
+}
+
 void user_interface::view_controller::create_event(const types::game_events event) {
     m_eventCtrl.new_event(event);
 }
@@ -32,6 +41,7 @@ void user_interface::view_controller::open_current_view() {
     auto result = m_views.find(m_currentView.get());
 
     if (result != m_views.end()) {
+        m_viewHistory.push_back(m_currentView.get());
         auto& view = *result->second;
         m_rootBox.add(view.container());
         view.open();
