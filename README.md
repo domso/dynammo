@@ -19,22 +19,22 @@ Current State Server:
 - Executing requested actions like moving
 
 Current State Client:
-- Rendering the received heightmap and sprites
+- Rendering the received heightmap, water  and sprites
 - Allowing Viewport-Changes (Zoom, Window-Rescale, Moving)
 - Requesting actions to the server.
 - Overlay-UI
 - Animated Sprites
+- Account Creation
 
 Next goal:
-- Better animation-logic (currently just a counter for each frame)
-- Better movement-logic with collision and smoothing
-- Refactor the serverside-logic for game-objects
+- Full refactor to improve the
 - Build small test-village
 
 Screenshots:
 <p float="left">
   <img src="/gameClient/res/Screenshots/full.png" width="45%"/>
   <img src="/gameClient/res/Screenshots/small.png" width="45%"/>
+  <img src="/gameClient/res/Screenshots/water.png" width="45%"/>
 </p>
 
 Usage:
