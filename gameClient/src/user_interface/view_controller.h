@@ -3,6 +3,7 @@
 #include <gtkmm.h>
 #include <mutex>
 #include <unordered_map>
+#include <iostream>
 
 #include "src/util/config_file.h"
 #include "src/util/state_machine.h"
@@ -14,7 +15,7 @@
 namespace user_interface {
     class view_controller {
     public:
-        view_controller(Gtk::Box& rootBox, util::event_controller<types::game_events>& eventCtrl, util::config_file& config);
+        view_controller(Gtk::Box& rootBox, util::event_controller<types::game_events>& eventCtrl, util::config_file& config, Gtk::Window& window);
         
         template <typename T, typename ...Ta>
         void register_view(Ta... args) {   
@@ -25,15 +26,25 @@ namespace user_interface {
             } else {
                 m_views[T::id] = std::unique_ptr<views::base_view>(dynamic_cast<views::base_view*>(new T(*this, args...)));
             }
+            
+            for (auto e : T::events) {
+                m_eventCtrl.register_event_handler(e, T::event_callback, (views::base_view*)m_views[T::id].get());
+            }
         }
+        
+        
+        
         
         void change_view(const view_list::views newView);
         void return_to_last_view();
         void create_event(const types::game_events event);
+        
+        
         void set_option(const std::string& key, const std::string& value);
         std::string get_option(const std::string& key);
         
         util::config_file& config();
+        Gtk::Window& window();
     private:        
         void open_current_view();        
         void close_current_view();
@@ -46,5 +57,6 @@ namespace user_interface {
         util::event_controller<types::game_events>& m_eventCtrl;
         std::unordered_map<std::string, std::string> m_options;
         util::config_file& m_config;
+        Gtk::Window& m_window;
     };
 }

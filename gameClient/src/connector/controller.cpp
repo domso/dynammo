@@ -5,10 +5,11 @@ connector::controller::controller(region::controller& regCtrl, session::controll
       m_msgCtrl(bufferSize),
       m_tcpRecv(bufferSize),
       m_dataContext(sessionCtrl, m_tcpRecv, regCtrl),
-      m_messageContext(m_msgCtrl, regCtrl, sessionCtrl),      
+      m_messageContext(m_msgCtrl, regCtrl, sessionCtrl, config, eventCtrl),      
       m_requester(m_udpDestAddr, eventCtrl, m_msgCtrl)
       {
           eventCtrl.register_event_handler<open_event>(this);
+          open();
     }
 
 connector::controller::~controller() {
@@ -42,18 +43,18 @@ bool connector::controller::open() {
 }
 
 types::game_events connector::controller::open_event::handle(const types::game_events event, const uint64_t& arg, connector::controller* ctrl) {
-    ctrl->open();
+//     ctrl->open();
     return types::game_events::clear;
 }
 
 bool connector::controller::load_config() {
-    auto serverIP = m_config.get<std::string>("serverIP");
-    auto tcpPort = m_config.get<uint16_t>("tcpPort");
-    auto udpPort = m_config.get<uint16_t>("udpPort");
+    auto serverIP = m_config.get<std::string>("serverIP", "127.0.0.1");
+    auto tcpPort = m_config.get<uint16_t>("tcpPort", 1850);
+    auto udpPort = m_config.get<uint16_t>("udpPort", 1851);
     
-    if (serverIP.first && tcpPort.first && udpPort.first) {
+//     if (serverIP.first && tcpPort.first && udpPort.first) {
         return m_tcpDestAddr.init(serverIP.second, tcpPort.second) && m_udpDestAddr.init(serverIP.second, udpPort.second);
-    }   
+//     }   
     
     return false;
 }

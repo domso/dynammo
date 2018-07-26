@@ -11,7 +11,7 @@
 namespace user {
     class info : public util::locked_ref_item {
     public:
-        info();
+        info(const authentication::accountID_t accountID);
         info(const info& copy) = delete;
         info(info&& move) = delete;
         ~info();

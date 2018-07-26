@@ -19,6 +19,21 @@ void util::config_file::load(const std::string& filename) {
     }
 }
 
+void util::config_file::store(const std::string& filename) {
+    std::ofstream file;
+    std::string line;
+
+    file.open(filename);
+
+    if (file.is_open()) {
+        for (auto& item : m_configMap) {
+            file << item.first << ": " << item.second << "\n";
+        }
+
+        file.close();
+    }
+}
+
 void util::config_file::clear() {
     m_configMap.clear();
 }

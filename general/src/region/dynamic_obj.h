@@ -6,8 +6,7 @@
 #include "src/types/game_animations.h"
 
 namespace region {
-    class dynamic_obj {
-    public:
+    struct dynamic_obj {
         uint32_t id;
         uint32_t ownerID;
         

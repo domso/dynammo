@@ -27,7 +27,7 @@ void session::controller::set_tcp_link(const authentication::ticket_t newLink) {
         m_currentSession.tcpTicket = newLink;
     }
     // no mutex shall be locked while creating an event!
-    m_eventCtrl.new_event(types::game_events::recv_tcp_link);
+//     m_eventCtrl.new_event(types::game_events::recv_tcp_link);
 }
 
 authentication::ticket_t session::controller::get_tcp_link() {
@@ -72,7 +72,7 @@ bool session::controller::get_auth_state() {
 void session::controller::load_from_config() {
     if (!m_currentSession.valid) {
         bool result = true;
-        m_currentSession.accountID = m_config.get<int>("accountID").second;
+        m_currentSession.accountID = m_config.get<int>("accountID", 1).second;
         result &= m_currentSession.privateKey.load(m_config.get<std::string>("privateKey").second);
 
         m_currentSession.valid = result;

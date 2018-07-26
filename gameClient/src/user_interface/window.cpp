@@ -7,7 +7,7 @@
 user_interface::window::window(graphic::renderer& renderer, util::event_controller<types::game_events>& eventCtrl, util::config_file& config) :
     m_keyCtrl(eventCtrl),
     m_renderer(renderer),
-    m_viewCtrl(m_rootBox, eventCtrl, config)
+    m_viewCtrl(m_rootBox, eventCtrl, config, *this)
 //     m_startView(m_viewCtrl),
 //     m_mainGameView(m_viewCtrl, renderer, m_keyCtrl)
 {

@@ -1,7 +1,8 @@
 #include "src/user/info.h"
 
-user::info::info() {
-    publicKey.load("../keys/public.pem");
+
+user::info::info(const authentication::accountID_t accountID) {
+    publicKey.load("keys/" + std::to_string(accountID) + ".pem");
 }
 
 user::info::~info() {

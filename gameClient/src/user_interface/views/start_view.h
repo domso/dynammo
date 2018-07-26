@@ -14,13 +14,13 @@ namespace user_interface {
             start_view(view_controller& viewCtrl);
             
             void open();
-            void close();            
+            void close();   
+            static types::game_events event_callback(const types::game_events event, const uint64_t& arg, base_view* view);        
             Gtk::Container& container();
         private:
             void run_button_clicked();
             void create_button_clicked();
-            
-            
+             
             view_controller& m_viewCtrl;
             Gtk::Overlay m_VBox;
             Gtk::Image m_background;

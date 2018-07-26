@@ -17,9 +17,9 @@ namespace user_interface {
             
             void open();
             void close();            
+            static types::game_events event_callback(const types::game_events event, const uint64_t& arg, base_view* view);
             Gtk::Container& container();            
         private:
-            
             bool on_key_press_event(GdkEventKey* event);
             bool on_key_release_event(GdkEventKey* event);
             

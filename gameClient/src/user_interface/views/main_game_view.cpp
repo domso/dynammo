@@ -54,6 +54,11 @@ void user_interface::views::main_game_view::close() {
 
 }
 
+types::game_events user_interface::views::main_game_view::event_callback(const types::game_events event, const uint64_t& arg, user_interface::views::base_view* view)
+{
+    return types::game_events::clear;
+}
+
 Gtk::Container& user_interface::views::main_game_view::container() {
     return m_VBox;
 }

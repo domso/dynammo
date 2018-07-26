@@ -4,6 +4,7 @@
 #include "src/connector/msg_transfer/transfer_action.h"
 #include "src/connector/msg_transfer/enter_region.h"
 #include "src/connector/msg_transfer/leave_region.h"
+#include "src/connector/msg_transfer/create_account.h"
 
 connector::worker::worker(connector::context& context) : m_context(context), m_msgCtrl(bufferSize) {
 
@@ -42,6 +43,8 @@ void connector::worker::init_as_receiver() {
     m_msgCtrl.register_handler<msg_transfer::transfer_action>(&m_context);
     m_msgCtrl.register_handler<msg_transfer::enter_region>(&m_context);
     m_msgCtrl.register_handler<msg_transfer::leave_region>(&m_context);
+    m_msgCtrl.register_handler<msg_transfer::create_account>(&m_context);
+    
     m_thread = std::thread(&message::msg_controller::recv, &m_msgCtrl);
 }
 

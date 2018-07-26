@@ -5,6 +5,7 @@
 #include "src/connector/msg_transfer/transfer_action.h"
 #include "src/connector/msg_transfer/enter_region.h"
 #include "src/connector/msg_transfer/leave_region.h"
+#include "src/connector/msg_transfer/create_account.h"
 
 connector::requester::requester(network::ipv4_addr& udpDestAddr, util::event_controller<types::game_events>& eventCtrl, message::msg_controller& msgCtrl) :
     m_buffer(bufferSize),
@@ -25,6 +26,9 @@ connector::requester::requester(network::ipv4_addr& udpDestAddr, util::event_con
     
     m_eventCtrl.register_event_handler<requester::event_handler<types::game_events::enter_region, msg_transfer::enter_region>>(this);
     m_eventCtrl.register_event_handler<requester::event_handler<types::game_events::leave_region, msg_transfer::leave_region>>(this);
+    
+    m_eventCtrl.register_event_handler<requester::event_handler<types::game_events::request_account_creation, msg_transfer::create_account>>(this);
+    
 }
 
 connector::requester::~requester() {
@@ -42,6 +46,8 @@ connector::requester::~requester() {
     
     m_eventCtrl.unregister_event_handler<requester::event_handler<types::game_events::enter_region, msg_transfer::enter_region>>();
     m_eventCtrl.unregister_event_handler<requester::event_handler<types::game_events::leave_region, msg_transfer::leave_region>>();
+    
+    m_eventCtrl.unregister_event_handler<requester::event_handler<types::game_events::request_account_creation, msg_transfer::create_account>>();
 }
 
 void connector::requester::open() {

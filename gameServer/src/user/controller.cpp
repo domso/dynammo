@@ -5,7 +5,8 @@ user::controller::controller() {
 }
 
 util::locked_ref<user::info> user::controller::get_info(const authentication::accountID_t id) {
-    return util::locked_ref<user::info>(m_userInfo[id]);
+    m_userInfo.try_emplace(id, id);   
+    return util::locked_ref<user::info>(m_userInfo.at(id));
 }
 
 void user::controller::remove(const authentication::accountID_t id) {

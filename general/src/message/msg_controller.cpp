@@ -46,7 +46,9 @@ void message::msg_controller::recv() {
                     outputHeader->attr = header->attr;
 
                     m_inputBuffer.set_msg_length(0);
-                    internal_send(m_networkSocket, m_srcAddr,  m_outputBuffer);
+                    if (outputHeader->status != message::status::close) {
+                        internal_send(m_networkSocket, m_srcAddr,  m_outputBuffer);
+                    }                    
                 }
             }
         } else {

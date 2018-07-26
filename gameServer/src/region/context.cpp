@@ -12,6 +12,14 @@ region::context::~context() {
 }
 
 void region::context::add_user(const authentication::accountID_t accountID) {
+    region::dynamic_obj obj;
+        obj.ownerID = accountID;
+        obj.position.x = 5;
+        obj.position.y = 5;
+        obj.position.z = 0;
+
+        insert_new_dynamic_object(obj);
+        
     m_activeUsers.insert(accountID);
 
 }

@@ -20,6 +20,14 @@ namespace util {
         * @param filename the absolut or relative path to the config file
         */
         void load(const std::string& filename);
+        
+        /**
+        * @brief tries to store all current data in the file specified by filename;
+        * every line will be parsed into a key-value pair with ':' as seperator;
+        * 
+        * @param filename the absolut or relative path to the config file
+        */
+        void store(const std::string& filename);
                
         /**
         * @brief gets the stored value for the given key, or inserts the given defaultValue as the new value
@@ -67,8 +75,12 @@ namespace util {
         * @param value 
         */
         template <typename T>
-        void set(const std::string& key, const T& value) {
-            m_configMap[key] = std::to_string(value);
+        typename std::enable_if<std::is_same<std::string, T>::value, void>::type set(const std::string& key, const T& value) {
+            m_configMap[key] = value;
+        }
+        template <typename T>
+        typename std::enable_if<not std::is_same<std::string, T>::value, void>::type set(const std::string& key, const T& value) {
+            m_configMap[key] = std::to_string(value);                            
         }
         
         /**

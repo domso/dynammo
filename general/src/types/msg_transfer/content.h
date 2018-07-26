@@ -16,7 +16,8 @@ namespace types {
                     action,    
                     transfer_action,                    
                     enter_region,
-                    leave_region
+                    leave_region,
+                    create_account
                 };          
             };
             
