@@ -15,7 +15,7 @@ connector::data_transfer::context::context(session::controller& sessionCtrl, con
     tcpRecv.register_callbacks(&dynObjLink);
 }
 
-void connector::data_transfer::context::complete_tcp_ticket_link(obj_link<types::data_transfer::content::auth_ticket, session::controller>& obj, session::controller* sessionCtrl) {
+void connector::data_transfer::context::complete_tcp_ticket_link(obj_link<types::data_transfer::content::session_id, session::controller>& obj, session::controller* sessionCtrl) {
     assert(obj.data.size() > 0);
     sessionCtrl->set_tcp_link(obj.data[0]);
 }

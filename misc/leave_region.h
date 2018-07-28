@@ -6,8 +6,6 @@
 #include "src/message/msg_types.h"
 #include "src/types/msg_transfer/content.h"
 #include "src/connector/context.h"
-#include "src/connection/sender.h"
-#include "src/connector/verify_buffer.h"
 
 namespace connector {
     namespace msg_transfer {
@@ -26,15 +24,15 @@ namespace connector {
                 auto result = message::status::error::unknown;
 
                 if (request != nullptr && response != nullptr) {
-                    auto info = context->userCtrl.get_info(request->accountID);
-                    if (verify_buffer(inputBuffer, *info.data())) {
-                        auto region = context->regionCtrl.get_region(request->regionID);
-                        region->remove_user(request->accountID);                        
-                        
-                        result = message::status::ok;
-                    } else {
-                        result = message::status::error::auth;
-                    }
+//                     auto info = context->userCtrl.get_info(request->accountID);
+//                     if (verify_buffer(inputBuffer, *info.data())) {
+//                         auto region = context->regionCtrl.get_region(request->regionID);
+//                         region->remove_user(request->accountID);                        
+//                         
+//                         result = message::status::ok;
+//                     } else {
+//                         result = message::status::error::auth;
+//                     }
                 }
 
                 header.status = result; 

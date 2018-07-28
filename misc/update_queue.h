@@ -13,10 +13,7 @@ namespace region {
         update_queue();
         update_queue(const update_queue& copy) = delete;
         update_queue(update_queue&& move) = delete;
-                
-        typedef util::timed_queue<uint32_t>::itemT timed_obj;
-        
-        void insert(const timed_obj newObj);        
+            
         void insert(const uint32_t newObj);     
         bool wait_and_get(uint32_t* obj);        
     private:

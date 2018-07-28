@@ -1,6 +1,7 @@
 #ifndef gameServer_region_context_h
 #define gameServer_region_context_h
 
+#include <set>
 #include <unordered_set>
 #include <unordered_map>
 
@@ -11,50 +12,46 @@
 #include "src/region/layer.h"
 #include "src/types/game_events.h"
 
-
 namespace region {
     class context : public util::locked_ref_item {
     public:
         context(const uint32_t id);
         context(const context&) = delete;
         ~context();
-              
-        void add_user(const authentication::accountID_t accountID);
-        const std::unordered_set<authentication::accountID_t>& get_users() const;
-        void remove_user(const authentication::accountID_t accountID);     
-               
         bool update();
+        bool action(const uint32_t accountID, const uint32_t sessionID, const types::game_events event);        
+        void remove_user(const uint32_t sessionID);
         
-        const std::vector<region::layer<uint32_t>>& get_layers() const;
+        const std::unordered_set<uint32_t>& all_users();
+        const std::unordered_set<uint32_t>& affected_users();
+        const std::unordered_set<uint32_t>& changed_dynamic_objects();
+        const std::unordered_map<uint32_t, region::dynamic_obj>& all_dynamic_objects();
         
-        const region::layer<static_obj>& get_obj_layer(const int level) const;
+        const std::unordered_set<uint32_t>& changed_static_objects();
+        const std::unordered_map<uint32_t, region::static_obj>& all_static_objects();
         
-        region::dynamic_obj* get_dynamic_obj(const uint32_t id);        
-        const std::unordered_map<uint32_t, region::dynamic_obj>& get_dynamic_objs() const;
+        const std::set<uint32_t>& changed_layers();
+        const std::vector<region::layer<uint32_t>>& all_layers();
         
-        std::vector<region::static_obj> get_static_objs() const;
-               
-        
-        uint32_t insert_new_dynamic_object(const region::dynamic_obj& obj);        
-        void remove_dynamic_object(const uint32_t id);
-        
-        void insert_new_static_object(const region::static_obj& obj);
-    private:        
-        
+        void commit();
+    private:       
         void load_layer(region::layer<uint32_t>& layer, const std::string& filename);
         
         void load();
         void save();
-        
-        uint32_t m_dynIdCounter = 0;
-        
+
         uint32_t m_id;            
-        std::unordered_set<authentication::accountID_t> m_activeUsers;
         
-        std::vector<region::layer<uint32_t>> m_layers;    
-        
-        std::vector<region::layer<region::static_obj>> m_staticObjLayers;
+        std::unordered_set<uint32_t> m_activeUsers;
+        std::unordered_set<uint32_t> m_affectedUsers;
+        std::unordered_set<uint32_t> m_changedDynamicObjects;
         std::unordered_map<uint32_t, region::dynamic_obj> m_dynamicObjects;
+        
+        std::unordered_set<uint32_t> m_changedStaticObjects;
+        std::unordered_map<uint32_t, region::static_obj> m_staticObjects;
+        
+        std::set<uint32_t> m_changedLayers;
+        std::vector<region::layer<uint32_t>> m_layers;  
     };     
 }
 

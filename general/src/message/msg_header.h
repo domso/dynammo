@@ -24,14 +24,21 @@ namespace message {
 
         namespace error {
             constexpr msg_status_t unknown = 2;
-            constexpr msg_status_t auth = 3;
-            constexpr msg_status_t execution = 4;
-            constexpr msg_status_t invalid_arguments = 5;
-            constexpr msg_status_t access_denied = 6;
-            constexpr msg_status_t timeout = 7;
-            constexpr msg_status_t unavailable = 8;
-            constexpr msg_status_t signing = 9;
-            constexpr msg_status_t permission = 10;
+            
+            namespace auth {
+                constexpr msg_status_t invalid_signature = 3;
+                constexpr msg_status_t invalid_key = 4;
+                constexpr msg_status_t invalid_connection = 5;
+            }
+            
+            
+            constexpr msg_status_t execution = 6;
+            constexpr msg_status_t invalid_arguments = 7;
+            constexpr msg_status_t access_denied = 8;
+            constexpr msg_status_t timeout = 9;
+            constexpr msg_status_t unavailable = 10;
+            constexpr msg_status_t signing = 11;
+            constexpr msg_status_t permission = 12;
         }
     }
 

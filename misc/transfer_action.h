@@ -29,15 +29,15 @@ namespace connector {
 
                     for (auto& UserID : srcRegion->get_users()) {
                         if (UserID != request->accountID) {
-                            auto info = context->userCtrl.get_info(UserID);
-                            socket.send_pkt(info->udpAddr, outputBuffer);
+//                             auto info = context->userCtrl.get_info(UserID);
+//                             socket.send_pkt(info->udpAddr, outputBuffer);
                         }
                     }
 
                     for (auto& UserID : destRegion->get_users()) {
                         if (UserID != request->accountID) {
-                            auto info = context->userCtrl.get_info(UserID);
-                            socket.send_pkt(info->udpAddr, outputBuffer);
+//                             auto info = context->userCtrl.get_info(UserID);
+//                             socket.send_pkt(info->udpAddr, outputBuffer);
                         }
                     }
                 }
@@ -51,8 +51,8 @@ namespace connector {
 
                 if (request != nullptr && response != nullptr) {
                     {
-                        auto info = context->userCtrl.get_info(request->accountID);
-                        verified = verify_buffer(inputBuffer, *info.data());
+//                         auto info = context->userCtrl.get_info(request->accountID);
+//                         verified = verify_buffer(inputBuffer, *info.data());
                     }
                     
 

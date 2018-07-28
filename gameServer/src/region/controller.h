@@ -3,9 +3,14 @@
 
 #include <unordered_map>
 #include <mutex>
+#include <condition_variable>
+#include <queue>
+#include <optional>
+#include <atomic>
+
 #include "src/util/lock_ref.h"
+#include "src/util/timed_object.h"
 #include "src/region/context.h"
-#include "src/region/update_queue.h"
 
 namespace region {
     class controller {
@@ -13,17 +18,21 @@ namespace region {
         controller();
         controller(const controller& copy) = delete;
         controller(controller&& copy) = delete;
-        
-        void open_region(const uint32_t id);
-        bool is_open(const uint32_t id);
-        util::locked_ref<region::context> get_region(const uint32_t id);        
-        
+        ~controller();
+
+        util::locked_ref<region::context> get_region(const uint32_t id);                
         void update();
-    private:        
-        void close_region(const uint32_t id);
+        void close();
+    private:                   
+        constexpr static const int secTimeout = 1;
+        constexpr static const int msDelay = 2500;
         
+        std::optional<uint32_t> next_region_for_update();
+        
+        std::atomic<bool> m_running;
         std::mutex m_mutex;
-        update_queue m_regionUpdateQueue;
+        std::condition_variable m_cond;
+        std::queue<util::timed_object<uint32_t>> m_updateQueue;
         std::unordered_map<uint32_t, region::context> m_regionMap;
     };
 }

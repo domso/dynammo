@@ -3,11 +3,9 @@
 #include "network/udp_socket.h"
 #include "src/types/data_transfer/content.h"
 #include "src/message/msg_header.h"
-#include "src/message/msg_types.h"
+// #include "src/message/msg_types.h"
 #include "src/types/msg_transfer/content.h"
 #include "src/connector/context.h"
-#include "src/connection/sender.h"
-#include "src/connector/verify_buffer.h"
 
 namespace connector {
     namespace msg_transfer {
@@ -26,19 +24,19 @@ namespace connector {
                 auto result = message::status::error::unknown;
                 
                 if (request != nullptr && response != nullptr) {
-                    auto info = context->userCtrl.get_info(request->accountID);
-                    if (verify_buffer(inputBuffer, *info.data())) {
-                        auto region = context->regionCtrl.get_region(request->regionID);
-                        region->add_user(request->accountID);
-
-                        connection::sender::send<::types::data_transfer::content::region_select>(info->connection, request->regionID);
-                        connection::sender::send<::types::data_transfer::content::region_layer>(info->connection, region->get_layers());
-                        connection::sender::send<::types::data_transfer::content::static_object>(info->connection, region->get_static_objs());
-                        connection::sender::send<::types::data_transfer::content::dynamic_object>(info->connection, region->get_dynamic_objs());      
-                        result = message::status::ok;
-                    } else {
-                        result = message::status::error::auth;
-                    }
+//                     auto info = context->userCtrl.get_info(request->accountID);
+//                     if (verify_buffer(inputBuffer, *info.data())) {
+//                         auto region = context->regionCtrl.get_region(request->regionID);
+//                         region->add_user(request->accountID);
+// 
+//                         connection::sender::send<::types::data_transfer::content::region_select>(info->connection, request->regionID);
+//                         connection::sender::send<::types::data_transfer::content::region_layer>(info->connection, region->get_layers());
+//                         connection::sender::send<::types::data_transfer::content::static_object>(info->connection, region->get_static_objs());
+//                         connection::sender::send<::types::data_transfer::content::dynamic_object>(info->connection, region->get_dynamic_objs());      
+//                         result = message::status::ok;
+//                     } else {
+//                         result = message::status::error::auth;
+//                     }
                 }
 
                 header.status = result; 

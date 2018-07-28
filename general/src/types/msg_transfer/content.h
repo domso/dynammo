@@ -4,7 +4,7 @@
 #include "src/authentication/types.h"
 #include "src/message/msg_types.h"
 #include "src/region/dynamic_obj.h"
-
+#include "src/types/game_events.h"
 
 namespace types {
     namespace msg_transfer {
@@ -17,7 +17,8 @@ namespace types {
                     transfer_action,                    
                     enter_region,
                     leave_region,
-                    create_account
+                    create_account,
+                    region_action
                 };          
             };
             
@@ -42,11 +43,11 @@ namespace types {
                 struct types {
                     struct request {
                         authentication::accountID_t accountID;
-                        authentication::ticket_t tcpTicket;
+                        uint32_t sessionID;
                     };
 
                     struct response {
-                        authentication::accountID_t accountID;
+                        //-
                     };
                 };
             };
@@ -124,6 +125,27 @@ namespace types {
                     };
                 };
             };
+            
+            struct region_action {
+                constexpr static const uint8_t id = ids::region_action;
+
+                struct types {
+                    struct request {
+                        uint32_t sessionID;
+                        uint32_t regionID; 
+                        ::types::game_events actionID;                          
+                    };
+
+                    struct response {
+                        uint32_t sessionID;
+                        uint32_t regionID; 
+                        ::types::game_events actionID; 
+                    };
+                };
+            };
+            
+            
+            
         }
     }
 }

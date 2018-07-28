@@ -9,7 +9,6 @@
 #include "src/types/msg_transfer/content.h"
 #include "src/connector/context.h"
 #include "src/types/game_events.h"
-#include "src/connector/verify_buffer.h"
 
 namespace connector {
     namespace msg_transfer {
@@ -30,8 +29,8 @@ namespace connector {
 
                 if (request != nullptr && response != nullptr) {
                     {
-                        auto info = context->userCtrl.get_info(request->accountID);
-                        verified = verify_buffer(inputBuffer, *info.data());
+//                         auto info = context->userCtrl.get_info(request->accountID);
+//                         verified = verify_buffer(inputBuffer, *info.data());
                     }
 
 
@@ -43,10 +42,10 @@ namespace connector {
 //                         uint32_t destRegionID = request->regionID;
 //TODO
                         
-                        auto actionObj = context->actionCtrl.execute_action(request->regionID, request->objID, action);
-                        if (actionObj) {
-                            response->obj = actionObj.value();
-                        }
+//                         auto actionObj = context->actionCtrl.execute_action(request->regionID, request->objID, action);
+//                         if (actionObj) {
+//                             response->obj = actionObj.value();
+//                         }
                         
                         /*
                         {
@@ -137,7 +136,7 @@ namespace connector {
 */
                         result = message::status::ok;
                     } else {
-                        result = message::status::error::auth;
+//                         result = message::status::error::auth;
                     }
                 }
 
