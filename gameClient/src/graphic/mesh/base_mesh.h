@@ -7,8 +7,8 @@
 #include <functional>
 
 #include "src/util/int.h"
-#include "shader_program.h"
-#include "base_texture.h"
+#include "src/graphic/shader_program.h"
+#include "src/graphic/texture/base_texture.h"
 #include "src/graphic/settings.h"
 
 namespace graphic {

@@ -6,11 +6,11 @@
 #include "src/region/vec3.h"
 #include "src/region/dynamic_obj.h"
 #include "src/graphic/shader.h"
-#include "src/graphic/base_mesh.h"
-#include "src/graphic/base_texture.h"
-#include "src/graphic/img_texture.h"
-#include "src/graphic/data_texture.h"
-#include "src/graphic/texture_controller.h"
+#include "src/graphic/mesh/base_mesh.h"
+#include "src/graphic/texture/base_texture.h"
+#include "src/graphic/texture/img_texture.h"
+#include "src/graphic/texture/data_texture.h"
+#include "src/graphic/texture/texture_controller.h"
 
 namespace graphic {
     class sprite_mesh : public base_mesh {

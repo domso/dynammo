@@ -10,7 +10,7 @@
 #include <chrono>
 
 #include "src/util/state_machine.h"
-#include "src/graphic/base_mesh.h"
+#include "src/graphic/mesh/base_mesh.h"
 #include "src/graphic/settings.h"
 
 namespace graphic {

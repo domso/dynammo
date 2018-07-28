@@ -8,18 +8,18 @@
 
 #include "src/region/layer.h"
 #include "src/graphic/shader.h"
-#include "src/graphic/base_mesh.h"
-#include "src/graphic/img_texture.h"
-#include "src/graphic/data_texture.h"
-#include "src/graphic/texture_controller.h"
+#include "src/graphic/mesh/base_mesh.h"
+#include "src/graphic/texture/img_texture.h"
+#include "src/graphic/texture/data_texture.h"
+#include "src/graphic/texture/texture_controller.h"
 
 namespace graphic {
     class layer_mesh : public base_mesh {
     public:
         constexpr static const int resolution = 512;
 
-        layer_mesh(const region::layer<uint32_t>* layer, texture_controller& texCtrl) :
-            m_dataTexture(texCtrl.load_data_texture(layer->data(), layer->width, layer->height)) {           
+        layer_mesh(const region::layer<uint32_t>& layer, texture_controller& texCtrl) :
+            m_dataTexture(texCtrl.load_data_texture(layer.data(), layer.width, layer.height)) {           
 
         }
 

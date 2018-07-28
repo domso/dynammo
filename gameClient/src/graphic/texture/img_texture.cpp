@@ -1,4 +1,4 @@
-#include "src/graphic/img_texture.h"
+#include "src/graphic/texture/img_texture.h"
 
 graphic::img_texture::img_texture() {
     

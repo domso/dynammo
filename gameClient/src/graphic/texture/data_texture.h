@@ -1,7 +1,7 @@
 #pragma once
 
 #include <stdint.h>
-#include "src/graphic/base_texture.h"
+#include "src/graphic/texture/base_texture.h"
 
 namespace graphic {
     class data_texture : public base_texture {

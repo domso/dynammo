@@ -5,55 +5,47 @@
 #include <unordered_map>
 #include <vector>
 #include <functional>
+#include <optional>
 
 namespace util {
-    template <typename eventT, typename argT = uint64_t>
+    template <typename eventT>
     class event_controller {
     public:
-        event_controller(const eventT clearEvent) : m_clearEvent(clearEvent) {
-            
+        event_controller() {
+
         }
-                
-        void new_event(const eventT newEvent, const argT arg = argT()) {
-            std::lock_guard<std::mutex> lg(m_mutex);
-            std::vector<eventT> eventStack;
-            eventStack.push_back(newEvent);
+
+        void new_event(const eventT newEvent) {
+            auto handler = get_handler(newEvent);
             
-            while (!eventStack.empty()) {
-                eventT currentEvent = eventStack.back();
-                auto callbacks = m_callbacks.find(currentEvent);
-                eventStack.pop_back();
-                if(callbacks != m_callbacks.end()) {
-                    for (auto& c : callbacks->second) {
-                        eventStack.push_back(c.first(currentEvent, arg, c.second));
-                    }
-                }
+            if (handler) {
+                (*handler).first(newEvent, (*handler).second);
             }
         }
-        
-        template <typename T, typename additionalT>
-        void register_event_handler(additionalT* param) {
-            std::lock_guard<std::mutex> lg(m_mutex);
-            eventT(*typeGuard)(const eventT, const argT&, additionalT*) = &T::handle;
-            m_callbacks[T::trigger].push_back(std::make_pair((eventT(*)(const eventT, const argT&, void*)) typeGuard, (void*)param));
-        }  
-        
+
         template <typename additionalT>
-        void register_event_handler(const eventT trigger, eventT(*typeGuard)(const eventT, const argT&, additionalT*), additionalT* param) {
+        void register_event_handler(const eventT trigger, void(*typeGuard)(const eventT, additionalT*), additionalT* param) {
             std::lock_guard<std::mutex> lg(m_mutex);
-            if (trigger != m_clearEvent) {
-                m_callbacks[trigger].push_back(std::make_pair((eventT(*)(const eventT, const argT&, void*)) typeGuard, (void*)param));
-            }
-        }  
-                
-        template <typename T>
-        void unregister_event_handler() {
+            m_callbacks[trigger].push_back(std::make_pair((void(*)(const eventT, void*)) typeGuard, (void*)param));
+        }
+
+        void unregister_event_handler(const eventT trigger) {
             std::lock_guard<std::mutex> lg(m_mutex);
-            m_callbacks.erase(T::trigger);
-        }              
+            m_callbacks.erase(trigger);
+        }
     private:
-        eventT m_clearEvent;
-        std::mutex m_mutex;        
-        std::unordered_map<eventT, std::vector<std::pair<std::function<eventT(const eventT, const argT&, void*)>, void*>>> m_callbacks;
+        std::optional<std::pair<std::function<void(const eventT, void*)>, void*>> get_handler(const eventT newEvent) {
+            std::lock_guard<std::mutex> lg(m_mutex);
+            
+            auto it = m_callbacks.find(newEvent);
+            
+            if (it != m_callbacks.end()) {
+                return it->second;
+            }
+
+            return std::nullopt;
+        }
+        std::mutex m_mutex;
+        std::unordered_map<eventT, std::pair<std::function<void(const eventT, void*)>, void*>> m_callbacks;
     };
 }

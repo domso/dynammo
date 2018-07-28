@@ -14,7 +14,7 @@ connector::requester::requester(network::ipv4_addr& udpDestAddr, util::event_con
     m_eventCtrl(eventCtrl),
     m_msgCtrl(msgCtrl)
     {
-    m_eventCtrl.register_event_handler<requester::event_handler<types::game_events::recv_tcp_link, msg_transfer::auth>>(this);
+//     m_eventCtrl.register_event_handler<requester::event_handler<types::game_events::recv_tcp_link, msg_transfer::auth>>(this);
 //     m_eventCtrl.register_event_handler<requester::event_handler2<types::game_events::move_up, msg_transfer::action>>(this);
 //     m_eventCtrl.register_event_handler<requester::event_handler2<types::game_events::move_left, msg_transfer::action>>(this);
 //     m_eventCtrl.register_event_handler<requester::event_handler2<types::game_events::move_down, msg_transfer::action>>(this);
@@ -25,30 +25,30 @@ connector::requester::requester(network::ipv4_addr& udpDestAddr, util::event_con
 //     m_eventCtrl.register_event_handler<requester::event_handler2<types::game_events::move_down_region, msg_transfer::transfer_action>>(this);  
 //     m_eventCtrl.register_event_handler<requester::event_handler2<types::game_events::move_right_region, msg_transfer::transfer_action>>(this);  
 //     
-    m_eventCtrl.register_event_handler<requester::event_handler2<types::game_events::enter_region, msg_transfer::region_action>>(this);
+//     m_eventCtrl.register_event_handler<requester::event_handler2<types::game_events::enter_region, msg_transfer::region_action>>(this);
 //     m_eventCtrl.register_event_handler<requester::event_handler<types::game_events::leave_region, msg_transfer::leave_region>>(this);
     
-    m_eventCtrl.register_event_handler<requester::event_handler<types::game_events::request_account_creation, msg_transfer::create_account>>(this);
+//     m_eventCtrl.register_event_handler<requester::event_handler<types::game_events::request_account_creation, msg_transfer::create_account>>(this);
     
 }
 
 connector::requester::~requester() {
     std::lock_guard<std::mutex> lg(m_mutex);
-    m_eventCtrl.unregister_event_handler<requester::event_handler<types::game_events::recv_tcp_link, msg_transfer::auth>>();
-    m_eventCtrl.unregister_event_handler<requester::event_handler2<types::game_events::move_up, msg_transfer::action>>();
-    m_eventCtrl.unregister_event_handler<requester::event_handler2<types::game_events::move_left, msg_transfer::action>>();
-    m_eventCtrl.unregister_event_handler<requester::event_handler2<types::game_events::move_down, msg_transfer::action>>();
-    m_eventCtrl.unregister_event_handler<requester::event_handler2<types::game_events::move_right, msg_transfer::action>>();
-        
-    m_eventCtrl.unregister_event_handler<requester::event_handler2<types::game_events::move_up_region, msg_transfer::transfer_action>>();
-    m_eventCtrl.unregister_event_handler<requester::event_handler2<types::game_events::move_left_region, msg_transfer::transfer_action>>();
-    m_eventCtrl.unregister_event_handler<requester::event_handler2<types::game_events::move_down_region, msg_transfer::transfer_action>>();  
-    m_eventCtrl.unregister_event_handler<requester::event_handler2<types::game_events::move_right_region, msg_transfer::transfer_action>>();  
-    
-    m_eventCtrl.unregister_event_handler<requester::event_handler<types::game_events::enter_region, msg_transfer::enter_region>>();
-    m_eventCtrl.unregister_event_handler<requester::event_handler<types::game_events::leave_region, msg_transfer::leave_region>>();
-    
-    m_eventCtrl.unregister_event_handler<requester::event_handler<types::game_events::request_account_creation, msg_transfer::create_account>>();
+//     m_eventCtrl.unregister_event_handler<requester::event_handler<types::game_events::recv_tcp_link, msg_transfer::auth>>();
+//     m_eventCtrl.unregister_event_handler<requester::event_handler2<types::game_events::move_up, msg_transfer::action>>();
+//     m_eventCtrl.unregister_event_handler<requester::event_handler2<types::game_events::move_left, msg_transfer::action>>();
+//     m_eventCtrl.unregister_event_handler<requester::event_handler2<types::game_events::move_down, msg_transfer::action>>();
+//     m_eventCtrl.unregister_event_handler<requester::event_handler2<types::game_events::move_right, msg_transfer::action>>();
+//         
+//     m_eventCtrl.unregister_event_handler<requester::event_handler2<types::game_events::move_up_region, msg_transfer::transfer_action>>();
+//     m_eventCtrl.unregister_event_handler<requester::event_handler2<types::game_events::move_left_region, msg_transfer::transfer_action>>();
+//     m_eventCtrl.unregister_event_handler<requester::event_handler2<types::game_events::move_down_region, msg_transfer::transfer_action>>();  
+//     m_eventCtrl.unregister_event_handler<requester::event_handler2<types::game_events::move_right_region, msg_transfer::transfer_action>>();  
+//     
+//     m_eventCtrl.unregister_event_handler<requester::event_handler<types::game_events::enter_region, msg_transfer::enter_region>>();
+//     m_eventCtrl.unregister_event_handler<requester::event_handler<types::game_events::leave_region, msg_transfer::leave_region>>();
+//     
+//     m_eventCtrl.unregister_event_handler<requester::event_handler<types::game_events::request_account_creation, msg_transfer::create_account>>();
 }
 
 void connector::requester::open() {

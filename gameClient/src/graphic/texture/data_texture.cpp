@@ -1,4 +1,4 @@
-#include "src/graphic/data_texture.h"
+#include "src/graphic/texture/data_texture.h"
 #include <iostream>
 
 graphic::data_texture::data_texture(const uint32_t* data, const int width, const int height) : m_data(data), m_width(width), m_height(height) {

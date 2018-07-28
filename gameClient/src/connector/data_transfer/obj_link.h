@@ -5,16 +5,18 @@
 #include <functional>
 #include "src/util/state_machine.h"
 #include "src/types/data_transfer/content.h"
+#include "src/connector/context.h"
 
 namespace connector {
     namespace data_transfer {
-        template <typename T, typename callbackParamT = void>
+        template <typename T, typename callbackParamT = connector::context>
         class obj_link {
         public:
             constexpr static const auto id = T::id;
 
-            obj_link(const std::function<void(obj_link<T, callbackParamT>&, callbackParamT*)> callback, callbackParamT* param) : m_callback(callback), m_additionArg(param) {
-
+            void init(const std::function<void(std::vector<typename T::content>&, callbackParamT*)> callback, callbackParamT* param) {
+                m_callback = callback;
+                m_additionArg = param;
             }
 
             void reset() {
@@ -85,7 +87,7 @@ namespace connector {
 
             static bool complete_data(obj_link<T, callbackParamT>* obj) {
                 if (obj->m_callback != nullptr) {
-                    obj->m_callback(*obj, obj->m_additionArg);
+                    obj->m_callback(obj->data, obj->m_additionArg);
                 }
 
                 obj->m_currentState.set(states::recvCount);
@@ -100,7 +102,7 @@ namespace connector {
 
             util::state_machine<states> m_currentState = states::recvCount;
             uint16_t m_count;
-            std::function<void(obj_link<T, callbackParamT>&, callbackParamT*)> m_callback;
+            std::function<void(std::vector<typename T::content>&, callbackParamT*)> m_callback;
             callbackParamT* m_additionArg;
         };
     }

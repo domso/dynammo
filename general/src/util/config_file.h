@@ -29,6 +29,12 @@ namespace util {
         */
         void store(const std::string& filename);
                
+        
+        template <typename T>
+        std::pair<bool, T> operator=(const std::string& key) {
+            return get<T>(key);
+        }
+        
         /**
         * @brief gets the stored value for the given key, or inserts the given defaultValue as the new value
         * 

@@ -155,6 +155,8 @@ message::msg_status_t connector::msg_transfer::region_action::verify_request(
                 (*user).release();
                 send_udp(*region.data(), outputBuffer, socket, context->sessionCtrl);
                 send_tcp(*region.data(), context->sessionCtrl);
+                region->commit();
+                
                 return message::status::close;
             } else {
                 return message::status::error::execution;

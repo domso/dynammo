@@ -1,4 +1,4 @@
-#include "src/graphic/img_block_texture.h"
+#include "src/graphic/texture/img_block_texture.h"
 #include <assert.h>
 #include <string.h>
 

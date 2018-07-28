@@ -1,4 +1,4 @@
-#include "src/graphic/texture_controller.h"
+#include "src/graphic/texture/texture_controller.h"
 
 std::shared_ptr<graphic::img_texture> graphic::texture_controller::load_img_texture(const std::string& filename) {
     if (m_imgTextures.count(filename) == 0) {

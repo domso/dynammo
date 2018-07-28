@@ -17,8 +17,8 @@
 #include "src/region/static_obj.h"
 #include "src/region/dynamic_obj.h"
 #include "src/graphic/renderer.h"
-#include "src/graphic/texture_controller.h"
-#include "src/graphic/region_mesh_controller.h"
+#include "src/graphic/texture/texture_controller.h"
+#include "src/graphic/mesh/region_mesh_controller.h"
 
 namespace graphic {
     class controller {
@@ -31,22 +31,10 @@ namespace graphic {
         void open();
         void wait_for_close();
 
-        template <typename T, typename argT = int>
-        void add_obj(const uint32_t regionID, const T* newObj, const uint32_t id, const argT* arg = nullptr) {
-            std::lock_guard<std::mutex> lg(m_mutex);
-            get_region_meshes(regionID).add_mesh<T, argT>(newObj, id, arg); 
-        }
-
         template <typename T>
-        void remove_obj(const uint32_t regionID, const uint32_t id) {
-            std::lock_guard<std::mutex> lg(m_mutex);    
-            get_region_meshes(regionID).remove_mesh<T>(id);
-        }
-
-        template <typename T>
-        void update_obj(const uint32_t regionID, const T* newObj, const uint32_t id) {
+        void add_obj(const uint32_t regionID, const uint32_t objID, const T& newObj) {
             std::lock_guard<std::mutex> lg(m_mutex);
-            get_region_meshes(regionID).update_mesh<T>(newObj, id);
+            get_region_meshes(regionID).add_mesh<T>(objID, newObj); 
         }
         
         std::string get_option(const std::string& key);

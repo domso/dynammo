@@ -5,8 +5,7 @@
 #include "src/message/msg_types.h"
 #include "src/types/msg_transfer/content.h"
 #include "src/types/game_events.h"
-#include "src/session/controller.h"
-#include "src/connector/data.h"
+#include "src/connector/context.h"
 #include "src/connector/sign_buffer.h"
 
 
@@ -21,18 +20,18 @@ namespace connector {
             static bool request(message::msg_header_t& header, network::ipv4_addr& destAddr, network::pkt_buffer& outputBuffer, network::udp_socket<network::ipv4_addr>& socket, uint64_t eventArg, connector::msg_transfer::data* data) {
                 auto request = outputBuffer.push_next<content::types::request>();
 
-                if (request != nullptr) {
-                    request->accountID = data->sessionCtrl.get_accountID();
-                    request->regionID = data->sessionCtrl.regUserID;
-                    request->actionID = eventArg;
-
-                    {
-                        auto region = data->regionCtrl[data->sessionCtrl.regUserID];
-                        request->objID = region->get_selected_character();
-                    }
-
-                    return sign_buffer(outputBuffer, data->sessionCtrl);
-                }
+//                 if (request != nullptr) {
+//                     request->accountID = data->sessionCtrl.get_accountID();
+//                     request->regionID = data->sessionCtrl.regUserID;
+//                     request->actionID = eventArg;
+// 
+//                     {
+//                         auto region = data->regionCtrl[data->sessionCtrl.regUserID];
+//                         request->objID = region->get_selected_character();
+//                     }
+// 
+//                     return sign_buffer(outputBuffer, data->sessionCtrl);
+//                 }
 
                 return false;
             }
@@ -46,25 +45,25 @@ namespace connector {
                 auto responseExtension = inputBuffer.get_next<content::types::response_extension>();
 
                 if (header.status == message::status::ok) {
-                    if (response != nullptr) {
-                        auto region = data->regionCtrl[response->regionID];
-                        region->load_dynamic_object(response->obj);
-                    }
-
-                    if (responseExtension != nullptr) {
-                        {
-                            auto region = data->regionCtrl[responseExtension->oldRegionID];
-                            region->remove_dynamic_object(responseExtension->oldObjID);
-                        }
-
-                        {
-                            auto region = data->regionCtrl[data->sessionCtrl.regUserID];
-                            if (region->get_selected_character() == responseExtension->oldObjID
-                                    && data->sessionCtrl.regUserID == responseExtension->oldRegionID) {
-                                data->sessionCtrl.regUserID = response->regionID;
-                            }
-                        }
-                    }
+//                     if (response != nullptr) {
+//                         auto region = data->regionCtrl[response->regionID];
+//                         region->load_dynamic_object(response->obj);
+//                     }
+// 
+//                     if (responseExtension != nullptr) {
+//                         {
+//                             auto region = data->regionCtrl[responseExtension->oldRegionID];
+//                             region->remove_dynamic_object(responseExtension->oldObjID);
+//                         }
+// 
+//                         {
+//                             auto region = data->regionCtrl[data->sessionCtrl.regUserID];
+//                             if (region->get_selected_character() == responseExtension->oldObjID
+//                                     && data->sessionCtrl.regUserID == responseExtension->oldRegionID) {
+//                                 data->sessionCtrl.regUserID = response->regionID;
+//                             }
+//                         }
+//                     }
                 }
 
                 return message::status::close;

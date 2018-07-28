@@ -4,9 +4,9 @@
 #include <unordered_map>
 #include <string>
 
-#include "src/graphic/img_texture.h"
-#include "src/graphic/img_block_texture.h"
-#include "src/graphic/data_texture.h"
+#include "src/graphic/texture/img_texture.h"
+#include "src/graphic/texture/img_block_texture.h"
+#include "src/graphic/texture/data_texture.h"
 
 namespace graphic {
     class texture_controller {

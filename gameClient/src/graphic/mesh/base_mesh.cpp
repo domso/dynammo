@@ -1,4 +1,4 @@
-#include "src/graphic/base_mesh.h"
+#include "src/graphic/mesh/base_mesh.h"
 #include <glm/glm.hpp>
 
 #include "src/util/int.h"

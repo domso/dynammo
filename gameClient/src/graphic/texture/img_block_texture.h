@@ -1,7 +1,7 @@
 #pragma once
 
 #include <vector>
-#include "src/graphic/base_texture.h"
+#include "src/graphic/texture/base_texture.h"
 
 namespace graphic {
     class img_block_texture : public base_texture {

@@ -28,7 +28,7 @@ namespace user_interface {
             }
             
             for (auto e : T::events) {
-                m_eventCtrl.register_event_handler(e, T::event_callback, (views::base_view*)m_views[T::id].get());
+//                 m_eventCtrl.register_event_handler(e, T::event_callback, (views::base_view*)m_views[T::id].get());
             }
         }
         

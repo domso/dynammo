@@ -7,7 +7,6 @@
 #include "src/types/game_events.h"
 #include "src/message/msg_controller.h"
 #include "src/region/controller.h"
-#include "src/session/controller.h"
 
 namespace connector {
     class requester {

@@ -21,10 +21,8 @@ namespace region {
         
         void load_layers(std::vector<region::layer<uint32_t>>&& move);
         void load_static_objects(std::vector<region::static_obj>&& objs);
-        void load_dynamic_objects(std::vector<region::dynamic_obj>&& objs);
-        
-        void load_dynamic_object(const region::dynamic_obj& obj);
-        
+        void load_dynamic_objects(std::vector<region::dynamic_obj>&& objs);        
+        void load_dynamic_object(const region::dynamic_obj& obj);        
         void remove_dynamic_object(const uint32_t id);
         
         bool update();
