@@ -57,9 +57,9 @@ namespace connector {
             template <typename T>
             void unregister_callbacks() {
                 static_assert(sizeof(T::id) == 1, "");
-                m_configureCallback.erase(T::id]);
-                m_completeCallback.erase(T::id]);
-                m_callbackDataArg.erase(T::id]);
+                m_configureCallback[T::id] = nullptr;
+                m_completeCallback[T::id] = nullptr;
+                m_callbackDataArg[T::id] = nullptr;
             }
 
             void close();

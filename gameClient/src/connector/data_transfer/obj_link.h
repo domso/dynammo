@@ -6,6 +6,7 @@
 #include "src/util/state_machine.h"
 #include "src/types/data_transfer/content.h"
 #include "src/connector/context.h"
+#include "src/connector/data_transfer/tcp_receiver.h"
 
 namespace connector {
     namespace data_transfer {
@@ -23,8 +24,8 @@ namespace connector {
                 m_currentState = states::recvCount;
             }
             
-            static connector::tcp_receiver::target configure(obj_link<T, callbackParamT>* obj) {
-                connector::tcp_receiver::target result;
+            static connector::data_transfer::tcp_receiver::target configure(obj_link<T, callbackParamT>* obj) {
+                connector::data_transfer::tcp_receiver::target result;
 
                 switch (obj->m_currentState.get()) {
                 case states::recvCount:
@@ -67,8 +68,8 @@ namespace connector {
 
             std::vector<typename T::content> data;
         private:
-            static connector::tcp_receiver::target configure_count(obj_link<T, callbackParamT>* obj) {
-                connector::tcp_receiver::target result;
+            static connector::data_transfer::tcp_receiver::target configure_count(obj_link<T, callbackParamT>* obj) {
+                connector::data_transfer::tcp_receiver::target result;
                 result.set<uint16_t>(&obj->m_count);
                 return result;
             }
@@ -79,8 +80,8 @@ namespace connector {
                 return false;
             }
 
-            static connector::tcp_receiver::target configure_data(obj_link<T, callbackParamT>* obj) {
-                connector::tcp_receiver::target result;
+            static connector::data_transfer::tcp_receiver::target configure_data(obj_link<T, callbackParamT>* obj) {
+                connector::data_transfer::tcp_receiver::target result;
                 result.set<typename T::content>(obj->data.data(), obj->data.size());
                 return result;
             }

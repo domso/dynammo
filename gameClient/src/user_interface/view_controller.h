@@ -5,7 +5,7 @@
 #include <unordered_map>
 #include <iostream>
 
-#include "src/util/config_file.h"
+#include "src/config/controller.h"
 #include "src/util/state_machine.h"
 #include "src/util/event_controller.h"
 #include "src/types/game_events.h"
@@ -15,7 +15,7 @@
 namespace user_interface {
     class view_controller {
     public:
-        view_controller(Gtk::Box& rootBox, util::event_controller<types::game_events>& eventCtrl, util::config_file& config, Gtk::Window& window);
+        view_controller(Gtk::Box& rootBox, util::event_controller<types::game_events>& eventCtrl, config::controller& config, Gtk::Window& window);
         
         template <typename T, typename ...Ta>
         void register_view(Ta... args) {   
@@ -28,7 +28,7 @@ namespace user_interface {
             }
             
             for (auto e : T::events) {
-//                 m_eventCtrl.register_event_handler(e, T::event_callback, (views::base_view*)m_views[T::id].get());
+                m_eventCtrl.register_event_handler(e, T::event_callback, (views::base_view*)m_views[T::id].get());
             }
         }
         
@@ -43,7 +43,7 @@ namespace user_interface {
         void set_option(const std::string& key, const std::string& value);
         std::string get_option(const std::string& key);
         
-        util::config_file& config();
+        config::controller& config();
         Gtk::Window& window();
     private:        
         void open_current_view();        
@@ -56,7 +56,7 @@ namespace user_interface {
         util::state_machine<view_list::views> m_currentView = view_list::views::start;
         util::event_controller<types::game_events>& m_eventCtrl;
         std::unordered_map<std::string, std::string> m_options;
-        util::config_file& m_config;
+        config::controller& m_config;
         Gtk::Window& m_window;
     };
 }

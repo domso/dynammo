@@ -13,8 +13,8 @@ connector::data_transfer::controller::controller(connector::context& context)
 }
 
 void connector::data_transfer::controller::update() {
-    auto serverIP = m_context.config.get<std::string>("serverIP", "127.0.0.1");
-    auto tcpPort = m_context.config.get<uint16_t>("tcpPort", 1850);
+    auto serverIP = m_context.config.global().get<std::string>("serverIP", "127.0.0.1");
+    auto tcpPort = m_context.config.global().get<uint16_t>("tcpPort", 1850);
     
     network::ipv4_addr destAddr;
     assert(destAddr.init(serverIP.second, tcpPort.second));

@@ -1,60 +1,30 @@
 #include "src/connector/requester.h"
 
 #include "src/connector/msg_transfer/auth.h"
-#include "src/connector/msg_transfer/action.h"
-#include "src/connector/msg_transfer/transfer_action.h"
-#include "src/connector/msg_transfer/enter_region.h"
-#include "src/connector/msg_transfer/leave_region.h"
 #include "src/connector/msg_transfer/create_account.h"
 #include "src/connector/msg_transfer/region_action.h"
 
-connector::requester::requester(network::ipv4_addr& udpDestAddr, util::event_controller<types::game_events>& eventCtrl, message::msg_controller& msgCtrl) :
+connector::requester::requester(connector::context& context, message::msg_controller& msgCtrl) :
     m_buffer(bufferSize),
-    m_udpDestAddr(udpDestAddr),
-    m_eventCtrl(eventCtrl),
-    m_msgCtrl(msgCtrl)
-    {
-//     m_eventCtrl.register_event_handler<requester::event_handler<types::game_events::recv_tcp_link, msg_transfer::auth>>(this);
-//     m_eventCtrl.register_event_handler<requester::event_handler2<types::game_events::move_up, msg_transfer::action>>(this);
-//     m_eventCtrl.register_event_handler<requester::event_handler2<types::game_events::move_left, msg_transfer::action>>(this);
-//     m_eventCtrl.register_event_handler<requester::event_handler2<types::game_events::move_down, msg_transfer::action>>(this);
-//     m_eventCtrl.register_event_handler<requester::event_handler2<types::game_events::move_right, msg_transfer::action>>(this);
-//     
-//     m_eventCtrl.register_event_handler<requester::event_handler2<types::game_events::move_up_region, msg_transfer::transfer_action>>(this);
-//     m_eventCtrl.register_event_handler<requester::event_handler2<types::game_events::move_left_region, msg_transfer::transfer_action>>(this);
-//     m_eventCtrl.register_event_handler<requester::event_handler2<types::game_events::move_down_region, msg_transfer::transfer_action>>(this);  
-//     m_eventCtrl.register_event_handler<requester::event_handler2<types::game_events::move_right_region, msg_transfer::transfer_action>>(this);  
-//     
-//     m_eventCtrl.register_event_handler<requester::event_handler2<types::game_events::enter_region, msg_transfer::region_action>>(this);
-//     m_eventCtrl.register_event_handler<requester::event_handler<types::game_events::leave_region, msg_transfer::leave_region>>(this);
-    
-//     m_eventCtrl.register_event_handler<requester::event_handler<types::game_events::request_account_creation, msg_transfer::create_account>>(this);
-    
+    m_context(context),
+    m_msgCtrl(msgCtrl) {
+    m_context.eventCtrl.register_event_handler(types::game_events::enter_region, execute_callback<msg_transfer::region_action>, this);
+    m_context.eventCtrl.register_event_handler(types::game_events::request_account_creation, execute_callback<msg_transfer::create_account>, this);
+    m_context.eventCtrl.register_event_handler(types::game_events::recv_tcp_link, execute_callback<msg_transfer::auth>, this);
+
 }
 
 connector::requester::~requester() {
     std::lock_guard<std::mutex> lg(m_mutex);
-//     m_eventCtrl.unregister_event_handler<requester::event_handler<types::game_events::recv_tcp_link, msg_transfer::auth>>();
-//     m_eventCtrl.unregister_event_handler<requester::event_handler2<types::game_events::move_up, msg_transfer::action>>();
-//     m_eventCtrl.unregister_event_handler<requester::event_handler2<types::game_events::move_left, msg_transfer::action>>();
-//     m_eventCtrl.unregister_event_handler<requester::event_handler2<types::game_events::move_down, msg_transfer::action>>();
-//     m_eventCtrl.unregister_event_handler<requester::event_handler2<types::game_events::move_right, msg_transfer::action>>();
-//         
-//     m_eventCtrl.unregister_event_handler<requester::event_handler2<types::game_events::move_up_region, msg_transfer::transfer_action>>();
-//     m_eventCtrl.unregister_event_handler<requester::event_handler2<types::game_events::move_left_region, msg_transfer::transfer_action>>();
-//     m_eventCtrl.unregister_event_handler<requester::event_handler2<types::game_events::move_down_region, msg_transfer::transfer_action>>();  
-//     m_eventCtrl.unregister_event_handler<requester::event_handler2<types::game_events::move_right_region, msg_transfer::transfer_action>>();  
-//     
-//     m_eventCtrl.unregister_event_handler<requester::event_handler<types::game_events::enter_region, msg_transfer::enter_region>>();
-//     m_eventCtrl.unregister_event_handler<requester::event_handler<types::game_events::leave_region, msg_transfer::leave_region>>();
-//     
-//     m_eventCtrl.unregister_event_handler<requester::event_handler<types::game_events::request_account_creation, msg_transfer::create_account>>();
+    m_context.eventCtrl.unregister_event_handler(types::game_events::request_account_creation);
+    m_context.eventCtrl.unregister_event_handler(types::game_events::recv_tcp_link);
 }
 
-void connector::requester::open() {
-    m_open = true;
-}
-
-void connector::requester::close() {
-    m_open = false;
+void connector::requester::lazy_init() {
+    if (!m_open) {
+        auto serverIP = m_context.config.global().get<std::string>("serverIP", "127.0.0.1");
+        auto udpPort = m_context.config.global().get<uint16_t>("udpPort", 1851);
+        assert(m_udpDestAddr.init(serverIP.second, udpPort.second));
+        m_open = true;
+    }
 }

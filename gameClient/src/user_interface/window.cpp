@@ -4,7 +4,7 @@
 #include "src/user_interface/views/main_game_view.h"
 #include "src/user_interface/views/create_account_view.h"
 
-user_interface::window::window(graphic::renderer& renderer, util::event_controller<types::game_events>& eventCtrl, util::config_file& config) :
+user_interface::window::window(graphic::renderer& renderer, util::event_controller<types::game_events>& eventCtrl, config::controller& config) :
     m_keyCtrl(eventCtrl),
     m_renderer(renderer),
     m_viewCtrl(m_rootBox, eventCtrl, config, *this)

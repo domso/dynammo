@@ -48,9 +48,8 @@ void user_interface::views::start_view::close() {
 
 }
 
-types::game_events user_interface::views::start_view::event_callback(const types::game_events event, const uint64_t& arg, user_interface::views::base_view* view)
+void user_interface::views::start_view::event_callback(const types::game_events event, user_interface::views::base_view* view)
 {
-    return types::game_events::clear;
 }
 
 Gtk::Container& user_interface::views::start_view::container() {
@@ -58,10 +57,10 @@ Gtk::Container& user_interface::views::start_view::container() {
 }
 
 void user_interface::views::start_view::run_button_clicked() {
-    m_viewCtrl.config().clear();
-    m_viewCtrl.config().load("../" + m_entry.get_text() + ".config");   
+    m_viewCtrl.config().global().load("../" + m_entry.get_text() + ".config");   
     
-    m_viewCtrl.create_event(types::game_events::recv_tcp_link);    
+    m_viewCtrl.create_event(types::game_events::recv_tcp_link);
+    m_viewCtrl.create_event(types::game_events::enter_region);
     m_viewCtrl.change_view(view_list::views::main_game);
 }
 

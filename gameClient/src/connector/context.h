@@ -1,23 +1,21 @@
 #pragma once
 
-
-#include "src/util/config_file.h"
+#include "src/game/controller.h"
 #include "src/util/event_controller.h"
 #include "src/types/game_events.h"
-#include "src/region/controller.h"
-#include "src/graphic/controller.h"
+#include "src/config/controller.h"
+#include "src/encryption/private_key.h"
 
 namespace connector {
     struct context {
         context(
-            region::controller& regCtrl,
-            graphic::controller& graphicCtrl,
-            util::config_file& config,
-            util::event_controller<types::game_events>& eventCtrl
+            game::controller& gameCtrl,
+            util::event_controller<types::game_events>& eventCtrl,
+            config::controller& config
         );
-        region::controller& regionCtrl;
-        graphic::controller& graphicCtrl;
-        util::config_file& config;
+        game::controller& gameCtrl;
         util::event_controller<types::game_events>& eventCtrl;
+        config::controller& config;
+        encryption::private_key privateKey;
     };
 }

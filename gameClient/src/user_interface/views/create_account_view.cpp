@@ -50,14 +50,14 @@ void user_interface::views::create_account_view::close() {
 
 }
 
-types::game_events user_interface::views::create_account_view::event_callback(const types::game_events event, const uint64_t& arg, user_interface::views::base_view* view)
+void user_interface::views::create_account_view::event_callback(const types::game_events event, user_interface::views::base_view* view)
 {
     create_account_view& current = *(dynamic_cast<create_account_view*>(view));
     
     if (event == types::game_events::success_account_creation) {
         current.m_progress.set_fraction(1);
         current.m_progress.set_text("Success");
-        current.m_viewCtrl.config().store("../" + current.m_viewCtrl.config().get<std::string>("username").second + ".config");
+        current.m_viewCtrl.config().global().store("../" + current.m_viewCtrl.config().global().get<std::string>("username").second + ".config");
     } else {
         current.m_progress.set_fraction(1);
         current.m_progress.set_text("Error");
@@ -67,8 +67,6 @@ types::game_events user_interface::views::create_account_view::event_callback(co
     current.m_backButton.set_sensitive(true);
     current.m_entry.set_sensitive(true);
     current.m_entry.set_text("");
-    
-    return types::game_events::clear;
 }
 
 Gtk::Container& user_interface::views::create_account_view::container() {
@@ -102,8 +100,8 @@ void user_interface::views::create_account_view::create_button_clicked() {
     m_progress.set_fraction(0.5);
     m_progress.set_text("Send request");
     
-    m_viewCtrl.config().set<std::string>("username", std::string(m_entry.get_text()));
-    m_viewCtrl.config().set<std::string>("privateKey", "../../keys/" + m_entry.get_text() + "_private.pem");
+    m_viewCtrl.config().global().set<std::string>("username", std::string(m_entry.get_text()));
+    m_viewCtrl.config().global().set<std::string>("privateKey", "../../keys/" + m_entry.get_text() + "_private.pem");
     m_viewCtrl.create_event(types::game_events::request_account_creation);
     
     m_progress.set_fraction(0.75);

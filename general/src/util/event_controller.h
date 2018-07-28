@@ -26,7 +26,7 @@ namespace util {
         template <typename additionalT>
         void register_event_handler(const eventT trigger, void(*typeGuard)(const eventT, additionalT*), additionalT* param) {
             std::lock_guard<std::mutex> lg(m_mutex);
-            m_callbacks[trigger].push_back(std::make_pair((void(*)(const eventT, void*)) typeGuard, (void*)param));
+            m_callbacks[trigger] = std::make_pair((void(*)(const eventT, void*)) typeGuard, (void*)param);
         }
 
         void unregister_event_handler(const eventT trigger) {

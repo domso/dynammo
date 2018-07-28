@@ -19,7 +19,9 @@ void graphic::renderer::link_glarea(Gtk::GLArea& glarea) {
 
 void graphic::renderer::add_mesh(const std::shared_ptr<graphic::base_mesh>& newMesh) {
     std::lock_guard<std::mutex> lg(m_mutex);
+    
     m_addQueue.push(newMesh);    
+    
 }
 
 void graphic::renderer::remove_mesh(const std::shared_ptr<graphic::base_mesh>& oldMesh) {
@@ -107,6 +109,10 @@ bool graphic::renderer::render(const Glib::RefPtr<Gdk::GLContext>& context) {
 void graphic::renderer::render_meshes() {
     for (auto& currentMesh : m_renderMeshes) {
         currentMesh->render(m_currentSettings);
+        
+        if (currentMesh.use_count() == 1) {
+            m_removeQueue.push(currentMesh);
+        }
     }
 }
 
@@ -118,9 +124,13 @@ void graphic::renderer::update_meshes() {
 void graphic::renderer::add_new_mesh() {
     while (!m_addQueue.empty()) {
         auto newMesh = m_addQueue.front();
+        
+        
         newMesh->realize();
         m_renderMeshes.insert(newMesh);
+        
         m_addQueue.pop();
+        
     }
 }
 
@@ -137,6 +147,7 @@ void graphic::renderer::remove_all_meshes() {
     for (auto& currentMesh : m_renderMeshes) {
         currentMesh->unrealize();
     }
+    m_renderMeshes.clear();
     
     currentState.set(states::unrealized);
 }

@@ -14,27 +14,26 @@ INCLUDE(FindPkgConfig)
 
 find_package(OpenGL REQUIRED)
 
-file(GLOB src_graphic "${CMAKE_CURRENT_SOURCE_DIR}/src/graphic/*.cpp")
-file(GLOB src_graphic_mesh "${CMAKE_CURRENT_SOURCE_DIR}/src/graphic/mesh/*.cpp")
-file(GLOB src_graphic_texture "${CMAKE_CURRENT_SOURCE_DIR}/src/graphic/texture/*.cpp")
-add_library(graphicGameClient STATIC ${src_graphic} ${src_graphic_mesh} ${src_graphic_texture})
+file(GLOB src_all 
+    "${CMAKE_CURRENT_SOURCE_DIR}/src/config/*.cpp"
+    
+    "${CMAKE_CURRENT_SOURCE_DIR}/src/graphic/*.cpp"
+    "${CMAKE_CURRENT_SOURCE_DIR}/src/graphic/mesh/*.cpp"
+    "${CMAKE_CURRENT_SOURCE_DIR}/src/graphic/shader/*.cpp"
+    "${CMAKE_CURRENT_SOURCE_DIR}/src/graphic/texture/*.cpp"
+    
+    "${CMAKE_CURRENT_SOURCE_DIR}/src/user_interface/*.cpp"
+    "${CMAKE_CURRENT_SOURCE_DIR}/src/user_interface/views/*.cpp"
+    
+    "${CMAKE_CURRENT_SOURCE_DIR}/src/game/*.cpp"
+    
+    "${CMAKE_CURRENT_SOURCE_DIR}/src/region/*.cpp"
+    "${CMAKE_CURRENT_SOURCE_DIR}/src/connector/*.cpp"
+    "${CMAKE_CURRENT_SOURCE_DIR}/src/connector/data_transfer/*.cpp"
+    "${CMAKE_CURRENT_SOURCE_DIR}/src/connector/msg_transfer/*.cpp"
+)
 
-file(GLOB src_user_interface "${CMAKE_CURRENT_SOURCE_DIR}/src/user_interface/*.cpp")
-file(GLOB src_user_interface_views "${CMAKE_CURRENT_SOURCE_DIR}/src/user_interface/views/*.cpp")
-add_library(user_interfaceGameClient STATIC ${src_user_interface} ${src_user_interface_views})
-target_link_libraries(user_interfaceGameClient utilGeneral encryptionGeneral)
-
-file(GLOB src_region "${CMAKE_CURRENT_SOURCE_DIR}/src/region/*.cpp")
-add_library(regionGameClient STATIC ${src_region})
-
-file(GLOB src_connector "${CMAKE_CURRENT_SOURCE_DIR}/src/connector/*.cpp")
-file(GLOB src_connector_data_transfer "${CMAKE_CURRENT_SOURCE_DIR}/src/connector/data_transfer/*.cpp")
-file(GLOB src_connector_msg_transfer "${CMAKE_CURRENT_SOURCE_DIR}/src/connector/msg_transfer/*.cpp")
-add_library(connectorGameClient STATIC ${src_connector} ${src_connector_data_transfer} ${src_connector_msg_transfer})
-target_link_libraries(connectorGameClient messageGeneral regionGameClient)
-
-
-add_executable(gameClient main.cpp)
-target_link_libraries(gameClient utilGeneral messageGeneral encryptionGeneral regionGameClient graphicGameClient user_interfaceGameClient connectorGameClient)
+add_executable(gameClient main.cpp ${src_all})
+target_link_libraries(gameClient utilGeneral messageGeneral encryptionGeneral)
 INCLUDE_DIRECTORIES(${OPENGL_INCLUDE_DIRS} ${GTKMM_INCLUDE_DIRS})
 TARGET_LINK_LIBRARIES(gameClient ${OPENGL_LIBRARIES} ${GTKMM_LIBRARIES} "epoxy")

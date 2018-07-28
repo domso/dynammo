@@ -11,10 +11,15 @@ namespace util {
         }
         worker(const worker&) = delete;
         worker(worker&&) = delete;
-        ~worker() {
+        ~worker() {            
             m_obj.close();
-            m_thread.join();
-        } 
+            wait_for_close();
+        }         
+        void wait_for_close() {
+            if (m_thread.joinable()) {
+                m_thread.join();
+            }            
+        }
     private:
         T& m_obj;
         std::thread m_thread;

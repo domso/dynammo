@@ -16,7 +16,7 @@ namespace connector {
 
             constexpr static const auto id = content::id;
 
-            static bool request(message::msg_header_t& header, network::ipv4_addr& destAddr, network::pkt_buffer& outputBuffer, network::udp_socket<network::ipv4_addr>& socket, uint64_t eventArg, connector::msg_transfer::context* context) {
+            static bool request(message::msg_header_t& header, network::ipv4_addr& destAddr, network::pkt_buffer& outputBuffer, network::udp_socket<network::ipv4_addr>& socket, uint64_t eventArg, connector::context* context) {
                 auto request = outputBuffer.push_next<content::types::request>();
                 
 //                 if (request != nullptr) {
@@ -36,16 +36,16 @@ namespace connector {
                 return false;
             }
 
-            static message::msg_status_t requestHandler(message::msg_header_t& header, network::ipv4_addr& srcAddr, network::pkt_buffer& inputBuffer, network::pkt_buffer& outputBuffer, network::udp_socket<network::ipv4_addr>& socket, message::msg_option_t& options, connector::msg_transfer::context* context) {
+            static message::msg_status_t requestHandler(message::msg_header_t& header, network::ipv4_addr& srcAddr, network::pkt_buffer& inputBuffer, network::pkt_buffer& outputBuffer, network::udp_socket<network::ipv4_addr>& socket, message::msg_option_t& options, connector::context* context) {
                 return message::status::close;
             }
 
-            static message::msg_status_t responseHandler(message::msg_header_t& header, network::ipv4_addr& srcAddr, network::pkt_buffer& inputBuffer, network::pkt_buffer& outputBuffer, network::udp_socket<network::ipv4_addr>& socket, message::msg_option_t& options, connector::msg_transfer::context* context) {               
+            static message::msg_status_t responseHandler(message::msg_header_t& header, network::ipv4_addr& srcAddr, network::pkt_buffer& inputBuffer, network::pkt_buffer& outputBuffer, network::udp_socket<network::ipv4_addr>& socket, message::msg_option_t& options, connector::context* context) {               
                 auto response = inputBuffer.get_next<content::types::response>();
                 
                 if (response != nullptr) {
                     if (header.status == message::status::ok) {
-                        auto region = data->regionCtrl[response->destRegionID];
+//                         auto region = data->regionCtrl[response->destRegionID];
 //                         region->load_dynamic_object(response->obj);
                     }
                 }                

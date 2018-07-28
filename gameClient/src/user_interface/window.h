@@ -6,7 +6,7 @@
 #include <glm/glm.hpp>
 
 #include "src/util/state_machine.h"
-#include "src/util/config_file.h"
+#include "src/config/controller.h"
 #include "src/graphic/renderer.h"
 #include "src/user_interface/key_controller.h"
 #include "src/user_interface/view_controller.h"
@@ -14,7 +14,7 @@
 namespace user_interface {
     class window : public Gtk::Window {
     public:
-        window(graphic::renderer& renderer, util::event_controller<types::game_events>& eventCtrl, util::config_file& config);
+        window(graphic::renderer& renderer, util::event_controller<types::game_events>& eventCtrl, config::controller& config);
         ~window() override;
         
         enum class states {       

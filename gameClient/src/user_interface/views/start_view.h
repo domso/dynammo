@@ -15,7 +15,7 @@ namespace user_interface {
             
             void open();
             void close();   
-            static types::game_events event_callback(const types::game_events event, const uint64_t& arg, base_view* view);        
+            static void event_callback(const types::game_events event, base_view* view);        
             Gtk::Container& container();
         private:
             void run_button_clicked();

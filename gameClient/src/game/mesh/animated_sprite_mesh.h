@@ -5,7 +5,7 @@
 
 #include "src/region/vec3.h"
 #include "src/region/dynamic_obj.h"
-#include "src/graphic/shader.h"
+#include "src/graphic/shader/shader.h"
 #include "src/graphic/mesh/base_mesh.h"
 #include "src/graphic/texture/base_texture.h"
 #include "src/graphic/texture/img_texture.h"

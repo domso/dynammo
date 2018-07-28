@@ -12,7 +12,7 @@ namespace user_interface {
             virtual Gtk::Container& container() = 0;
             
             constexpr static const auto events = {types::game_events::clear};
-            static types::game_events event_callback(const types::game_events event, const uint64_t& arg, base_view* view);
+            static void event_callback(const types::game_events event, base_view* view);
         };
     }
 }

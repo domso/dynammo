@@ -77,9 +77,9 @@ void graphic::base_mesh::unrealize() {
  
     m_shaders.close();
     
-//     for (base_texture* tex : m_textures) {
-//         tex->free();
-//     }   
+    for (base_texture* tex : m_textures) {
+        tex->free();
+    }   
     
     glBindVertexArray(m_externalVertexGroup);
          

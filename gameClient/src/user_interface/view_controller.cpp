@@ -1,6 +1,11 @@
 #include "src/user_interface/view_controller.h"
 
-user_interface::view_controller::view_controller(Gtk::Box& rootBox, util::event_controller<types::game_events>& eventCtrl, util::config_file& config, Gtk::Window& window) 
+user_interface::view_controller::view_controller(
+    Gtk::Box& rootBox,
+    util::event_controller<types::game_events>& eventCtrl,
+    config::controller& config,
+    Gtk::Window& window
+) 
 : m_rootBox(rootBox), m_eventCtrl(eventCtrl), m_config(config), m_window(window){
 
 }
@@ -34,7 +39,7 @@ std::string user_interface::view_controller::get_option(const std::string& key) 
     return m_options[key];
 }
 
-util::config_file& user_interface::view_controller::config() {
+config::controller& user_interface::view_controller::config() {
     return m_config;
 }
 

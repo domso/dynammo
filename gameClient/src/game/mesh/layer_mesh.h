@@ -7,7 +7,7 @@
 #include <random>
 
 #include "src/region/layer.h"
-#include "src/graphic/shader.h"
+#include "src/graphic/shader/shader.h"
 #include "src/graphic/mesh/base_mesh.h"
 #include "src/graphic/texture/img_texture.h"
 #include "src/graphic/texture/data_texture.h"
@@ -19,7 +19,7 @@ namespace graphic {
         constexpr static const int resolution = 512;
 
         layer_mesh(const region::layer<uint32_t>& layer, texture_controller& texCtrl) :
-            m_dataTexture(texCtrl.load_data_texture(layer.data(), layer.width, layer.height)) {           
+            m_dataTexture(std::make_shared<graphic::data_texture>(layer.data(), layer.width, layer.height)) {          
 
         }
 
@@ -34,14 +34,14 @@ namespace graphic {
 
             if (get_id() == 0) {
                 add_texture(m_tex);
-                m_shaders.add_shader<graphic::shader_program::shader_types::vertex>("../shader/terrain_layer.glsl");
+                m_shaders.add_shader<graphic::shader_program::shader_types::vertex>("../src/game/vertex/terrain_layer.glsl");
             } else {
                 add_texture(m_tex);
-                m_shaders.add_shader<graphic::shader_program::shader_types::vertex>("../shader/water_layer.glsl");
+                m_shaders.add_shader<graphic::shader_program::shader_types::vertex>("../src/game/vertex/water_layer.glsl");
             }
 
             add_texture(*m_dataTexture.get());
-            m_shaders.add_shader<graphic::shader_program::shader_types::fragment>("../shader/fragment.glsl");
+            m_shaders.add_shader<graphic::shader_program::shader_types::fragment>("../src/game/fragment/fragment.glsl");
 
             m_shaders.add_uniform_attr("groundTex");
             m_shaders.add_uniform_attr("mapData");
@@ -55,7 +55,6 @@ namespace graphic {
         }
 
         void free() {
-
         }
 
         void update_data(const region::layer<uint32_t>* layer) {

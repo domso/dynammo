@@ -77,15 +77,15 @@ void connector::data_transfer::tcp_receiver::copy_bytes() {
 }
 
 connector::data_transfer::tcp_receiver::target::target()                                            : m_destPtr(nullptr), m_destSize(0) {}
-connector::data_transfer::tcp_receiver::target::target(const connector::tcp_receiver::target& copy) : m_destPtr(copy.m_destPtr), m_destSize(copy.m_destSize) {}
-connector::data_transfer::tcp_receiver::target::target(connector::tcp_receiver::target&& move)      : m_destPtr(move.m_destPtr), m_destSize(move.m_destSize) {move.reset();}
+connector::data_transfer::tcp_receiver::target::target(const connector::data_transfer::tcp_receiver::target& copy) : m_destPtr(copy.m_destPtr), m_destSize(copy.m_destSize) {}
+connector::data_transfer::tcp_receiver::target::target(connector::data_transfer::tcp_receiver::target&& move)      : m_destPtr(move.m_destPtr), m_destSize(move.m_destSize) {move.reset();}
 
-void connector::data_transfer::tcp_receiver::target::operator=(const connector::tcp_receiver::target& copy) {
+void connector::data_transfer::tcp_receiver::target::operator=(const connector::data_transfer::tcp_receiver::target& copy) {
     m_destPtr = copy.m_destPtr;
     m_destSize = copy.m_destSize;
 }
 
-void connector::data_transfer::tcp_receiver::target::operator=(connector::tcp_receiver::target && move) {
+void connector::data_transfer::tcp_receiver::target::operator=(connector::data_transfer::tcp_receiver::target && move) {
     m_destPtr = move.m_destPtr;
     m_destSize = move.m_destSize;    
     
