@@ -26,6 +26,7 @@ file(GLOB src_all
     "${CMAKE_CURRENT_SOURCE_DIR}/src/user_interface/views/*.cpp"
     
     "${CMAKE_CURRENT_SOURCE_DIR}/src/game/*.cpp"
+    "${CMAKE_CURRENT_SOURCE_DIR}/src/game/mesh/*.cpp"
     
     "${CMAKE_CURRENT_SOURCE_DIR}/src/region/*.cpp"
     "${CMAKE_CURRENT_SOURCE_DIR}/src/connector/*.cpp"
@@ -34,6 +35,6 @@ file(GLOB src_all
 )
 
 add_executable(gameClient main.cpp ${src_all})
-target_link_libraries(gameClient utilGeneral messageGeneral encryptionGeneral)
+target_link_libraries(gameClient allGeneral)
 INCLUDE_DIRECTORIES(${OPENGL_INCLUDE_DIRS} ${GTKMM_INCLUDE_DIRS})
 TARGET_LINK_LIBRARIES(gameClient ${OPENGL_LIBRARIES} ${GTKMM_LIBRARIES} "epoxy")

@@ -30,6 +30,7 @@ message::msg_status_t connector::msg_transfer::auth::requestHandler(
         if (user) {
             if ((*user)->set_accountID(request->accountID)) {
                 if ((*user)->verify_buffer(inputBuffer)) {
+                    (*user)->set_addr(srcAddr);
                     result = message::status::ok;
                 } else {
                     result = message::status::error::access_denied;

@@ -46,14 +46,14 @@ void graphic::base_mesh::set_vertex_attr_dimension(const uint attrNr, const uint
     m_externalVertexAttrDimension[attrNr] = dim;
 }
 
-void graphic::base_mesh::add_texture(graphic::base_texture& tex) {
-    m_textures.push_back(&tex);
+void graphic::base_mesh::add_texture(std::shared_ptr<base_texture> texture) {
+    m_textures.push_back(texture);
 }
 
 void graphic::base_mesh::realize() {
     load();
 
-    for (base_texture* tex : m_textures) {
+    for (auto& tex : m_textures) {
         tex->link();
     }
 
@@ -77,9 +77,10 @@ void graphic::base_mesh::unrealize() {
  
     m_shaders.close();
     
-    for (base_texture* tex : m_textures) {
+    for (auto& tex : m_textures) {
         tex->free();
     }   
+    m_textures.clear();
     
     glBindVertexArray(m_externalVertexGroup);
          
@@ -97,7 +98,7 @@ void graphic::base_mesh::render(const graphic::settings& settings) {
     update(settings);
     
     int i = 0;
-    for (base_texture* tex : m_textures) {
+    for (auto& tex : m_textures) {
         glActiveTexture(GL_TEXTURE0 + i);
         tex->bind();
         

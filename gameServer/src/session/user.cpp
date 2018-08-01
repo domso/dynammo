@@ -41,7 +41,7 @@ bool session::user::verify_buffer(network::pkt_buffer& inputBuffer) {
     
     if (m_publicKey.valid()) {
         int sigLength = m_publicKey.required_size();        
-        result = m_publicKey.verify<int8_t>(inputBuffer.get_next<uint8_t>(sigLength), sigLength, inputBuffer.data(), inputBuffer.msg_length() - sigLength);
+        result = m_publicKey.verify<uint8_t>(inputBuffer.get_next<uint8_t>(sigLength), sigLength, inputBuffer.data(), inputBuffer.msg_length() - sigLength);
     }
     
     return result;

@@ -15,7 +15,6 @@ connector::controller::~controller() {
     assert(m_running == false);
 }
 
-
 void connector::controller::update() {
     m_msgCtrl.recv();
 }

@@ -41,14 +41,15 @@ namespace connector {
             
             template <typename T>
             static enable_if_same<T, region::dynamic_obj> complete_T(std::vector<T>& objs, connector::context* context) {
+                context->gameCtrl.add_game_object(0, objs);
                 return true;
             }
             
             template <typename T>
             static enable_if_same<T, region::static_obj> complete_T(std::vector<T>& objs, connector::context* context) {
+                context->gameCtrl.add_game_object(0, objs);
                 return true;
-            }
-            
+            }           
             
             
             template <typename T>

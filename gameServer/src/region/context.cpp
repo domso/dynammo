@@ -21,6 +21,10 @@ bool region::context::action(const uint32_t accountID, const uint32_t sessionID,
             m_activeUsers.insert(sessionID);
             m_affectedUsers.insert(sessionID);
             
+            m_dynamicObjects[sessionID].position.x = 5;
+            m_dynamicObjects[sessionID].position.y = 5;
+            m_dynamicObjects[sessionID].id = sessionID;            
+            
             for (auto& item : m_staticObjects) {
                 m_changedStaticObjects.insert(item.first);
             }
@@ -37,6 +41,34 @@ bool region::context::action(const uint32_t accountID, const uint32_t sessionID,
         case types::game_events::leave_region: {
             m_activeUsers.erase(sessionID);
             m_affectedUsers.insert(sessionID);
+            break;
+        }
+        case types::game_events::move_up: {
+            m_dynamicObjects[sessionID].position.x -= 1;
+            m_dynamicObjects[sessionID].animation = types::game_animations::move_up;
+            m_affectedUsers.insert(sessionID);
+            m_changedDynamicObjects.insert(sessionID);
+            break;
+        }
+        case types::game_events::move_down: {
+            m_dynamicObjects[sessionID].position.x += 1;
+            m_dynamicObjects[sessionID].animation = types::game_animations::move_down;
+            m_affectedUsers.insert(sessionID);
+            m_changedDynamicObjects.insert(sessionID);
+            break;
+        }
+        case types::game_events::move_left: {
+            m_dynamicObjects[sessionID].position.y -= 1;
+            m_dynamicObjects[sessionID].animation = types::game_animations::move_left;
+            m_affectedUsers.insert(sessionID);
+            m_changedDynamicObjects.insert(sessionID);
+            break;
+        }
+        case types::game_events::move_right: {
+            m_dynamicObjects[sessionID].position.y += 1;
+            m_dynamicObjects[sessionID].animation = types::game_animations::move_right;
+            m_affectedUsers.insert(sessionID);
+            m_changedDynamicObjects.insert(sessionID);
             break;
         }
         
@@ -117,6 +149,13 @@ void region::context::load() {
     m_layers.resize(2);
     load_layer(m_layers[0], "data/terrain.ppm");
     load_layer(m_layers[1], "data/water.ppm");
+    
+//     for (int i = 0; i < 10000; i++) {
+//         m_staticObjects[i].durability = 100;
+//         m_staticObjects[i].type = 1;
+//         m_staticObjects[i].position.x = i % 512;
+//         m_staticObjects[i].position.y = i / 512;
+//     }
 }
 
 void region::context::save() {

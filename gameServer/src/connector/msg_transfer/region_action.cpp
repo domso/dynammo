@@ -72,17 +72,17 @@ void connector::msg_transfer::region_action::tcp_broadcast(
     for (uint32_t id : users) {
         auto user = sessionCtrl.get_user(id);
 
-        if (user) {
+        if (user) {            
+            if (!layers.empty()) {
+                (*user)->send<::types::data_transfer::content::region_layer>(layers);
+            }
+            
             if (!statics.empty()) {
                 (*user)->send<::types::data_transfer::content::static_object>(statics);
             }
 
             if (!dynamics.empty()) {
                 (*user)->send<::types::data_transfer::content::dynamic_object>(dynamics);
-            }
-            
-            if (!layers.empty()) {
-                (*user)->send<::types::data_transfer::content::region_layer>(layers);
             }
         } else {
             region.remove_user(id);

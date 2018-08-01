@@ -4,6 +4,7 @@
 #include <string>
 #include <epoxy/gl.h>
 #include <gtkmm/image.h>
+#include <mutex>
               
 namespace graphic {
     class base_texture {
@@ -19,7 +20,8 @@ namespace graphic {
         void link();
         void bind();
     private:        
-        bool m_linked;
+        int m_linkCounter;
+        std::mutex m_mutex;
         GLuint m_textureHandle;
     };
 }

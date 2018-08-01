@@ -16,16 +16,19 @@
 namespace graphic {
     class animated_sprite_mesh : public base_mesh {
     public:        
-        animated_sprite_mesh(const region::dynamic_obj* obj, texture_controller& texCtrl, const region::layer<uint32_t>* layer) :         
-        m_dataTexture(texCtrl.load_data_texture(layer->data(), layer->width, layer->height)),
+        animated_sprite_mesh(const region::dynamic_obj& obj, texture_controller& texCtrl)      : m_texCtrl(texCtrl)
+//         m_dataTexture(texCtrl.load_data_texture(layer->data(), layer->width, layer->height)),
 //         m_texture(texCtrl.load_img_texture("../res/tile.png"))        
-        m_texture(texCtrl.load_img_texture("../res/Sprites/CitizenSheet.png"))
+//         m_texture(texCtrl.load_img_texture("../res/Sprites/CitizenSheet.png"))
 //         m_textureBlock(texCtrl.load_img_block_texture("../res/isometric_Mini-Crusader/walk/crusader_walk_", 0, 119, 15))
         {
-            set_position(obj->position);
+            set_position(obj.position);
             m_currentFrame = 0;
             m_firstFrame = 0;
-            m_lastFrame = 0;            
+            m_lastFrame = 0;                
+            
+            add_texture(std::make_shared<img_texture>("../res/Sprites/CitizenSheet.png"));
+
         }
 
         void load() {
@@ -33,11 +36,11 @@ namespace graphic {
             build_position();
             build_uv();
 
-            add_texture(*m_texture.get());
-            add_texture(*m_dataTexture.get());
+//             add_texture(*m_texture.get());
+//             add_texture(*m_dataTexture.get());
             
-            m_shaders.add_shader<graphic::shader_program::shader_types::vertex>("../shader/animated_sprite_vertex.glsl");
-            m_shaders.add_shader<graphic::shader_program::shader_types::fragment>("../shader/sprite_fragment.glsl");
+            m_shaders.add_shader<graphic::shader_program::shader_types::vertex>("../src/game/vertex/animated_sprite_vertex.glsl");
+            m_shaders.add_shader<graphic::shader_program::shader_types::fragment>("../src/game/fragment/sprite_fragment.glsl");
 
             m_shaders.add_uniform_attr("tex");
             m_shaders.add_uniform_attr("mapData");
@@ -77,6 +80,14 @@ namespace graphic {
 
         void update(const graphic::settings& settings) {
             std::lock_guard<std::mutex> lg(m_mutex);
+            
+            if (!m_lazyInit) {
+                auto layerData = m_texCtrl.get_texture("data::layer");
+                add_texture(*layerData);
+                m_lazyInit = true;
+            }
+            
+            
             m_shaders.set_uniform_attr<int>("tex", 0);
             m_shaders.set_uniform_attr<int>("mapData", 1);
             m_shaders.set_uniform_attr<float>("scale", 0.01, 0.01);
@@ -187,6 +198,8 @@ namespace graphic {
         float m_speed;
         bool m_loopFrame;
         bool m_invert;
+        bool m_lazyInit = false;
+        texture_controller& m_texCtrl;
         
         std::shared_ptr<img_block_texture> m_textureBlock;
     };

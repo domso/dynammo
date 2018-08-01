@@ -21,6 +21,22 @@ namespace game {
             m_renderer.add_mesh(result);
             return result;
         }
+        
+        template <typename T>
+        enable_if_same<T, std::vector<region::static_obj>, graphic::sprite_mesh> new_mesh(const uint32_t id, const T& newObj) {
+            auto result = std::make_shared<graphic::sprite_mesh>(newObj, m_texCtrl);
+            result->set_id(id);
+            m_renderer.add_mesh(result);
+            return result;
+        }
+        
+        template <typename T>
+        enable_if_same<T, region::dynamic_obj, graphic::animated_sprite_mesh> new_mesh(const uint32_t id, const T& newObj) {
+            auto result = std::make_shared<graphic::animated_sprite_mesh>(newObj, m_texCtrl);
+            result->set_id(id);
+            m_renderer.add_mesh(result);
+            return result;
+        }
     private:      
         graphic::renderer& m_renderer;
         graphic::texture_controller m_texCtrl;

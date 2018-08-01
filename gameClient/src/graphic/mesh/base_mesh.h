@@ -30,7 +30,7 @@ namespace graphic {
         void set_vertex_attr(const uint attrNr, const uint vertexNr, const float value);
         void set_vertex_attr_dimension(const uint attrNr, const uint dim);
                 
-        void add_texture(base_texture& tex);
+        void add_texture(std::shared_ptr<base_texture> texture);
                 
         void realize();
         void unrealize();
@@ -46,7 +46,7 @@ namespace graphic {
         
         uint32_t m_id;
         
-        std::vector<base_texture*> m_textures;
+        std::vector<std::shared_ptr<base_texture>> m_textures;
     };
 }
 

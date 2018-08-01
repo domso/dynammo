@@ -20,7 +20,7 @@ user_interface::key_controller::~key_controller() {
         m_thread.join();
     }
 }
-#include <iostream>
+
 void user_interface::key_controller::key_was_pressed(uint32_t key) {
     std::lock_guard<std::mutex> lg(m_mutex);    
     

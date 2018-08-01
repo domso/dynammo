@@ -3,6 +3,7 @@
 layout(location = 0) in vec3 vCoord;
 layout(location = 1) in vec2 vertexUV;
 layout(location = 2) in vec3 position;
+layout(location = 3) in float typeIn;
 
 // uniform vec3 position;
 uniform vec2 scale;
@@ -38,6 +39,22 @@ void main() {
     
     
     gl_Position = vec4(scaledCoord + outputPosition - vec3(camera * zoom, 0), 1);    
-    UV = vertexUV;
+    
+    
+    
+    
+    
+    vec2 outputUV = vertexUV;
+    
+    outputUV.x /= 10;
+    outputUV.y /= 8;
+    
+    int t = int(typeIn);
+    outputUV.x += (t % 10) * (1f / 10);
+    outputUV.y += (t / 8) * (1f / 8);
+    
+    
+    
+    UV = outputUV;
 }
 
