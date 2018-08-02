@@ -23,6 +23,7 @@ namespace connector {
             obj_link<types::data_transfer::content::region_layer> layerLink;
             obj_link<types::data_transfer::content::static_object> staticObjLink;
             obj_link<types::data_transfer::content::dynamic_object> dynObjLink;
+            obj_link<types::data_transfer::content::region_chat> regionChatLink;
 
             template <typename T, typename V>
             using enable_if_same = typename std::enable_if<std::is_same<T, V>::value, bool>::type;                       
@@ -49,8 +50,15 @@ namespace connector {
             static enable_if_same<T, region::static_obj> complete_T(std::vector<T>& objs, connector::context* context) {
                 context->gameCtrl.add_game_object(0, objs);
                 return true;
-            }           
+            }         
             
+            template <typename T>
+            static enable_if_same<T, char> complete_T(std::vector<T>& objs, connector::context* context) {
+                std::string newMsg(objs.begin(), objs.end());
+                context->config.global().set("last-chat-message", newMsg);
+                context->eventCtrl.new_event(::types::game_events::recv_chat_message);
+                return true;
+            }                       
             
             template <typename T>
             void register_link(obj_link<T>& link) {

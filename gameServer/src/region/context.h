@@ -1,9 +1,8 @@
 #ifndef gameServer_region_context_h
 #define gameServer_region_context_h
 
-#include <set>
-#include <unordered_set>
 #include <unordered_map>
+#include <unordered_set>
 
 #include "src/util/lock_ref.h"
 #include "src/authentication/types.h"
@@ -23,34 +22,40 @@ namespace region {
         void remove_user(const uint32_t sessionID);
         
         const std::unordered_set<uint32_t>& all_users();
-        const std::unordered_set<uint32_t>& affected_users();
-        const std::unordered_set<uint32_t>& changed_dynamic_objects();
+        const std::vector<uint32_t>& affected_users();
+        const std::vector<uint32_t>& changed_dynamic_objects();
+        const std::vector<uint32_t>& changed_reliable_dynamic_objects();
+        
         const std::unordered_map<uint32_t, region::dynamic_obj>& all_dynamic_objects();
         
-        const std::unordered_set<uint32_t>& changed_static_objects();
+        const std::vector<uint32_t>& changed_static_objects();
         const std::unordered_map<uint32_t, region::static_obj>& all_static_objects();
         
-        const std::set<uint32_t>& changed_layers();
+        const std::vector<uint32_t>& changed_layers();
         const std::vector<region::layer<uint32_t>>& all_layers();
         
         void commit();
     private:       
-        void load_layer(region::layer<uint32_t>& layer, const std::string& filename);
+        void set_all_user_as_affected();
         
+        
+        void load_layer(region::layer<uint32_t>& layer, const std::string& filename);      
         void load();
         void save();
 
         uint32_t m_id;            
         
         std::unordered_set<uint32_t> m_activeUsers;
-        std::unordered_set<uint32_t> m_affectedUsers;
-        std::unordered_set<uint32_t> m_changedDynamicObjects;
+        std::vector<uint32_t> m_affectedUsers;
+        
+        std::vector<uint32_t> m_changedDynamicObjects;
+        std::vector<uint32_t> m_changedDynamicObjectsReliable;
         std::unordered_map<uint32_t, region::dynamic_obj> m_dynamicObjects;
         
-        std::unordered_set<uint32_t> m_changedStaticObjects;
+        std::vector<uint32_t> m_changedStaticObjects;
         std::unordered_map<uint32_t, region::static_obj> m_staticObjects;
         
-        std::set<uint32_t> m_changedLayers;
+        std::vector<uint32_t> m_changedLayers;
         std::vector<region::layer<uint32_t>> m_layers;  
     };     
 }

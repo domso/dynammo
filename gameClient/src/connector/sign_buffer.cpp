@@ -4,6 +4,10 @@ bool connector::msg_transfer::sign_buffer(network::pkt_buffer& outputBuffer, con
     int sigLength = context.privateKey.required_size();
     int msgLength = outputBuffer.msg_length();
         
+    if (!context.privateKey.valid()) {
+        return false;
+    }
+    
     return context.privateKey.sign<uint8_t>(
         outputBuffer.push_next<uint8_t>(
             sigLength

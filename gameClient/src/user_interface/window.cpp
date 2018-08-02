@@ -88,6 +88,7 @@ bool user_interface::window::on_scroll_event(GdkEventScroll* scroll_event) {
 
 bool user_interface::window::on_delete_event(GdkEventAny* event) {
     m_renderer.close();
+    m_viewCtrl.create_event(types::game_events::leave_region);
     return false;
 }
 

@@ -2,12 +2,15 @@
 #include "src/util/file_storage.h"
 
 #include <random>
+#include <iostream>
 
 region::context::context(const uint32_t id) : m_id(id) {
+    std::cout << "load" << std::endl;
     load();
 }
 
-region::context::~context() {
+region::context::~context() {   
+    std::cout << "close" << std::endl;
     save();
 }
 
@@ -19,56 +22,56 @@ bool region::context::action(const uint32_t accountID, const uint32_t sessionID,
     switch(event) {
         case types::game_events::enter_region: {
             m_activeUsers.insert(sessionID);
-            m_affectedUsers.insert(sessionID);
+            m_affectedUsers.push_back(sessionID);
             
             m_dynamicObjects[sessionID].position.x = 5;
             m_dynamicObjects[sessionID].position.y = 5;
-            m_dynamicObjects[sessionID].id = sessionID;            
+            m_dynamicObjects[sessionID].id = sessionID; 
+            m_dynamicObjects[sessionID].health = 100;
             
             for (auto& item : m_staticObjects) {
-                m_changedStaticObjects.insert(item.first);
+                m_changedStaticObjects.push_back(item.first);
             }
             
             for (auto& item : m_dynamicObjects) {
-                m_changedDynamicObjects.insert(item.first);
+                m_changedDynamicObjects.push_back(item.first);
             }
             
-            m_changedLayers.insert(0);
-            m_changedLayers.insert(1);
+            m_changedLayers.push_back(0);
+            m_changedLayers.push_back(1);
             
             break;
         }
-        case types::game_events::leave_region: {
-            m_activeUsers.erase(sessionID);
-            m_affectedUsers.insert(sessionID);
+        case types::game_events::leave_region: {  
+            remove_user(sessionID);
             break;
         }
         case types::game_events::move_up: {
             m_dynamicObjects[sessionID].position.x -= 1;
             m_dynamicObjects[sessionID].animation = types::game_animations::move_up;
-            m_affectedUsers.insert(sessionID);
-            m_changedDynamicObjects.insert(sessionID);
+            set_all_user_as_affected();
+            m_changedDynamicObjects.push_back(sessionID);
             break;
         }
         case types::game_events::move_down: {
             m_dynamicObjects[sessionID].position.x += 1;
             m_dynamicObjects[sessionID].animation = types::game_animations::move_down;
-            m_affectedUsers.insert(sessionID);
-            m_changedDynamicObjects.insert(sessionID);
+            set_all_user_as_affected();
+            m_changedDynamicObjects.push_back(sessionID);
             break;
         }
         case types::game_events::move_left: {
             m_dynamicObjects[sessionID].position.y -= 1;
             m_dynamicObjects[sessionID].animation = types::game_animations::move_left;
-            m_affectedUsers.insert(sessionID);
-            m_changedDynamicObjects.insert(sessionID);
+            set_all_user_as_affected();
+            m_changedDynamicObjects.push_back(sessionID);
             break;
         }
         case types::game_events::move_right: {
             m_dynamicObjects[sessionID].position.y += 1;
             m_dynamicObjects[sessionID].animation = types::game_animations::move_right;
-            m_affectedUsers.insert(sessionID);
-            m_changedDynamicObjects.insert(sessionID);
+            set_all_user_as_affected();
+            m_changedDynamicObjects.push_back(sessionID);
             break;
         }
         
@@ -82,25 +85,32 @@ bool region::context::action(const uint32_t accountID, const uint32_t sessionID,
 
 void region::context::remove_user(const uint32_t sessionID) {
     m_activeUsers.erase(sessionID);
+    m_dynamicObjects[sessionID].health = 0;
+    m_changedDynamicObjectsReliable.push_back(sessionID);
+    set_all_user_as_affected();
 }
 
 const std::unordered_set<uint32_t>& region::context::all_users() {
     return m_activeUsers;
 }
 
-const std::unordered_set<uint32_t>& region::context::affected_users() {
+const std::vector<uint32_t>& region::context::affected_users() {
     return m_affectedUsers;
 }
 
-const std::unordered_set<uint32_t>& region::context::changed_dynamic_objects() {
+const std::vector<uint32_t>& region::context::changed_dynamic_objects() {
     return m_changedDynamicObjects;
+}
+
+const std::vector<uint32_t>& region::context::changed_reliable_dynamic_objects() {
+    return m_changedDynamicObjectsReliable;
 }
 
 const std::unordered_map<uint32_t, region::dynamic_obj>& region::context::all_dynamic_objects() {
     return m_dynamicObjects;
 }
 
-const std::unordered_set<uint32_t>& region::context::changed_static_objects() {
+const std::vector<uint32_t>& region::context::changed_static_objects() {
     return m_changedStaticObjects;
 }
 
@@ -108,7 +118,7 @@ const std::unordered_map<uint32_t, region::static_obj>& region::context::all_sta
     return m_staticObjects;
 }
 
-const std::set<uint32_t>& region::context::changed_layers() {
+const std::vector<uint32_t>& region::context::changed_layers() {
     return m_changedLayers;
 }
 
@@ -120,6 +130,12 @@ void region::context::commit() {
     m_affectedUsers.clear();
     m_changedDynamicObjects.clear();
     m_changedStaticObjects.clear();    
+}
+
+void region::context::set_all_user_as_affected() {
+    for (auto& user : m_activeUsers) {
+        m_affectedUsers.push_back(user);
+    }
 }
 
 

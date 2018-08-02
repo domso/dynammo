@@ -12,16 +12,19 @@ namespace user_interface {
         class main_game_view : public base_view {
         public:                        
             constexpr static const auto id = view_list::views::main_game;
-            
+            constexpr static const auto events = {types::game_events::recv_chat_message};
             main_game_view(view_controller& viewCtrl, graphic::renderer& renderer, key_controller& keyCtrl);
             
             void open();
             void close();            
             static void event_callback(const types::game_events event, base_view* view);
-            Gtk::Container& container();            
+            Gtk::Container& container();              
         private:
             bool on_key_press_event(GdkEventKey* event);
             bool on_key_release_event(GdkEventKey* event);
+            
+            void chat_enter();
+            void chat_recv();
             
             view_controller& m_viewCtrl;
             key_controller& m_keyCtrl;
@@ -31,8 +34,11 @@ namespace user_interface {
             Gtk::GLArea m_GLArea;  
             Gtk::Button m_button;
             
-            Gtk::Box m_sidebar;
+            Gtk::Grid m_sidebar;
             Gtk::Button m_button2;
+            Gtk::Entry m_entry;
+            Gtk::ScrolledWindow m_scroll;
+            Gtk::TextView m_text;
         };
     }
 }

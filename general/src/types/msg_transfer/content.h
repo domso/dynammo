@@ -18,7 +18,8 @@ namespace types {
                     enter_region,
                     leave_region,
                     create_account,
-                    region_action
+                    region_action,
+                    region_chat
                 };          
             };
             
@@ -144,8 +145,21 @@ namespace types {
                 };
             };
             
-            
-            
+            struct region_chat {
+                constexpr static const uint8_t id = ids::region_chat;
+
+                struct types {
+                    struct request {
+                        uint32_t sessionID;
+                        uint32_t regionID; 
+                        uint8_t length;
+                    };
+
+                    struct response {
+                        //-
+                    };
+                };
+            };
         }
     }
 }

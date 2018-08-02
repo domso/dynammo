@@ -49,7 +49,7 @@ message::msg_status_t connector::msg_transfer::region_action::responseHandler(
 void connector::msg_transfer::region_action::udp_broadcast(
     const network::pkt_buffer& outputBuffer,
     network::udp_socket<network::ipv4_addr>& socket,
-    const std::unordered_set<uint32_t>& users,
+    const std::vector<uint32_t>& users,
     session::controller& sessionCtrl
 ) {
     for (uint32_t id : users) {
@@ -61,22 +61,23 @@ void connector::msg_transfer::region_action::udp_broadcast(
     }
 }
 
-void connector::msg_transfer::region_action::tcp_broadcast(
+std::vector<uint32_t> connector::msg_transfer::region_action::tcp_broadcast(
     region::context& region,
     const std::vector<region::static_obj>& statics,
     const std::vector<region::dynamic_obj>& dynamics,
     const std::vector<region::layer<uint32_t>> layers,
-    const std::unordered_set<uint32_t>& users,
+    const std::vector<uint32_t>& users,
     session::controller& sessionCtrl
 ) {
+    std::vector<uint32_t> result;
     for (uint32_t id : users) {
         auto user = sessionCtrl.get_user(id);
 
-        if (user) {            
+        if (user) {
             if (!layers.empty()) {
                 (*user)->send<::types::data_transfer::content::region_layer>(layers);
             }
-            
+
             if (!statics.empty()) {
                 (*user)->send<::types::data_transfer::content::static_object>(statics);
             }
@@ -85,34 +86,50 @@ void connector::msg_transfer::region_action::tcp_broadcast(
                 (*user)->send<::types::data_transfer::content::dynamic_object>(dynamics);
             }
         } else {
-            region.remove_user(id);
+            result.push_back(id);
         }
     }
+    
+    return result;
 }
 
 void connector::msg_transfer::region_action::send_tcp(
     region::context& region,
     session::controller& sessionCtrl
 ) {
-    std::vector<region::static_obj> statics;
-    std::vector<region::dynamic_obj> dynamics;
-    std::vector<region::layer<uint32_t>> layers;
-    
-    for (auto& o : region.changed_static_objects()) {
-        statics.push_back(region.all_static_objects().at(o));
-    }
+    std::vector<uint32_t> userRemoved;
 
-    if (region.changed_dynamic_objects().size() > 4) {
-        for (auto& o : region.changed_dynamic_objects()) {
+    do {
+        std::vector<region::static_obj> statics;
+        std::vector<region::dynamic_obj> dynamics;
+        std::vector<region::layer<uint32_t>> layers;
+
+        for (auto& o : region.changed_static_objects()) {
+            statics.push_back(region.all_static_objects().at(o));
+        }
+
+        if (region.changed_dynamic_objects().size() > 4 || !userRemoved.empty()) {
+            for (auto& o : region.changed_dynamic_objects()) {
+                dynamics.push_back(region.all_dynamic_objects().at(o));
+            }
+        }
+
+        for (auto& o : region.changed_reliable_dynamic_objects()) {
             dynamics.push_back(region.all_dynamic_objects().at(o));
         }
-    }
-    
-    for (auto& o : region.changed_layers()) {
-        layers.push_back(region.all_layers().at(o));
-    }
 
-    tcp_broadcast(region, statics, dynamics, layers, region.affected_users(), sessionCtrl);
+        for (auto& o : region.changed_layers()) {
+            layers.push_back(region.all_layers().at(o));
+        }
+
+        userRemoved = tcp_broadcast(region, statics, dynamics, layers, region.affected_users(), sessionCtrl);
+        region.commit();
+        
+        for (auto& user : userRemoved) {
+            region.remove_user(user);
+        }
+
+    } while (!userRemoved.empty());
 }
 
 void connector::msg_transfer::region_action::send_udp(
@@ -155,7 +172,6 @@ message::msg_status_t connector::msg_transfer::region_action::verify_request(
                 (*user).release();
                 send_udp(*region.data(), outputBuffer, socket, context->sessionCtrl);
                 send_tcp(*region.data(), context->sessionCtrl);
-                region->commit();
                 
                 return message::status::close;
             } else {

@@ -16,7 +16,8 @@ namespace types {
                     region_select,
                     region_layer,
                     static_object,
-                    dynamic_object
+                    dynamic_object,
+                    region_chat
                 };          
             };
             
@@ -48,6 +49,11 @@ namespace types {
             struct dynamic_object {
                 constexpr static const uint8_t id = ids::dynamic_object;
                 typedef region::dynamic_obj content;
+            };
+            
+            struct region_chat {
+                constexpr static const uint8_t id = ids::region_chat;
+                typedef char content;
             };
         }
     }

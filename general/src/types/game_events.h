@@ -27,6 +27,9 @@ namespace types {
         recv_tcp_link,
         request_account_creation,
         success_account_creation,
-        failure_account_creation
+        failure_account_creation,
+        
+        enter_chat_message,
+        recv_chat_message
     };
 }

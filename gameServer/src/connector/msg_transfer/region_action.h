@@ -44,15 +44,15 @@ namespace connector {
             static void udp_broadcast(
                 const network::pkt_buffer& outputBuffer,
                 network::udp_socket<network::ipv4_addr>& socket,
-                const std::unordered_set<uint32_t>& users,
+                const std::vector<uint32_t>& users,
                 session::controller& sessionCtrl
             );            
-            static void tcp_broadcast(
+            static std::vector<uint32_t> tcp_broadcast(
                 region::context& region,
                 const std::vector<region::static_obj>& statics,
                 const std::vector<region::dynamic_obj>& dynamics,
-                std::vector<region::layer<uint32_t>> layers,
-                const std::unordered_set<uint32_t>& users,
+                const std::vector<region::layer<uint32_t>> layers,
+                const std::vector<uint32_t>& users,
                 session::controller& sessionCtrl
             );                  
             static void send_tcp(

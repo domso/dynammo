@@ -40,6 +40,20 @@ namespace session {
 
             m_connectionState = result;
         }
+        
+        template <typename T>
+        void send(const char* data, const uint16_t n) {
+            assert(sizeof(typename T::content) == 1);
+            uint8_t protocolID = T::id;
+            uint16_t count = n;
+            bool result = true;
+
+            result &= m_connection.send_data<uint8_t>(&protocolID, 1).first;
+            result &= m_connection.send_data<uint16_t>(&count, 1).first;
+            result &= m_connection.send_data<char>(data, count).first;
+
+            m_connectionState = result;
+        }
 
         template <typename T>
         void send(const std::vector<typename T::content>& objs) {

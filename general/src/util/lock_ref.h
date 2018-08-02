@@ -45,7 +45,7 @@ namespace util {
     public:
         locked_ref(T& data) : m_valid(true), m_data(data), m_lock(data.mutex()) {}
         locked_ref(const locked_ref& copy) = delete;
-        locked_ref(locked_ref&& move) : m_data(move.m_data), m_lock(std::move(move.m_lock)) {}
+        locked_ref(locked_ref&& move) : m_valid(move.m_valid), m_data(move.m_data), m_lock(std::move(move.m_lock)) {}
 
         T* operator->() {
             assert(m_valid == true);

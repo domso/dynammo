@@ -10,6 +10,7 @@ connector::data_transfer::controller::controller(connector::context& context)
     register_link(layerLink);
     register_link(staticObjLink);
     register_link(dynObjLink);
+    register_link(regionChatLink);
 }
 
 void connector::data_transfer::controller::update() {

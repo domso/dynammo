@@ -5,6 +5,7 @@
 #include "src/util/config_file.h"
 
 void util::config_file::load(const std::string& filename) {
+    std::lock_guard<std::mutex> lg(m_mutex);
     std::ifstream file;
     std::string line;
 
@@ -20,6 +21,7 @@ void util::config_file::load(const std::string& filename) {
 }
 
 void util::config_file::store(const std::string& filename) {
+    std::lock_guard<std::mutex> lg(m_mutex);
     std::ofstream file;
     std::string line;
 
@@ -35,6 +37,7 @@ void util::config_file::store(const std::string& filename) {
 }
 
 void util::config_file::clear() {
+    std::lock_guard<std::mutex> lg(m_mutex);
     m_configMap.clear();
 }
 

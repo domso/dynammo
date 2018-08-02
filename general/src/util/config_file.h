@@ -4,6 +4,7 @@
 #include <string>
 #include <unordered_map>
 #include <type_traits>
+#include <mutex>
 
 namespace util {
     /**
@@ -45,6 +46,7 @@ namespace util {
         */ 
         template <typename T>
         typename std::enable_if<std::is_arithmetic<T>::value, std::pair<bool, T>>::type get(const std::string& key, const T defaultValue = T()) {
+            std::lock_guard<std::mutex> lg(m_mutex);
             auto result = convert_string<T>(m_configMap[key]);
             if (!result.first) {          
                 m_configMap[key] = std::to_string(defaultValue);
@@ -64,6 +66,7 @@ namespace util {
         */ 
         template <typename T>
         typename std::enable_if<std::is_same<T, std::string>::value, std::pair<bool, T>>::type get(const std::string& key, const T defaultValue = T()) {
+            std::lock_guard<std::mutex> lg(m_mutex);
             auto result = m_configMap[key];
             if (result == "") {      
                 m_configMap[key] = defaultValue;
@@ -82,10 +85,12 @@ namespace util {
         */
         template <typename T>
         typename std::enable_if<std::is_same<std::string, T>::value, void>::type set(const std::string& key, const T& value) {
+            std::lock_guard<std::mutex> lg(m_mutex);
             m_configMap[key] = value;
         }
         template <typename T>
         typename std::enable_if<not std::is_same<std::string, T>::value, void>::type set(const std::string& key, const T& value) {
+            std::lock_guard<std::mutex> lg(m_mutex);
             m_configMap[key] = std::to_string(value);                            
         }
         
@@ -127,6 +132,7 @@ namespace util {
         bool insert_new_pair(const std::string input);
         std::string remove_whitespace(const std::string input);
 
+        std::mutex m_mutex;
         std::unordered_map<std::string, std::string> m_configMap;
     };
 }

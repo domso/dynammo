@@ -8,7 +8,7 @@
 namespace region {
     struct dynamic_obj {
         uint32_t id;
-        uint32_t ownerID;
+        uint8_t health;
         
         float speed;
         vec3<float> position;
