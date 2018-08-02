@@ -47,6 +47,11 @@ Usage:
 
 Build:
 ```
+sudo apt-get install g++ git cmake libssl-dev libgtkmm-3.0-dev
+git clone https://github.com/domso/network
+git clone https://github.com/domso/dynammo
+
+cd dynammo
 mkdir build
 cd build
 cmake ..
