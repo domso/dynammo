@@ -1,5 +1,4 @@
 include_directories(/usr/include/openssl)
-include_directories(/usr/include/mysql)
 include_directories(${CMAKE_CURRENT_SOURCE_DIR})
 include_directories(${OPENSSL_INCLUDE_DIR})
 find_package(OpenSSL REQUIRED)
@@ -15,5 +14,5 @@ file(GLOB src_all
 )
 
 add_library(allGeneral STATIC ${src_all})
-target_link_libraries(allGeneral ${OPENSSL_LIBRARIES} mysqlclient)
+target_link_libraries(allGeneral ${OPENSSL_LIBRARIES})
 
