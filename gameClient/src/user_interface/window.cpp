@@ -1,8 +1,9 @@
 #include "src/user_interface/window.h"
 
 #include "src/user_interface/views/start_view.h"
-#include "src/user_interface/views/main_game_view.h"
 #include "src/user_interface/views/create_account_view.h"
+#include "src/user_interface/views/main_game_view.h"
+#include "src/user_interface/views/chat_view.h"
 
 user_interface::window::window(graphic::renderer& renderer, util::event_controller<types::game_events>& eventCtrl, config::controller& config) :
     m_keyCtrl(eventCtrl),
@@ -14,19 +15,19 @@ user_interface::window::window(graphic::renderer& renderer, util::event_controll
     m_viewCtrl.register_view<views::start_view>();
     m_viewCtrl.register_view<views::create_account_view>();
     m_viewCtrl.register_view<views::main_game_view>(std::ref(m_renderer), std::ref(m_keyCtrl));
+    m_viewCtrl.register_view<views::chat_view>(std::ref(m_renderer), std::ref(m_keyCtrl));
     
     
     
     
-    set_title("GL Area");
-    set_default_size(800, 600);
+    set_title("Dynammo");
+    maximize();
     add_events(Gdk::KEY_PRESS_MASK | Gdk::KEY_RELEASE_MASK | Gdk::SCROLL_MASK);
 //     m_VBox.property_margin() = 12;
 
     add(m_rootBox);
     m_rootBox.show();
-
-
+        
     signal_key_press_event().connect(sigc::mem_fun(*this, &window::key_press_event), true);
     signal_key_release_event().connect(sigc::mem_fun(*this, &window::key_release_event), true);
 }

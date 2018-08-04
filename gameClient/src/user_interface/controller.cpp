@@ -10,8 +10,8 @@ user_interface::controller::~controller() {
 
 void user_interface::controller::update() {
     m_app = Gtk::Application::create(m_argc, m_argv);
-    m_window = std::make_unique<user_interface::window>(m_renderer, m_eventCtrl, m_config);
-    m_app->run(*m_window);
+    auto window = std::make_unique<user_interface::window>(m_renderer, m_eventCtrl, m_config);
+    m_app->run(*window);
 }
 
 void user_interface::controller::close() {

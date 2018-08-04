@@ -7,7 +7,7 @@ user_interface::views::create_account_view::create_account_view(view_controller&
     m_VBox.set_vexpand(true);
     m_VBox.set_hexpand(true);
     
-//     m_VBox.add(m_grid);
+    m_VBox.add(m_grid);
     m_grid.show();
     
     m_grid.property_halign().set_value(Gtk::Align::ALIGN_CENTER);
@@ -69,9 +69,14 @@ void user_interface::views::create_account_view::event_callback(const types::gam
     current.m_entry.set_text("");
 }
 
-Gtk::Container& user_interface::views::create_account_view::container() {
-//     return m_VBox;
-    return m_grid;
+Gtk::Overlay& user_interface::views::create_account_view::container() {
+    return m_VBox;
+//     return m_grid;
+}
+
+
+Gtk::Container& user_interface::views::create_account_view::overlay() {
+    return m_container;
 }
 
 void user_interface::views::create_account_view::back_button_clicked() {

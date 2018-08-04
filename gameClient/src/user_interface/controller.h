@@ -28,7 +28,6 @@ namespace user_interface {
         std::mutex m_mutex;
         
         util::event_controller<types::game_events>& m_eventCtrl;           
-        std::unique_ptr<user_interface::window> m_window;
         config::controller& m_config;
         
         graphic::renderer m_renderer;

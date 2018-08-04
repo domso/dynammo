@@ -52,8 +52,12 @@ void user_interface::views::start_view::event_callback(const types::game_events 
 {
 }
 
-Gtk::Container& user_interface::views::start_view::container() {
+Gtk::Overlay& user_interface::views::start_view::container() {
     return m_VBox;
+}
+
+Gtk::Container& user_interface::views::start_view::overlay() {
+    return m_loginBox   ;
 }
 
 void user_interface::views::start_view::run_button_clicked() {

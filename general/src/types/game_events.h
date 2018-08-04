@@ -30,6 +30,7 @@ namespace types {
         failure_account_creation,
         
         enter_chat_message,
-        recv_chat_message
+        recv_chat_message,
+        chat_close
     };
 }

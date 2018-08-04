@@ -10,6 +10,12 @@ user_interface::view_controller::view_controller(
 
 }
 
+user_interface::view_controller::~view_controller() {
+    for (auto e : m_allRegisteredEvents) {
+        m_eventCtrl.unregister_event_handler(e);
+    }    
+}
+
 void user_interface::view_controller::change_view(const view_list::views newView) {
     close_current_view();
     m_currentView = newView;
@@ -52,10 +58,11 @@ void user_interface::view_controller::open_current_view() {
 
     if (result != m_views.end()) {
         m_viewHistory.push_back(m_currentView.get());
-        auto& view = *result->second;
-        m_rootBox.add(view.container());
-        view.open();
-        view.container().show();
+        
+        for (auto& view : result->second) {
+            view->open();
+            view->container().show();
+        }
     }
 }
 
@@ -63,9 +70,9 @@ void user_interface::view_controller::close_current_view() {
     auto result = m_views.find(m_currentView.get());
 
     if (result != m_views.end()) {
-        auto& view = *result->second;
-        view.close();
-        view.container().hide();
-        m_rootBox.remove(view.container());
+        for (auto& view : result->second) {
+            view->close();
+            view->container().hide();
+        }
     }
 }

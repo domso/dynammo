@@ -16,7 +16,8 @@ namespace user_interface {
             void open();
             void close();   
             static void event_callback(const types::game_events event, base_view* view);        
-            Gtk::Container& container();
+            Gtk::Overlay& container();   
+            Gtk::Container& overlay(); 
         private:
             void run_button_clicked();
             void create_button_clicked();
@@ -28,6 +29,7 @@ namespace user_interface {
             
             Gtk::Box m_loginBox;
             Gtk::Button m_loginButton;
+            Gtk::Box m_container;
             
             Gtk::Button m_createAccountButton;
             
