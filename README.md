@@ -10,21 +10,13 @@ Isometric game written in C++ using
 Project Structure:
 - general
     - Shared code between Server and Client; mostly type-definitions and generic wrappers/helpers
-- gameServer
-- gameClient
+- server
+- client
 
-Current State Server:
-- Authentication of an User by his RSA-Signature
-- Sending of the heightmap and some random objects
-- Executing requested actions like moving
-
-Current State Client:
-- Rendering the received heightmap, water  and sprites
-- Allowing Viewport-Changes (Zoom, Window-Rescale, Moving)
-- Requesting actions to the server.
-- Overlay-UI
-- Animated Sprites
-- Account Creation
+Current State:
+- working account-system with creation and login
+- moveable character
+- working chat
 
 Next goal:
 - Full refactor to improve the
@@ -32,18 +24,21 @@ Next goal:
 
 Screenshots:
 <p float="left">
-  <img src="/gameClient/res/Screenshots/full.png" width="45%"/>
-  <img src="/gameClient/res/Screenshots/small.png" width="45%"/>
-  <img src="/gameClient/res/Screenshots/water.png" width="45%"/>
+  <img src="/client/res/Screenshots/full.png" width="45%"/>
+  <img src="/client/res/Screenshots/small.png" width="45%"/>
+  <img src="/client/res/Screenshots/water.png" width="45%"/>
+  <img src="/client/res/Screenshots/chat.png" width="45%"/>
 </p>
 
 Usage:
-- Start the gameServer in the root-path of the gameServer-directory. (./bin/gameServer)
-- Start the gameClient in the build-path of the gameClient-directory. (./gameClient)
-- Type 'test' into the username-field and click start
+- Start the server in the root-path of the server-directory. (./bin/server)
+- Start the client in the build-path of the client-directory. (./client)
+- Create a new account
+- Login with the new account
 - Use wasd to move your character. (He is in the upper left corner of the map)
 - Use WASD to move the camera.
 - Use the mouse-wheel to zoom in/out.
+- Press ENTER to open the chat box
 
 Build:
 ```
