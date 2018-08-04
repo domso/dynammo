@@ -36,8 +36,6 @@ user_interface::views::start_view::start_view(view_controller& viewCtrl) : m_vie
     m_entry.property_width_chars().set_value(20);
     m_entry.property_placeholder_text().set_value("Username");    
     m_entry.set_editable(true);
-
-//     viewCtrl.register_view(*this);
 }
 
 void user_interface::views::start_view::open() {
@@ -48,8 +46,17 @@ void user_interface::views::start_view::close() {
 
 }
 
-void user_interface::views::start_view::event_callback(const types::game_events event, user_interface::views::base_view* view)
-{
+void user_interface::views::start_view::event_callback(const types::game_events event) {
+    if (event == types::game_events::success_login) {  
+        m_VBox.set_sensitive(true);
+        m_viewCtrl.create_event(types::game_events::enter_region);
+        m_viewCtrl.change_view(view_list::views::main_game);
+    } else {
+        m_VBox.set_sensitive(true);
+        
+        Gtk::MessageDialog errorDialog(m_viewCtrl.window(), "Error " + m_viewCtrl.config().global().get<std::string>("Auth-State").second);                                                                                                          
+        errorDialog.run();
+    }
 }
 
 Gtk::Overlay& user_interface::views::start_view::container() {
@@ -61,11 +68,13 @@ Gtk::Container& user_interface::views::start_view::overlay() {
 }
 
 void user_interface::views::start_view::run_button_clicked() {
-    m_viewCtrl.config().global().load("../" + m_entry.get_text() + ".config");   
-    
-    m_viewCtrl.create_event(types::game_events::recv_tcp_link);
-    m_viewCtrl.create_event(types::game_events::enter_region);
-    m_viewCtrl.change_view(view_list::views::main_game);
+    if (m_viewCtrl.config().global().load("../" + m_entry.get_text() + ".config")) {
+        m_VBox.set_sensitive(false);    
+        m_viewCtrl.create_event(types::game_events::request_auth);
+    } else {
+        Gtk::MessageDialog errorDialog(m_viewCtrl.window(), "Could not open account-file for '" + m_entry.get_text() + "'");
+        errorDialog.run();
+    }    
 }
 
 void user_interface::views::start_view::create_button_clicked() {

@@ -7,7 +7,6 @@
 #include "assert.h"
 #include "network/udp_socket.h"
 #include "src/message/msg_header.h"
-#include "src/message/msg_types.h"
 
 namespace message {
     //______________________________________________________________________________________________________

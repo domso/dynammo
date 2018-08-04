@@ -13,7 +13,7 @@ bool connector::msg_transfer::auth::request(
     auto request = outputBuffer.push_next<content::types::request>();
 
     if (request != nullptr) {
-        request->accountID = context->config.global().get<authentication::accountID_t>("accountID").second;
+        request->accountID = context->config.global().get<uint32_t>("accountID").second;
         request->sessionID = context->config.global().get<uint32_t>("sessionID").second;
         context->privateKey.load(context->config.global().get<std::string>("privateKey").second);
 
@@ -45,5 +45,11 @@ message::msg_status_t connector::msg_transfer::auth::responseHandler(
     connector::context* context
 ) {
     context->config.global().set("Auth-State", header.status);
+    if (header.status == message::status::ok) {
+        context->eventCtrl.new_event(types::game_events::success_login);
+    } else {
+        context->eventCtrl.new_event(types::game_events::failure_login);
+    }
+    
     return message::status::close;
 }

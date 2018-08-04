@@ -50,23 +50,21 @@ void user_interface::views::create_account_view::close() {
 
 }
 
-void user_interface::views::create_account_view::event_callback(const types::game_events event, user_interface::views::base_view* view)
-{
-    create_account_view& current = *(dynamic_cast<create_account_view*>(view));
-    
+void user_interface::views::create_account_view::event_callback(const types::game_events event)
+{    
     if (event == types::game_events::success_account_creation) {
-        current.m_progress.set_fraction(1);
-        current.m_progress.set_text("Success");
-        current.m_viewCtrl.config().global().store("../" + current.m_viewCtrl.config().global().get<std::string>("username").second + ".config");
+        m_progress.set_fraction(1);
+        m_progress.set_text("Success");
+        m_viewCtrl.config().global().store("../" + m_viewCtrl.config().global().get<std::string>("username").second + ".config");
     } else {
-        current.m_progress.set_fraction(1);
-        current.m_progress.set_text("Error");
+        m_progress.set_fraction(1);
+        m_progress.set_text("Error");
     }
     
-    current.m_createButton.set_sensitive(true);
-    current.m_backButton.set_sensitive(true);
-    current.m_entry.set_sensitive(true);
-    current.m_entry.set_text("");
+    m_createButton.set_sensitive(true);
+    m_backButton.set_sensitive(true);
+    m_entry.set_sensitive(true);
+    m_entry.set_text("");
 }
 
 Gtk::Overlay& user_interface::views::create_account_view::container() {

@@ -1,11 +1,11 @@
 #ifndef gameServer_region_context_h
 #define gameServer_region_context_h
 
+#include <vector>
 #include <unordered_map>
 #include <unordered_set>
 
 #include "src/util/lock_ref.h"
-#include "src/authentication/types.h"
 #include "src/region/static_obj.h"
 #include "src/region/dynamic_obj.h"
 #include "src/region/layer.h"

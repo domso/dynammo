@@ -3,7 +3,7 @@
 
 #include <mysql.h>
 #include "stdio.h"
-#include "src/authentication/types.h"
+#include <string>
 
 namespace database {
     namespace mysql {

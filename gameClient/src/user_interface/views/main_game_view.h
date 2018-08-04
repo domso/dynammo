@@ -20,7 +20,7 @@ namespace user_interface {
             
             void open();
             void close();            
-            static void event_callback(const types::game_events event, base_view* view);
+            void event_callback(const types::game_events event);
             Gtk::Overlay& container();    
             Gtk::Container& overlay();              
         private:                        

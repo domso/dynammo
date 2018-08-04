@@ -2,7 +2,6 @@
 
 #include "network/udp_socket.h"
 #include "src/message/msg_header.h"
-#include "src/message/msg_types.h"
 #include "src/types/msg_transfer/content.h"
 #include "src/types/game_events.h"
 #include "src/connector/context.h"

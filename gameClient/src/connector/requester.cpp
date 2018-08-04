@@ -19,14 +19,14 @@ connector::requester::requester(connector::context& context, message::msg_contro
     m_context.eventCtrl.register_event_handler(types::game_events::enter_chat_message, execute_callback<msg_transfer::region_chat>, this);
     
     m_context.eventCtrl.register_event_handler(types::game_events::request_account_creation, execute_callback<msg_transfer::create_account>, this);
-    m_context.eventCtrl.register_event_handler(types::game_events::recv_tcp_link, execute_callback<msg_transfer::auth>, this);
+    m_context.eventCtrl.register_event_handler(types::game_events::request_auth, execute_callback<msg_transfer::auth>, this);
 
 }
 
 connector::requester::~requester() {
     std::lock_guard<std::mutex> lg(m_mutex);
     m_context.eventCtrl.unregister_event_handler(types::game_events::request_account_creation);
-    m_context.eventCtrl.unregister_event_handler(types::game_events::recv_tcp_link);
+    m_context.eventCtrl.unregister_event_handler(types::game_events::request_auth);
 }
 
 void connector::requester::lazy_init() {

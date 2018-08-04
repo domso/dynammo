@@ -10,12 +10,17 @@ namespace user_interface {
         class start_view : public base_view {
         public:                        
             constexpr static const auto id = view_list::views::start;
+            constexpr static const auto events = 
+            {
+                types::game_events::success_login,                
+                types::game_events::failure_login
+            };
             
             start_view(view_controller& viewCtrl);
             
             void open();
             void close();   
-            static void event_callback(const types::game_events event, base_view* view);        
+            void event_callback(const types::game_events event);        
             Gtk::Overlay& container();   
             Gtk::Container& overlay(); 
         private:

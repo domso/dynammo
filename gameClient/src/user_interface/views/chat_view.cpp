@@ -44,13 +44,9 @@ void user_interface::views::chat_view::close() {
 
 }
 
-void user_interface::views::chat_view::event_callback(const types::game_events event, user_interface::views::base_view* view) {
-    chat_view& current = *(dynamic_cast<chat_view*>(view));
-    std::lock_guard<std::mutex> lg(current.m_mutex);
-
-    if (event == types::game_events::recv_chat_message) {
-        current.m_receivedMessages.push(current.m_viewCtrl.config().global().get<std::string>("last-chat-message").second);
-        gdk_threads_add_idle(chat_recv, &current);
+void user_interface::views::chat_view::event_callback(const types::game_events event) {
+    if (event == types::game_events::recv_chat_message) {        
+        chat_recv();
     }
 }
 
@@ -78,22 +74,19 @@ void user_interface::views::chat_view::chat_enter() {
     }
 }
 
-int user_interface::views::chat_view::chat_recv(void* view) {
-    chat_view& current = *((chat_view*) view);
-    std::lock_guard<std::mutex> lg(current.m_mutex);
+void user_interface::views::chat_view::chat_recv() {
+    bool scroll = !m_msgView.place_cursor_onscreen();
+    
+    m_receivedMessages.push(m_viewCtrl.config().global().get<std::string>("last-chat-message").second);
 
-    bool scroll = !current.m_msgView.place_cursor_onscreen();
+    insert_all_messages();
 
-    current.insert_all_messages();
-
-    auto textBuffer = current.m_msgView.get_buffer();
+    auto textBuffer = m_msgView.get_buffer();
     textBuffer->place_cursor(textBuffer->end());
 
     if (scroll) {
-        current.scroll_down();
+        scroll_down();
     }
-
-    return 0;
 }
 
 void user_interface::views::chat_view::insert_all_messages() {

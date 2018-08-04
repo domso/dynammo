@@ -6,7 +6,6 @@
 #include "src/user_interface/views/base_view.h"
 #include "src/user_interface/view_controller.h"
 #include "src/graphic/renderer.h"
-#include <mutex>
 #include <queue>
 
 namespace user_interface {
@@ -19,12 +18,12 @@ namespace user_interface {
             
             void open();
             void close();            
-            static void event_callback(const types::game_events event, base_view* view);
+            void event_callback(const types::game_events event);
             Gtk::Overlay& container();     
             Gtk::Container& overlay();           
         private:          
             void chat_enter();
-            static int chat_recv(void* view);
+            void chat_recv();
             
             void insert_all_messages();
             void scroll_down();
@@ -33,9 +32,7 @@ namespace user_interface {
             key_controller& m_keyCtrl;
 
             std::queue<std::string> m_receivedMessages;
-            
-            std::mutex m_mutex;
-            
+                        
             Gtk::Overlay m_emptyOverlay;
             
             Gtk::Grid m_chatBox;

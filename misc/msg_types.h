@@ -3,7 +3,6 @@
 
 #include <cstdint>
 #include "src/message/msg_header.h"
-#include "src/authentication/types.h"
 
 namespace message {
     

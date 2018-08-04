@@ -23,11 +23,10 @@ void user_interface::views::main_game_view::close() {
 
 }
 
-void user_interface::views::main_game_view::event_callback(const types::game_events event, user_interface::views::base_view* view) {
-    main_game_view& current = *(dynamic_cast<main_game_view*>(view));
+void user_interface::views::main_game_view::event_callback(const types::game_events event) {
     if (event == types::game_events::chat_close) {
-        current.m_GLArea.set_can_focus(true);
-        current.m_GLArea.grab_focus();
+        m_GLArea.set_can_focus(true);
+        m_GLArea.grab_focus();
     }
 }
 

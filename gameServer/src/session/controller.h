@@ -5,7 +5,6 @@
 #include <atomic>
 #include <optional>
 
-#include "src/authentication/types.h"
 #include "src/util/lock_ref.h"
 #include "src/session/user.h"
 

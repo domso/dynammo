@@ -39,7 +39,7 @@ namespace user_interface {
             }
             
             for (auto e : T::events) {
-                m_eventCtrl.register_event_handler(e, T::event_callback, newView);
+                m_eventCtrl.register_event_handler(e, T::event_dispatcher, newView);
                 m_allRegisteredEvents.push_back(e);
             }
         }

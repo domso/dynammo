@@ -7,7 +7,6 @@
 #include "network/pkt_buffer.h"
 #include "network/tcp_connection.h"
 #include "src/util/lock_ref.h"
-#include "src/authentication/types.h"
 #include "src/encryption/public_key.h"
 
 namespace session {
@@ -18,7 +17,7 @@ namespace session {
         user(user&& move) = delete;
         ~user();
 
-        bool set_accountID(const authentication::accountID_t accountID);
+        bool set_accountID(const uint32_t accountID);
         uint32_t get_accountID() const;
 
         void set_connection(network::tcp_connection<network::ipv4_addr>& conn);

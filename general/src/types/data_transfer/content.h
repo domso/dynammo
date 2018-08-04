@@ -1,7 +1,6 @@
 #pragma once
 
 #include <stdint.h>
-#include "src/authentication/types.h"
 #include "src/region/layer.h"
 #include "src/region/static_obj.h"
 #include "src/region/dynamic_obj.h"
@@ -23,7 +22,7 @@ namespace types {
             
             struct auth_ticket {
                 constexpr static const uint8_t id = ids::auth_ticket;
-                typedef authentication::ticket_t content;
+                typedef uint32_t content;
             };
             
             struct session_id {

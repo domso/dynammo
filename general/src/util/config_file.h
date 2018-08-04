@@ -20,7 +20,7 @@ namespace util {
         * 
         * @param filename the absolut or relative path to the config file
         */
-        void load(const std::string& filename);
+        bool load(const std::string& filename);
         
         /**
         * @brief tries to store all current data in the file specified by filename;
@@ -28,7 +28,7 @@ namespace util {
         * 
         * @param filename the absolut or relative path to the config file
         */
-        void store(const std::string& filename);
+        bool store(const std::string& filename);
                
         
         template <typename T>

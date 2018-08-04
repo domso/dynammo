@@ -4,7 +4,7 @@
 #include <fstream>
 #include "src/util/config_file.h"
 
-void util::config_file::load(const std::string& filename) {
+bool util::config_file::load(const std::string& filename) {
     std::lock_guard<std::mutex> lg(m_mutex);
     std::ifstream file;
     std::string line;
@@ -15,12 +15,12 @@ void util::config_file::load(const std::string& filename) {
         while (std::getline(file, line)) {
             insert_new_pair(line);
         }
-
-        file.close();
     }
+    
+    return file.is_open();
 }
 
-void util::config_file::store(const std::string& filename) {
+bool util::config_file::store(const std::string& filename) {
     std::lock_guard<std::mutex> lg(m_mutex);
     std::ofstream file;
     std::string line;
@@ -31,9 +31,9 @@ void util::config_file::store(const std::string& filename) {
         for (auto& item : m_configMap) {
             file << item.first << ": " << item.second << "\n";
         }
-
-        file.close();
     }
+    
+    return file.is_open();
 }
 
 void util::config_file::clear() {

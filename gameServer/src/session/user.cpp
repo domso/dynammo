@@ -9,7 +9,7 @@ session::user::~user() {
 
 }
 
-bool session::user::set_accountID(const authentication::accountID_t accountID) {
+bool session::user::set_accountID(const uint32_t accountID) {
     m_accountID = accountID;
     return m_publicKey.load("keys/" + std::to_string(accountID) + ".pem");
 }

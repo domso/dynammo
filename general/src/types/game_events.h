@@ -24,7 +24,10 @@ namespace types {
         leave_region,
         
         request_login,
-        recv_tcp_link,
+        success_login,
+        failure_login,
+        
+        request_auth,
         request_account_creation,
         success_account_creation,
         failure_account_creation,
