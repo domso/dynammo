@@ -2,7 +2,7 @@
 
 graphic::sprite_mesh::sprite_mesh(const std::vector<region::static_obj>& objs, texture_controller& texCtrl) {
     m_objs = objs;
-    add_texture(std::make_shared<img_texture>("../res/Sprites/iso-64x64-building.png"));
+    add_texture(std::make_shared<img_texture>("../res/tiles/block/out_full.png"));
     auto layerData = texCtrl.get_texture("data::layer");
     add_texture(*layerData);
 }

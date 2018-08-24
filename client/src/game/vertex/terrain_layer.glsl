@@ -50,7 +50,7 @@ void main() {
     //
     outputPosition.x = -((scaledPosition.x - scaledPosition.y) * 2 * size) * zoom.x;
     outputPosition.y = -((scaledPosition.x + scaledPosition.y) * size - center) * zoom.y * (screenResolution.x / screenResolution.y);
-    outputPosition.z = -((scaledPosition.x + scaledPosition.y) * depthMargin);
+    outputPosition.z = outputPosition.y * depthMargin;
             
     
 //     vec3 scaleV = vec3(scale, scale, scale);

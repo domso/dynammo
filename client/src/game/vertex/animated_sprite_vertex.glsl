@@ -36,7 +36,7 @@ void main() {
     
     outputPosition.x = -((correctedPosition.x - correctedPosition.y) * 2 * size) * zoom.x;
     outputPosition.y = -((correctedPosition.x + correctedPosition.y) * size - center) * zoom.y * (screenResolution.x / screenResolution.y);
-    outputPosition.z = -((correctedPosition.x + correctedPosition.y) * depthMargin);
+    outputPosition.z = outputPosition.y * depthMargin;//-((correctedPosition.x + correctedPosition.y) * depthMargin);
     
     gl_Position = vec4(scaledCoord + outputPosition - vec3(camera * zoom, 0), 1);
     

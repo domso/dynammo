@@ -2,7 +2,7 @@
 
 
 graphic::layer_mesh::layer_mesh(const region::layer<uint32_t>& layer, texture_controller& texCtrl) {
-    add_texture(std::make_shared<graphic::img_texture>("../res/newgrass.png"));
+    add_texture(std::make_shared<graphic::img_texture>("../res/newgrass2.png"));
 
     auto layerTex = std::make_shared<graphic::data_texture>(layer.data(), layer.width, layer.height);
     texCtrl.register_texture("data::layer", layerTex);

@@ -39,7 +39,8 @@ namespace region {
         void set_all_user_as_affected();
         
         
-        void load_layer(region::layer<uint32_t>& layer, const std::string& filename);      
+        void load_layer(region::layer<uint32_t>& layer, const std::string& filename);
+        void set_static_obj(const uint32_t x, const uint32_t y, const uint32_t z, const uint32_t type);
         void load();
         void save();
 
