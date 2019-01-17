@@ -12,7 +12,21 @@ region::context::~context() {
     save();
 }
 
-bool region::context::update() {
+bool region::context::update() {    
+    bool insert = false;
+    for (auto& dynObj : m_dynamicObjects) {
+        if (dynObj.second.direction != region::vec3<float>(0, 0, 0)) {
+            dynObj.second.position += dynObj.second.direction * 0.1;// * dynObj.second.speed;
+            m_changedDynamicObjects.push_back(dynObj.first);
+            dynObj.second.direction -= dynObj.second.direction * 0.1;
+            insert = true;
+        }
+    }
+    
+    if (insert) {        
+        set_all_user_as_affected();
+    }
+    
     return !m_activeUsers.empty();
 }
 
@@ -36,7 +50,7 @@ bool region::context::action(const uint32_t accountID, const uint32_t sessionID,
         }
 
         m_changedLayers.push_back(0);
-        m_changedLayers.push_back(1);
+//         m_changedLayers.push_back(1);
 
         break;
     }
@@ -47,34 +61,38 @@ bool region::context::action(const uint32_t accountID, const uint32_t sessionID,
     }
 
     case types::game_events::move_up: {
-        m_dynamicObjects[sessionID].position.x -= 1;
+        m_dynamicObjects[sessionID].direction.x = -1;
+        m_dynamicObjects[sessionID].direction.y = 0;
         m_dynamicObjects[sessionID].animation = types::game_animations::move_up;
-        set_all_user_as_affected();
-        m_changedDynamicObjects.push_back(sessionID);
+//         set_all_user_as_affected();
+//         m_changedDynamicObjects.push_back(sessionID);
         break;
     }
 
     case types::game_events::move_down: {
-        m_dynamicObjects[sessionID].position.x += 1;
+        m_dynamicObjects[sessionID].direction.x = 1;
+        m_dynamicObjects[sessionID].direction.y = 0;
         m_dynamicObjects[sessionID].animation = types::game_animations::move_down;
-        set_all_user_as_affected();
-        m_changedDynamicObjects.push_back(sessionID);
+//         set_all_user_as_affected();
+//         m_changedDynamicObjects.push_back(sessionID);
         break;
     }
 
     case types::game_events::move_left: {
-        m_dynamicObjects[sessionID].position.y -= 1;
+        m_dynamicObjects[sessionID].direction.x = 0;
+        m_dynamicObjects[sessionID].direction.y = -1;
         m_dynamicObjects[sessionID].animation = types::game_animations::move_left;
-        set_all_user_as_affected();
-        m_changedDynamicObjects.push_back(sessionID);
+//         set_all_user_as_affected();
+//         m_changedDynamicObjects.push_back(sessionID);
         break;
     }
 
     case types::game_events::move_right: {
-        m_dynamicObjects[sessionID].position.y += 1;
+        m_dynamicObjects[sessionID].direction.x = 0;
+        m_dynamicObjects[sessionID].direction.y = 1;
         m_dynamicObjects[sessionID].animation = types::game_animations::move_right;
-        set_all_user_as_affected();
-        m_changedDynamicObjects.push_back(sessionID);
+//         set_all_user_as_affected();
+//         m_changedDynamicObjects.push_back(sessionID);
         break;
     }
 
@@ -133,7 +151,13 @@ void region::context::commit() {
     m_affectedUsers.clear();
     m_changedDynamicObjects.clear();
     m_changedStaticObjects.clear();
+    m_changedLayers.clear();
 }
+
+uint32_t region::context::get_id() {
+    return m_id;
+}
+
 
 void region::context::set_all_user_as_affected() {
     for (auto& user : m_activeUsers) {
@@ -173,10 +197,15 @@ void region::context::set_static_obj(const uint32_t x, const uint32_t y, const u
 }
 
 void region::context::load() {
-    m_layers.resize(2);
-//     load_layer(m_layers[0], "data/terrain.ppm");
+    m_layers.resize(1);
+    load_layer(m_layers[0], "data/terrain.ppm");
+//     load_layer(m_layers[2], "data/terrain.ppm");
 //     load_layer(m_layers[1], "data/water.ppm");
-
+    for (int i = 0; i < m_layers[1].size; i++) {
+//         m_layers[0][i] = 0;
+//         m_layers[2][i] = 1;
+    }
+    
     set_static_obj(0, 0, 0,  3);
     set_static_obj(1, 0, 0,  7);
     set_static_obj(2, 0, 0,  7);

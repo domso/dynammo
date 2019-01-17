@@ -20,9 +20,10 @@ namespace game {
         enable_if_same<T, std::vector<region::layer<uint32_t>>> add_game_object(const T& layers) {
             m_layers.resize(layers.size());
 
-            for (size_t i = 0; i < 1; i++) {
+            for (size_t i = 0; i < layers.size(); i++) {
                 m_layers[i] = m_meshFactory.new_mesh(i, layers[i]);
             }
+            
         }
 
         template <typename T>

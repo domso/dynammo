@@ -83,7 +83,9 @@ namespace graphic {
             
             if (!m_lazyInit) {
                 auto layerData = m_texCtrl.get_texture("data::layer");
-                add_texture(*layerData);
+                if (layerData) {
+                    add_texture(*layerData);
+                }
                 m_lazyInit = true;
             }
             

@@ -4,6 +4,7 @@
 #include "src/user_interface/views/create_account_view.h"
 #include "src/user_interface/views/main_game_view.h"
 #include "src/user_interface/views/chat_view.h"
+#include "src/user_interface/views/code_view.h"
 
 user_interface::window::window(graphic::renderer& renderer, util::event_controller<types::game_events>& eventCtrl, config::controller& config) :
     m_keyCtrl(eventCtrl),
@@ -16,7 +17,7 @@ user_interface::window::window(graphic::renderer& renderer, util::event_controll
     m_viewCtrl.register_view<views::create_account_view>();
     m_viewCtrl.register_view<views::main_game_view>(std::ref(m_renderer), std::ref(m_keyCtrl));
     m_viewCtrl.register_view<views::chat_view>(std::ref(m_renderer), std::ref(m_keyCtrl));
-    
+//     m_viewCtrl.register_view<views::code_view>(std::ref(m_renderer), std::ref(m_keyCtrl));
     
     
     

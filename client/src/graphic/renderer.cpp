@@ -26,6 +26,7 @@ void graphic::renderer::add_mesh(const std::shared_ptr<graphic::base_mesh>& newM
 
 void graphic::renderer::remove_mesh(const std::shared_ptr<graphic::base_mesh>& oldMesh) {
     std::lock_guard<std::mutex> lg(m_mutex);
+    //FIXME
     m_addQueue.push(oldMesh);
 }
 

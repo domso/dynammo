@@ -8,6 +8,8 @@
 #include "network/tcp_connection.h"
 #include "src/util/lock_ref.h"
 #include "src/encryption/public_key.h"
+#include "src/context.h"
+
 
 namespace session {
     class user : public util::locked_ref_item {
@@ -98,11 +100,14 @@ namespace session {
 
             m_connectionState = false;
         }
+        
+        riscv_sim::context executionContext;
     private:
         network::tcp_connection<network::ipv4_addr> m_connection;
         network::ipv4_addr m_udpAddr;
         encryption::public_key m_publicKey;
         uint32_t m_accountID;
+        uint32_t m_regionID;
         bool m_connectionState;
     };
 }

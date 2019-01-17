@@ -1,5 +1,5 @@
 #include "src/region/controller.h"
-
+#include <iostream>
 region::controller::controller() {
     m_running = false;
 }
@@ -23,16 +23,28 @@ util::locked_ref<region::context> region::controller::get_region(const uint32_t 
     return result;
 }
 
+std::optional<util::locked_ref<region::context>> region::controller::get_region_with_update() {
+    std::optional<uint32_t> id = m_regionWithUpdates.pop();
+    if (id) {
+        return get_region(*id);
+    }
+    
+    return std::nullopt;
+}
+
 void region::controller::update() {
     m_running = true;
+
     while (m_running) {
         auto next = next_region_for_update();
 
         if (next) {
             bool updateResult;
+            bool changedRegion;
             {
                 auto region = get_region(*next);
                 updateResult = region->update();
+                changedRegion = !region->changed_dynamic_objects().empty();
             }
             {
                 std::lock_guard<std::mutex> lg(m_mutex);
@@ -42,6 +54,10 @@ void region::controller::update() {
                     m_updateQueue.push(tobj);
                 } else {
                     m_regionMap.erase(*next);
+                }
+
+                if (changedRegion) {
+                    m_regionWithUpdates.push(*next);
                 }
             }
         }

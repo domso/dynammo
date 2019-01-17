@@ -6,6 +6,8 @@ Isometric game written in C++ using
 - gtk
 - "network" wrapper (https://github.com/domso/network)
 - "mapgen" map-generator (https://github.com/domso/mapgen)
+- "riscv_sim" Risc-V Simulator (https://github.com/domso/riscv_sim)
+- "riscv_asm" Risc-V Assembler (https://github.com/domso/riscv_asm)
 
 Project Structure:
 - general
@@ -44,6 +46,8 @@ Build:
 ```
 sudo apt-get install g++ git cmake libssl-dev libgtkmm-3.0-dev
 git clone https://github.com/domso/network
+git clone https://github.com/domso/riscv_asm
+git clone https://github.com/domso/riscv_sim
 git clone https://github.com/domso/dynammo
 
 cd dynammo

@@ -10,12 +10,37 @@ namespace connector {
     public:
         controller(region::controller& rCtrl, session::controller& sCtrl);
         ~controller();
-        
-        void update();
-        void close();
+
+        class input {
+        public:
+            input(connector::context& context, message::msg_controller& msgCtrl);
+            ~input();
+
+            void update();
+            void close();
+        private:            
+            connector::context& m_context;
+            message::msg_controller& m_msgCtrl;
+        };
+
+        class output {
+        public:
+            output(connector::context& context, message::msg_controller& msgCtrl);
+            ~output();
+
+            void update();
+            void close();
+        private:
+            std::atomic<bool> m_running;
+            connector::context& m_context;
+            message::msg_controller& m_msgCtrl;
+            network::pkt_buffer m_buffer;
+        };
     private:
-        std::atomic<bool> m_running;
         connector::context m_context;
-        message::msg_controller m_msgCtrl;        
+        message::msg_controller m_msgCtrl;
+    public:
+        input inputCtrl;
+        output outputCtrl;
     };
 }

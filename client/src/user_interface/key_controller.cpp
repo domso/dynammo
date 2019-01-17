@@ -38,7 +38,7 @@ void user_interface::key_controller::key_was_released(uint32_t key) {
 
 void user_interface::key_controller::update() {
     while (m_running.load(std::memory_order_acquire)) {
-        std::chrono::milliseconds duration(1000);
+        std::chrono::milliseconds duration(100);
         std::this_thread::sleep_for(duration);
         {
             std::lock_guard<std::mutex> lg(m_mutex);

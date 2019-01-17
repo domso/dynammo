@@ -1,9 +1,12 @@
 include_directories(../general/)
+include_directories(../../riscv_asm/)
 include_directories(${CMAKE_CURRENT_SOURCE_DIR})
 
 set (CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/libs/)
 set (CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/bin/)
 
+
+link_directories(../../riscv_asm/libs/)
 include(FindPkgConfig)
 
 find_package(PkgConfig)
@@ -35,6 +38,6 @@ file(GLOB src_all
 )
 
 add_executable(client main.cpp ${src_all})
-target_link_libraries(client allGeneral)
+target_link_libraries(client allGeneral riscv_asm)
 INCLUDE_DIRECTORIES(${OPENGL_INCLUDE_DIRS} ${GTKMM_INCLUDE_DIRS})
 TARGET_LINK_LIBRARIES(client ${OPENGL_LIBRARIES} ${GTKMM_LIBRARIES} "epoxy")

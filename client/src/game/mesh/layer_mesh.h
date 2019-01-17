@@ -17,7 +17,7 @@ namespace graphic {
     public:
         constexpr static const int resolution = 512;
 
-        layer_mesh(const region::layer<uint32_t>& layer, texture_controller& texCtrl);
+        layer_mesh(const region::layer<uint32_t>& layer, texture_controller& texCtrl, const uint32_t id);
         
         void load();
         void free();

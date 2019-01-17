@@ -35,6 +35,7 @@ namespace region {
         const std::vector<region::layer<uint32_t>>& all_layers();
         
         void commit();
+        uint32_t get_id();
     private:       
         void set_all_user_as_affected();
         

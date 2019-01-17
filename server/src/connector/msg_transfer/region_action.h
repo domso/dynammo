@@ -18,7 +18,7 @@ namespace connector {
                 network::ipv4_addr& destAddr,
                 network::pkt_buffer& outputBuffer,
                 network::udp_socket<network::ipv4_addr>& socket,
-                void*,
+                std::pair<uint32_t, std::vector<region::dynamic_obj>&>* data,
                 connector::context* context
             );
             
@@ -51,7 +51,7 @@ namespace connector {
                 region::context& region,
                 const std::vector<region::static_obj>& statics,
                 const std::vector<region::dynamic_obj>& dynamics,
-                const std::vector<region::layer<uint32_t>> layers,
+                const std::vector<region::layer<uint32_t>>& layers,
                 const std::vector<uint32_t>& users,
                 session::controller& sessionCtrl
             );                  

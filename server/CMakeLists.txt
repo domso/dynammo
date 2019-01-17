@@ -1,8 +1,11 @@
 include_directories(../general/)
+include_directories(../../riscv_sim/)
 include_directories(${CMAKE_CURRENT_SOURCE_DIR})
 
 set (CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/libs/)
 set (CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/bin/)
+
+link_directories(../../riscv_sim/libs/)
 
 file(GLOB src_all 
     "${CMAKE_CURRENT_SOURCE_DIR}/src/region/*.cpp"
@@ -12,4 +15,4 @@ file(GLOB src_all
 )
 
 add_executable(server main.cpp ${src_all})
-target_link_libraries(server allGeneral)
+target_link_libraries(server allGeneral riscv_sim)

@@ -5,8 +5,25 @@ bool connector::msg_transfer::region_action::request(
     network::ipv4_addr& destAddr,
     network::pkt_buffer& outputBuffer,
     network::udp_socket<network::ipv4_addr>& socket,
-    void*, connector::context* context
-) {
+    std::pair<uint32_t, std::vector<region::dynamic_obj>&>* data,
+    connector::context* context
+) {    
+    auto request = outputBuffer.push_next<content::types::request>();
+
+    if (request != nullptr) {
+        request->regionID = data->first;
+        for (auto& region : data->second) {
+            auto dest = outputBuffer.push_next<region::dynamic_obj>();
+            if (dest != nullptr) {
+                *dest = region;                
+            } else {
+                return false;
+            }
+        }
+        
+        return true;
+    }
+
     return false;
 }
 
@@ -65,7 +82,7 @@ std::vector<uint32_t> connector::msg_transfer::region_action::tcp_broadcast(
     region::context& region,
     const std::vector<region::static_obj>& statics,
     const std::vector<region::dynamic_obj>& dynamics,
-    const std::vector<region::layer<uint32_t>> layers,
+    const std::vector<region::layer<uint32_t>>& layers,
     const std::vector<uint32_t>& users,
     session::controller& sessionCtrl
 ) {
@@ -165,11 +182,12 @@ message::msg_status_t connector::msg_transfer::region_action::verify_request(
 
     if (user) {
         if ((*user)->verify_buffer(inputBuffer)) {
+            uint32_t accountID = (*user)->get_accountID();
+            (*user).release();
             auto region = context->regionCtrl.get_region(request->regionID);
 
-            if (region->action((*user)->get_accountID(), request->sessionID, request->actionID)) {
+            if (region->action(accountID, request->sessionID, request->actionID)) {
                 header.status = message::status::ok;
-                (*user).release();
                 send_udp(*region.data(), outputBuffer, socket, context->sessionCtrl);
                 send_tcp(*region.data(), context->sessionCtrl);
                 

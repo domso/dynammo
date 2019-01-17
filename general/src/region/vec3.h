@@ -81,10 +81,25 @@ namespace region {
             return *this;
         }
         
+        vec3 operator-=(const vec3<T> v) {
+            x -= v.x;           
+            y -= v.y;
+            z -= v.z;
+            return *this;
+        }
+        
         vec3 operator+(const vec3<T> v) {
             vec3 result = *this;
             result += v;
             return result;
+        }
+        
+        bool operator==(const vec3<T> v) {
+            return x == v.x && y == v.y && z == v.y;
+        }
+        
+        bool operator!=(const vec3<T> v) {
+            return x != v.x || y != v.y || z != v.z;
         }
     };
 }

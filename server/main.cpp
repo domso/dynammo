@@ -15,10 +15,12 @@ int main() {
     
     util::worker<region::controller> w1(regionCtrl);
     util::worker<session::controller> w2(sessionCtrl);
-    util::worker<connector::controller> w3(connCtrl);
+    util::worker<connector::controller::input> w3(connCtrl.inputCtrl);
+    util::worker<connector::controller::output> w4(connCtrl.outputCtrl);
     
     util::signals::wait_for_sigint();
     std::cout << "Close Server" << std::endl;   
         
     return 0;
 }
+

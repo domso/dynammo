@@ -71,7 +71,7 @@ namespace message {
         // - false | on any error
         //______________________________________________________________________________________________________
         template <typename T, typename instant_argT = void*>
-        bool exec_request(network::ipv4_addr& destAddr, network::pkt_buffer& outputBuffer, instant_argT arg = instant_argT()) {
+        bool exec_request(const network::ipv4_addr& destAddr, network::pkt_buffer& outputBuffer, instant_argT arg = instant_argT()) {
             static_assert((sizeof(T::id) == 1));
             message::msg_header_t* outputHeader = outputBuffer.push_next<message::msg_header_t>();
 
@@ -83,7 +83,7 @@ namespace message {
 
                 // T::request exspects an actual type as parameter, internal we store only void*
                 // Type-Safety is guaranteed by the register-call
-                auto castedRequest = (bool (*)(message::msg_header_t&, network::ipv4_addr&, network::pkt_buffer&, network::udp_socket<network::ipv4_addr>&, instant_argT, void*)) T::request;
+                auto castedRequest = (bool (*)(message::msg_header_t&, const network::ipv4_addr&, network::pkt_buffer&, network::udp_socket<network::ipv4_addr>&, instant_argT, void*)) T::request;
 
                 if (castedRequest(*outputHeader, destAddr, outputBuffer, m_networkSocket, arg, m_additional_data[T::id])) {
                     return internal_send(m_networkSocket, destAddr, outputBuffer);
@@ -157,7 +157,7 @@ namespace message {
         //
         // dont use it outside of recv() or execRequest()
         //______________________________________________________________________________________________________
-        static bool internal_send(network::udp_socket<network::ipv4_addr>& networkSocket, network::ipv4_addr& dest, network::pkt_buffer& outputBuffer, const int flags = 0);
+        static bool internal_send(network::udp_socket<network::ipv4_addr>& networkSocket, const network::ipv4_addr& dest, network::pkt_buffer& outputBuffer, const int flags = 0);
 
         std::function<message::msg_status_t(message::msg_header_t& header, network::ipv4_addr&, network::pkt_buffer&, network::pkt_buffer&, network::udp_socket<network::ipv4_addr>&, message::msg_option_t&, void*)> m_callbacks[256];
         void* m_additional_data[256];

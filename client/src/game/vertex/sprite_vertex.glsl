@@ -34,7 +34,9 @@ void main() {
     
     outputPosition.x = -((correctedPosition.x - correctedPosition.y) * 2 * size) * zoom.x;
     outputPosition.y = -((correctedPosition.x + correctedPosition.y) * size - center - position.z * size * 2) * zoom.y * (screenResolution.x / screenResolution.y);
-    outputPosition.z = outputPosition.y * depthMargin - (depthMargin) * position.z + abs(vCoord.x) * size * depthMargin;//-((correctedPosition.x + correctedPosition.y) * size - center) * zoom.y * (screenResolution.x / screenResolution.y);
+    outputPosition.z = -((correctedPosition.x + correctedPosition.y + 1 + position.z) * depthMargin);
+    
+    //outputPosition.y * depthMargin - (depthMargin) * position.z + abs(vCoord.x) * size * depthMargin;//-((correctedPosition.x + correctedPosition.y) * size - center) * zoom.y * (screenResolution.x / screenResolution.y);
     
     
     

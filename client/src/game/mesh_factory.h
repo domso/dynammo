@@ -16,9 +16,12 @@ namespace game {
         
         template <typename T>
         enable_if_same<T, region::layer<uint32_t>, graphic::layer_mesh> new_mesh(const uint32_t id, const T& newObj) {
-            auto result = std::make_shared<graphic::layer_mesh>(newObj, m_texCtrl);
+            auto result = std::make_shared<graphic::layer_mesh>(newObj, m_texCtrl, id);
             result->set_id(id);
+            
+//             if (id == 0) {
             m_renderer.add_mesh(result);
+//             }
             return result;
         }
         

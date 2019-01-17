@@ -31,7 +31,19 @@ message::msg_status_t connector::msg_transfer::region_action::requestHandler(
     message::msg_option_t& options,
     connector::context* context
 ) {
-    return message::status::error::unknown;
+    auto request = inputBuffer.get_next<content::types::request>();
+
+    
+    if (request != nullptr) {
+        auto dynObj = inputBuffer.get_next<region::dynamic_obj>();
+        while (dynObj != nullptr) {
+            context->gameCtrl.add_game_object(0, *dynObj);
+            dynObj = inputBuffer.get_next<region::dynamic_obj>();
+        }
+    }
+    
+
+    return message::status::close;
 }
 
 message::msg_status_t connector::msg_transfer::region_action::responseHandler(
@@ -44,6 +56,7 @@ message::msg_status_t connector::msg_transfer::region_action::responseHandler(
     connector::context* context
 ) {
     auto response = inputBuffer.get_next<content::types::response>();
+    
     
     if (response != nullptr) {
         auto dynObj = inputBuffer.get_next<region::dynamic_obj>();

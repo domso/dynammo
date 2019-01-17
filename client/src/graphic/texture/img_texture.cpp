@@ -33,6 +33,8 @@ void graphic::img_texture::copy() {
 
         if (pixelData->get_has_alpha()) {
             glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, pixelData->get_width(), pixelData->get_height(), 0, GL_RGBA, GL_UNSIGNED_BYTE, pixelData->get_pixels());
+        } else {
+            glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, pixelData->get_width(), pixelData->get_height(), 0, GL_RGB, GL_UNSIGNED_BYTE, pixelData->get_pixels());
         }
     }
 }
