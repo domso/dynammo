@@ -9,6 +9,7 @@ user_interface::key_controller::key_controller(util::event_controller<types::gam
     register_key_event<key_bindings::move_left>();
     register_key_event<key_bindings::move_down>();
     register_key_event<key_bindings::move_right>();
+    register_key_event<key_bindings::attack>();
     
     m_running.store(true);
     m_thread = std::thread(&key_controller::update, this);

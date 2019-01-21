@@ -60,8 +60,8 @@ void main() {
     
     vec3 scaledPosition = position;
     
-    scaledPosition.x -= (regionID >> 16) * 126;
-    scaledPosition.y -= ((regionID << 16) >> 16) * 126;
+//     scaledPosition.x -= (regionID >> 16) * 126;
+//     scaledPosition.y -= ((regionID << 16) >> 16) * 126;
     
     float tmp = regionID;
     //

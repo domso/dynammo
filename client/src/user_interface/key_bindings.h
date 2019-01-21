@@ -31,5 +31,12 @@ namespace user_interface {
             constexpr static const auto event            = types::game_events::move_right;
             constexpr static const auto triggerOnRelease = false;
         };
+        
+        struct attack {
+            constexpr static const auto title            = "attack";
+            constexpr static const auto defaultKey       = ' ';
+            constexpr static const auto event            = types::game_events::attack;
+            constexpr static const auto triggerOnRelease = false;
+        };
     }
 }

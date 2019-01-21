@@ -11,6 +11,8 @@
 #include "src/game/mesh_factory.h"
 #include "src/game/context.h"
 
+#include <mutex>
+
 namespace game {
     class controller {
     public:
@@ -21,10 +23,12 @@ namespace game {
         
         template <typename T>
         void add_game_object(const uint32_t regionID, T& input) {
+            std::lock_guard<std::mutex> lg(m_mutex);
             auto& region = m_gameObjects.try_emplace(regionID, m_meshFactory).first->second;            
             region.add_game_object(input);            
         }
-    private:        
+    private:    
+        std::mutex m_mutex;
         graphic::renderer& m_renderer;        
         mesh_factory m_meshFactory;
         util::event_controller<types::game_events>& m_eventCtrl;

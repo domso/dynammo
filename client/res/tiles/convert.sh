@@ -16,6 +16,7 @@ do
        	if (( i == 2 ))
 	then 
 		cmd="$cmd block/out_$j.png"
+		echo $cmd
 		$($cmd)
 		j=$(( j + 1 ))
 		i=0
@@ -24,14 +25,15 @@ do
 	fi
 done
 
-if [ "$cmd" != "" ]
-then
-	cmd="$cmd block/out_$j.png"
-	$($cmd)
-fi
+#if [ "$cmd" != "" ]
+#then
+#	cmd="$cmd block/out_$j.png"
+#	echo $cmd
+#	$($cmd)
+#fi
 
 cmd="convert -append"
-for ((i=0;i<=$j;i++))
+for ((i=0;i<$j;i++))
 do
 	cmd="$cmd block/out_$i.png"
 done
@@ -39,5 +41,6 @@ done
 if (( j > 0 ))
 then
 	cmd="$cmd block/out_full.png"
+	echo $cmd
 	$($cmd)
 fi

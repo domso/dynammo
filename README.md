@@ -21,8 +21,7 @@ Current State:
 - working chat
 
 Next goal:
-- Full refactor to improve the
-- Build small test-village
+- build roadway
 
 Screenshots:
 <p float="left">
@@ -30,6 +29,7 @@ Screenshots:
   <img src="/client/res/Screenshots/small.png" width="45%"/>
   <img src="/client/res/Screenshots/water.png" width="45%"/>
   <img src="/client/res/Screenshots/chat.png" width="45%"/>
+  <img src="/client/res/Screenshots/close.png" width="45%"/>
 </p>
 
 Usage:

@@ -2,15 +2,34 @@
 
 
 graphic::layer_mesh::layer_mesh(const region::layer<uint32_t>& layer, texture_controller& texCtrl, const uint32_t id) {
-//     if (id == 0) {
-        add_texture(std::make_shared<graphic::img_texture>("../res/terrain/adesert_cracks_d.jpg"));
-        add_texture(std::make_shared<graphic::img_texture>("../res/terrain/adesert_sand2_d.jpg"));
-        add_texture(std::make_shared<graphic::img_texture>("../res/terrain/grass_ground_d.jpg"));
-        add_texture(std::make_shared<graphic::img_texture>("../res/terrain/grass_rocky_d.jpg"));
+    if (id == 0) {
+        add_texture(std::make_shared<graphic::img_texture>("../res/newgrass.png"));
+        add_texture(std::make_shared<graphic::img_texture>("../res/newgrass.png"));
+        add_texture(std::make_shared<graphic::img_texture>("../res/newgrass.png"));
+        add_texture(std::make_shared<graphic::img_texture>("../res/newgrass.png"));
         
-//     } else {
-//         add_texture(std::make_shared<graphic::img_texture>("../res/newwater.png"));
-//     }
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+//         add_texture(std::make_shared<graphic::img_texture>("../res/terrain/adesert_cracks_d.jpg"));
+//         add_texture(std::make_shared<graphic::img_texture>("../res/terrain/adesert_sand2_d.jpg"));
+//         add_texture(std::make_shared<graphic::img_texture>("../res/terrain/grass_ground_d.jpg"));
+//         add_texture(std::make_shared<graphic::img_texture>("../res/terrain/grass_rocky_d.jpg"));
+        
+    } else {
+        add_texture(std::make_shared<graphic::img_texture>("../res/newwater.png"));
+    }
 
 
     if (id == 0) {
@@ -28,11 +47,11 @@ graphic::layer_mesh::layer_mesh(const region::layer<uint32_t>& layer, texture_co
 void graphic::layer_mesh::load() {
     build();
 
-//     if (get_id() == 0) {
+    if (get_id() == 0) {
         m_shaders.add_shader<graphic::shader_program::shader_types::vertex>("../src/game/vertex/terrain_layer.glsl");
-//     } else {
-//         m_shaders.add_shader<graphic::shader_program::shader_types::vertex>("../src/game/vertex/water_layer.glsl");
-//     }
+    } else {
+        m_shaders.add_shader<graphic::shader_program::shader_types::vertex>("../src/game/vertex/water_layer.glsl");
+    }
 
 
     m_shaders.add_shader<graphic::shader_program::shader_types::fragment>("../src/game/fragment/fragment.glsl");
@@ -55,16 +74,16 @@ void graphic::layer_mesh::free() {
 }
 
 void graphic::layer_mesh::update(const graphic::settings& settings) {
-//     if (get_id() == 0) {
+    if (get_id() == 0) {
         m_shaders.set_uniform_attr<int>("groundTex", 0);
         m_shaders.set_uniform_attr<int>("groundTex2", 1);
         m_shaders.set_uniform_attr<int>("groundTex3", 2);
         m_shaders.set_uniform_attr<int>("groundTex4", 3);
         m_shaders.set_uniform_attr<int>("mapData", 4);
-//     } else {
-//         m_shaders.set_uniform_attr<int>("groundTex", 0);
-//         m_shaders.set_uniform_attr<int>("mapData", 1);
-//     }
+    } else {
+        m_shaders.set_uniform_attr<int>("groundTex", 0);
+        m_shaders.set_uniform_attr<int>("mapData", 1);
+    }
 
 
     m_shaders.set_uniform_attr<int>("regionID", get_id());

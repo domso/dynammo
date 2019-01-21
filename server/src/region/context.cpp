@@ -16,16 +16,58 @@ bool region::context::update() {
     bool insert = false;
     for (auto& dynObj : m_dynamicObjects) {
         if (dynObj.second.direction != region::vec3<float>(0, 0, 0)) {
-            dynObj.second.position += dynObj.second.direction * 0.1;// * dynObj.second.speed;
-            m_changedDynamicObjects.push_back(dynObj.first);
+            region::vec3 dest = dynObj.second.position + dynObj.second.direction * 0.1;            
+            if (get_static_obj(dest.x, dest.y, dest.z).type == 0) {            
+                dynObj.second.position = dest;
+                m_changedDynamicObjects.push_back(dynObj.first);
+            }
+            
             dynObj.second.direction -= dynObj.second.direction * 0.1;
+            
+            if (std::abs(dynObj.second.direction.x) < 0.1) {
+                dynObj.second.direction.x = 0;
+            }
+            if (std::abs(dynObj.second.direction.y) < 0.1) {
+                dynObj.second.direction.y = 0;
+            }
+            if (std::abs(dynObj.second.direction.z) < 0.1) {
+                dynObj.second.direction.z = 0;
+            }
+            
             insert = true;
+        } else {
+            switch (dynObj.second.animation) {                                  
+                case types::game_animations::move_up:
+                    dynObj.second.animation = types::game_animations::stand_up;
+                    m_changedDynamicObjects.push_back(dynObj.first);
+                    insert = true;  
+                    break;
+                case types::game_animations::move_left:
+                    dynObj.second.animation = types::game_animations::stand_left;
+                    m_changedDynamicObjects.push_back(dynObj.first);
+                    insert = true;
+                    break;
+                case types::game_animations::move_down:
+                    dynObj.second.animation = types::game_animations::stand_down;
+                    m_changedDynamicObjects.push_back(dynObj.first);
+                    insert = true;
+                    break;
+                case types::game_animations::move_right:
+                    dynObj.second.animation = types::game_animations::stand_right;
+                    m_changedDynamicObjects.push_back(dynObj.first);
+                    insert = true;
+                    break;
+                default: break;
+            }
+            
+            
         }
     }
     
     if (insert) {        
         set_all_user_as_affected();
     }
+    
     
     return !m_activeUsers.empty();
 }
@@ -36,8 +78,8 @@ bool region::context::action(const uint32_t accountID, const uint32_t sessionID,
         m_activeUsers.insert(sessionID);
         m_affectedUsers.push_back(sessionID);
 
-        m_dynamicObjects[sessionID].position.x = 5;
-        m_dynamicObjects[sessionID].position.y = 5;
+        m_dynamicObjects[sessionID].position.x = 50;
+        m_dynamicObjects[sessionID].position.y = 50;
         m_dynamicObjects[sessionID].id = sessionID;
         m_dynamicObjects[sessionID].health = 100;
 
@@ -50,7 +92,7 @@ bool region::context::action(const uint32_t accountID, const uint32_t sessionID,
         }
 
         m_changedLayers.push_back(0);
-//         m_changedLayers.push_back(1);
+        m_changedLayers.push_back(1);
 
         break;
     }
@@ -196,48 +238,37 @@ void region::context::set_static_obj(const uint32_t x, const uint32_t y, const u
     m_staticObjects[x + y * 512 + z * 512 * 512].position.z = z;
 }
 
+region::static_obj& region::context::get_static_obj(const uint32_t x, const uint32_t y, const uint32_t z) {
+    return m_staticObjects[x + y * 512 + z * 512 * 512];
+}
+
 void region::context::load() {
-    m_layers.resize(1);
+    m_layers.resize(2);
     load_layer(m_layers[0], "data/terrain.ppm");
 //     load_layer(m_layers[2], "data/terrain.ppm");
 //     load_layer(m_layers[1], "data/water.ppm");
     for (int i = 0; i < m_layers[1].size; i++) {
-//         m_layers[0][i] = 0;
+        m_layers[1][i] = 100;
 //         m_layers[2][i] = 1;
     }
     
-    set_static_obj(0, 0, 0,  3);
-    set_static_obj(1, 0, 0,  7);
-    set_static_obj(2, 0, 0,  7);
-    set_static_obj(3, 0, 0,  0);
-    set_static_obj(3, 1, 0,  6);
-    set_static_obj(3, 2, 0,  6);
-    set_static_obj(3, 3, 0,  1);
-    set_static_obj(0, 3, 0,  2);
-    set_static_obj(0, 2, 0,  6);
-    set_static_obj(0, 1, 0,  6);
+    std::random_device rd;
+    std::uniform_int_distribution dis(0, 511);
+    std::uniform_int_distribution dis2(1, 3);
+    
+    for (int i = 0; i < 10000; i++) {
+        int x;
+        int y;
+        do {
+            x = dis(rd);
+            y = dis(rd);
+        } while (m_layers[0].get_nearest(x, y) < 100);        
+        
+        set_static_obj(x, y, 0,  dis2(rd));
+    }
     
     
-    set_static_obj(3, 0, 1,  4);
-    set_static_obj(3, 1, 1,  4);
-    set_static_obj(3, 2, 1,  4);
-    set_static_obj(3, 3, 1,  4);
-    
-    set_static_obj(0, 0, 1,  5);
-    set_static_obj(0, 1, 1,  5);
-    set_static_obj(0, 2, 1,  5);
-    set_static_obj(0, 3, 1,  5);
-    
-    set_static_obj(2, 0, 2,  4);
-    set_static_obj(2, 1, 2,  4);
-    set_static_obj(2, 2, 2,  4);
-    set_static_obj(2, 3, 2,  4);
-    
-    set_static_obj(1, 0, 2,  5);
-    set_static_obj(1, 1, 2,  5);
-    set_static_obj(1, 2, 2,  5);
-    set_static_obj(1, 3, 2,  5);   
-
+  
 }
 
 void region::context::save() {

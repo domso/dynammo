@@ -70,10 +70,15 @@ namespace graphic {
 //                 case types::game_animations::move_down:  set_animation(0, 14, false);  break;
 //                 case types::game_animations::move_right: set_animation(30, 44, false); break;
                  
-                case types::game_animations::move_up:    set_animation(4, 7, true, false, 2);    break;
-                case types::game_animations::move_left:  set_animation(4, 7, true, true, 2);  break;
-                case types::game_animations::move_down:  set_animation(0, 3, true, true, 2);  break;
-                case types::game_animations::move_right: set_animation(0, 3, true, false, 2); break;
+                 case types::game_animations::stand_up:    set_animation(4, 4, true, false, 2); break;
+                case types::game_animations::stand_left:  set_animation(4, 4, true, true, 2);  break;
+                case types::game_animations::stand_down:  set_animation(0, 0, true, true, 2);  break;
+                case types::game_animations::stand_right: set_animation(0, 0, true, false, 2); break;
+                 
+                case types::game_animations::move_up:    set_animation(4, 7, true, false, 4);    break;
+                case types::game_animations::move_left:  set_animation(4, 7, true, true, 4);  break;
+                case types::game_animations::move_down:  set_animation(0, 3, true, true, 4);  break;
+                case types::game_animations::move_right: set_animation(0, 3, true, false, 4); break;
                 default: break;
             }    
         }
@@ -85,8 +90,8 @@ namespace graphic {
                 auto layerData = m_texCtrl.get_texture("data::layer");
                 if (layerData) {
                     add_texture(*layerData);
+                    m_lazyInit = true;
                 }
-                m_lazyInit = true;
             }
             
             

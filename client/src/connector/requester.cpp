@@ -15,6 +15,7 @@ connector::requester::requester(connector::context& context, message::msg_contro
     m_context.eventCtrl.register_event_handler(types::game_events::move_up, execute_callback<msg_transfer::region_action>, this);
     m_context.eventCtrl.register_event_handler(types::game_events::move_left, execute_callback<msg_transfer::region_action>, this);
     m_context.eventCtrl.register_event_handler(types::game_events::move_right, execute_callback<msg_transfer::region_action>, this);
+    m_context.eventCtrl.register_event_handler(types::game_events::attack, execute_callback<msg_transfer::region_action>, this);
     
     m_context.eventCtrl.register_event_handler(types::game_events::enter_chat_message, execute_callback<msg_transfer::region_chat>, this);
     

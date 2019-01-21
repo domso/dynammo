@@ -13,6 +13,7 @@ namespace types {
         move_down,
         move_right,
         move_left,
+        attack,
         
         
         move_up_region,
