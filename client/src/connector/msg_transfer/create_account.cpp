@@ -14,7 +14,7 @@ bool connector::msg_transfer::create_account::request(
 ) {
     util::file_storage file;
 
-    if (file.init("../../keys/" + context->config.global().get<std::string>("username").second + "_public.pem")) {
+    if (file.init("../keys/" + context->config.global().get<std::string>("username").second + "_public.pem")) {
         char c;
 
         while (file.read(&c)) {
